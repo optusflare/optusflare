@@ -13,10 +13,12 @@
 <!-- Canonical URL -->
 <link rel="canonical" href="https://astraspec.vercel.app/" />
 
-<!-- ===== Google Search Console verification =====
-     Paste your GSC meta tag on the next line, exactly as Google gives it to you, e.g.:
-     <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
-     ============================================== -->
+<!-- ================================================================
+     GOOGLE SEARCH CONSOLE VERIFICATION — paste your tag on the blank
+     line directly below, exactly as Search Console gives it to you.
+     Example: <meta name="google-site-verification" content="abc123..." />
+     ================================================================ -->
+
 
 
 <!-- Favicon -->
@@ -291,6 +293,62 @@ section{
 .msg.err{color:var(--bad);}
 .msg.ok{color:var(--good);}
 
+/* ---------- security module ---------- */
+.sec-tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.sec-tab{
+  padding:.55em 1.2em;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--glass);
+  color:var(--muted);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.85rem;
+  cursor:pointer;
+}
+.sec-tab.active{
+  color:#000;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  border-color:transparent;
+}
+.sec-panel{display:none;}
+.sec-panel.active{display:block;}
+.strength-meter{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin:12px 0 6px;}
+.strength-meter > div{height:100%;width:0%;transition:width .4s ease, background .4s ease;}
+.strength-label{font-size:.85rem;font-weight:600;}
+.strength-list{margin:10px 0 0;padding-left:18px;font-size:.82rem;color:var(--muted);}
+.gen-options{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0;font-size:.85rem;color:var(--muted);}
+.gen-options label{display:flex;align-items:center;gap:6px;}
+.pwned-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.85rem;}
+.pwned-safe{color:var(--good);}
+.pwned-bad{color:var(--bad);}
+.finger-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+@media (max-width:600px){.finger-grid{grid-template-columns:1fr;}}
+.username-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.username-links a{
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:.5em 1.1em;
+  font-size:.82rem;
+  text-decoration:none;
+  color:var(--text);
+}
+.username-links a:hover{border-color:var(--cyan);}
+.warn-list{list-style:none;padding:0;margin:14px 0 0;}
+.warn-list li{
+  padding:10px 0;
+  border-bottom:1px dashed var(--border);
+  font-size:.85rem;
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+}
+.warn-list li span:first-child{color:var(--muted);}
+
 footer{
   text-align:center;
   padding:60px 20px 40px;
@@ -309,6 +367,7 @@ footer{
   <a href="#dns" data-section="dns">DNS</a>
   <a href="#peripherals" data-section="peripherals">Peripherals</a>
   <a href="#privacy" data-section="privacy">Privacy</a>
+  <a href="#security" data-section="security">Security</a>
 </nav>
 
 <section id="hero">
@@ -426,6 +485,91 @@ footer{
       </div>
       <div class="hash-output mono" id="hash-output"></div>
     </div>
+  </div>
+</section>
+
+<section id="security" class="reveal">
+  <div class="section-head">
+    <div class="tag">MODULE 05</div>
+    <h2>Security Toolkit</h2>
+    <p>Password strength, breach checking, and a look at what sites can see about you — all computed in your browser.</p>
+  </div>
+
+  <div class="sec-tabs" id="sec-tabs">
+    <button class="sec-tab active" data-tab="strength">Strength Test</button>
+    <button class="sec-tab" data-tab="generator">Password Generator</button>
+    <button class="sec-tab" data-tab="breach">Breach Check</button>
+    <button class="sec-tab" data-tab="email">Email Check</button>
+    <button class="sec-tab" data-tab="fingerprint">Fingerprint</button>
+    <button class="sec-tab" data-tab="username">Username Search</button>
+    <button class="sec-tab" data-tab="warning">Privacy Warning</button>
+  </div>
+
+  <div class="panel">
+
+    <div class="sec-panel active" id="panel-strength">
+      <h3>Password strength tester</h3>
+      <p>Type a password to see how secure it is. Nothing is sent anywhere.</p>
+      <input type="password" id="pw-strength-input" placeholder="Type a password…" autocomplete="off">
+      <div class="strength-meter"><div id="strength-bar"></div></div>
+      <div class="strength-label" id="strength-label">—</div>
+      <ul class="strength-list" id="strength-tips"></ul>
+    </div>
+
+    <div class="sec-panel" id="panel-generator">
+      <h3>Password generator</h3>
+      <p>Generated locally using the browser's cryptographic random number generator.</p>
+      <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
+      <input type="range" id="gen-length" min="8" max="48" value="16">
+      <div class="gen-options">
+        <label><input type="checkbox" id="gen-upper" checked> Uppercase</label>
+        <label><input type="checkbox" id="gen-lower" checked> Lowercase</label>
+        <label><input type="checkbox" id="gen-numbers" checked> Numbers</label>
+        <label><input type="checkbox" id="gen-symbols" checked> Symbols</label>
+      </div>
+      <button id="gen-generate">Generate password</button>
+      <div class="aes-output mono" id="gen-output"></div>
+      <button id="gen-copy" style="margin-top:10px;">Copy</button>
+    </div>
+
+    <div class="sec-panel" id="panel-breach">
+      <h3>Password breach check</h3>
+      <p>Checks your password against the Have I Been Pwned Pwned Passwords database using k-anonymity — only the first 5 characters of the password's hash ever leave your browser, so the real password is never transmitted or revealed to anyone.</p>
+      <input type="password" id="pw-breach-input" placeholder="Type a password to check…" autocomplete="off">
+      <button id="pw-breach-check" style="margin-top:12px;">Check for breaches</button>
+      <div class="msg" id="breach-result"></div>
+    </div>
+
+    <div class="sec-panel" id="panel-email">
+      <h3>Email breach check</h3>
+      <p>Checks whether an email address has appeared in a known data breach, via the Have I Been Pwned account API.</p>
+      <input type="email" id="email-breach-input" placeholder="you@example.com">
+      <button id="email-breach-check" style="margin-top:12px;">Check email</button>
+      <div class="msg" id="email-result"></div>
+    </div>
+
+    <div class="sec-panel" id="panel-fingerprint">
+      <h3>Browser fingerprint</h3>
+      <p>This is the kind of information almost any website can read about your browser without asking permission.</p>
+      <div class="finger-grid" id="finger-grid"></div>
+    </div>
+
+    <div class="sec-panel" id="panel-username">
+      <h3>Username search</h3>
+      <p>Cross-site username lookups can't run silently in a browser due to how most platforms block outside requests — so this opens direct profile links for you to check by eye.</p>
+      <input type="text" id="username-input" placeholder="Type a username…">
+      <button id="username-search" style="margin-top:12px;">Build search links</button>
+      <div class="username-links" id="username-links"></div>
+    </div>
+
+    <div class="sec-panel" id="panel-warning">
+      <h3>Privacy warning: what this site (and most sites) can see about you</h3>
+      <p>Live snapshot combining your network and browser exposure.</p>
+      <ul class="warn-list" id="warn-list"></ul>
+      <button id="warn-copy" style="margin-top:14px;">Copy full privacy report</button>
+      <div class="msg" id="warn-msg"></div>
+    </div>
+
   </div>
 </section>
 
@@ -967,6 +1111,260 @@ footer{
   });
   document.getElementById('hash-md5').addEventListener('click', ()=>{
     out.textContent = md5(document.getElementById('hash-input').value);
+  });
+  window.__astraMd5 = md5; // reused by the security module below
+})();
+
+/* ================= security: tab switching ================= */
+(function(){
+  const tabs = document.querySelectorAll('.sec-tab');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.sec-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+})();
+
+/* ================= security: password strength ================= */
+(function(){
+  const input = document.getElementById('pw-strength-input');
+  const bar = document.getElementById('strength-bar');
+  const label = document.getElementById('strength-label');
+  const tips = document.getElementById('strength-tips');
+
+  function evaluate(pw){
+    if(!pw) return {score:0, tips:[]};
+    let score = 0;
+    const notes = [];
+    if(pw.length >= 8) score += 20; else notes.push('Use at least 8 characters.');
+    if(pw.length >= 12) score += 15;
+    if(/[a-z]/.test(pw)) score += 10; else notes.push('Add a lowercase letter.');
+    if(/[A-Z]/.test(pw)) score += 15; else notes.push('Add an uppercase letter.');
+    if(/[0-9]/.test(pw)) score += 15; else notes.push('Add a number.');
+    if(/[^A-Za-z0-9]/.test(pw)) score += 20; else notes.push('Add a symbol.');
+    if(/(.)\1\1/.test(pw)){ score -= 10; notes.push('Avoid repeating the same character three times.'); }
+    if(/^(123|abc|password|qwerty)/i.test(pw)){ score -= 25; notes.push('Avoid common patterns and words.'); }
+    return {score: Math.max(0, Math.min(100, score)), tips: notes};
+  }
+
+  input.addEventListener('input', ()=>{
+    const {score, tips: notes} = evaluate(input.value);
+    bar.style.width = score + '%';
+    let color = '#ff5470', text = 'Very weak';
+    if(score >= 80){ color = '#2de08e'; text = 'Strong'; }
+    else if(score >= 60){ color = '#00f3ff'; text = 'Good'; }
+    else if(score >= 35){ color = '#9d4edd'; text = 'Weak'; }
+    bar.style.background = color;
+    label.textContent = input.value ? text : '—';
+    tips.innerHTML = notes.map(n=>`<li>${n}</li>`).join('');
+  });
+})();
+
+/* ================= security: password generator ================= */
+(function(){
+  const lenInput = document.getElementById('gen-length');
+  const lenVal = document.getElementById('gen-length-val');
+  lenInput.addEventListener('input', ()=> lenVal.textContent = lenInput.value);
+
+  const sets = {
+    upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
+    lower: 'abcdefghijkmnpqrstuvwxyz',
+    numbers: '23456789',
+    symbols: '!@#$%^&*()-_=+[]{}'
+  };
+
+  document.getElementById('gen-generate').addEventListener('click', ()=>{
+    let pool = '';
+    if(document.getElementById('gen-upper').checked) pool += sets.upper;
+    if(document.getElementById('gen-lower').checked) pool += sets.lower;
+    if(document.getElementById('gen-numbers').checked) pool += sets.numbers;
+    if(document.getElementById('gen-symbols').checked) pool += sets.symbols;
+    const out = document.getElementById('gen-output');
+    if(!pool){ out.textContent = 'Select at least one character type.'; return; }
+    const len = parseInt(lenInput.value,10);
+    const bytes = new Uint32Array(len);
+    crypto.getRandomValues(bytes);
+    let pw = '';
+    for(let i=0;i<len;i++) pw += pool[bytes[i] % pool.length];
+    out.textContent = pw;
+  });
+
+  document.getElementById('gen-copy').addEventListener('click', async ()=>{
+    const text = document.getElementById('gen-output').textContent;
+    if(!text) return;
+    try{ await navigator.clipboard.writeText(text); }catch(e){}
+  });
+})();
+
+/* ================= security: pwned password check (k-anonymity) ================= */
+(function(){
+  async function sha1Hex(str){
+    const enc = new TextEncoder().encode(str);
+    const buf = await crypto.subtle.digest('SHA-1', enc);
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+
+  document.getElementById('pw-breach-check').addEventListener('click', async ()=>{
+    const result = document.getElementById('breach-result');
+    const pw = document.getElementById('pw-breach-input').value;
+    if(!pw){ result.className='msg err'; result.textContent='Type a password first.'; return; }
+    result.className='msg'; result.textContent='Checking…';
+    try{
+      const hash = await sha1Hex(pw);
+      const prefix = hash.slice(0,5), suffix = hash.slice(5);
+      const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+      const text = await res.text();
+      const lines = text.split('\n');
+      const match = lines.find(l => l.split(':')[0] === suffix);
+      if(match){
+        const count = parseInt(match.split(':')[1],10);
+        result.className='msg err';
+        result.textContent = `Found in ${count.toLocaleString()} known breaches — don't use this password.`;
+      } else {
+        result.className='msg ok';
+        result.textContent = 'Not found in any known breach database.';
+      }
+    }catch(err){
+      result.className='msg err';
+      result.textContent = 'Could not reach the breach database — check your connection.';
+    }
+  });
+})();
+
+/* ================= security: email breach check ================= */
+(function(){
+  // Paste a Have I Been Pwned API key here to enable this tool: https://haveibeenpwned.com/API/Key
+  const HIBP_API_KEY = "";
+
+  document.getElementById('email-breach-check').addEventListener('click', async ()=>{
+    const result = document.getElementById('email-result');
+    const email = document.getElementById('email-breach-input').value.trim();
+    if(!email){ result.className='msg err'; result.textContent='Enter an email address.'; return; }
+    if(!HIBP_API_KEY){
+      result.className='msg err';
+      result.textContent = 'Email Check needs a free/paid Have I Been Pwned API key — see the HIBP_API_KEY line near the top of the script.';
+      return;
+    }
+    result.className='msg'; result.textContent='Checking…';
+    try{
+      const res = await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}`, {
+        headers: { 'hibp-api-key': HIBP_API_KEY }
+      });
+      if(res.status === 404){
+        result.className='msg ok'; result.textContent='No known breaches found for this address.';
+      } else if(res.ok){
+        const data = await res.json();
+        result.className='msg err';
+        result.textContent = `Found in ${data.length} breach(es): ${data.map(b=>b.Name).join(', ')}`;
+      } else {
+        result.className='msg err'; result.textContent='The breach lookup service returned an error.';
+      }
+    }catch(err){
+      result.className='msg err'; result.textContent='Could not reach the breach lookup service.';
+    }
+  });
+})();
+
+/* ================= security: fingerprint ================= */
+(function(){
+  function canvasFingerprint(){
+    try{
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      ctx.textBaseline = 'top';
+      ctx.font = '14px Arial';
+      ctx.fillText('AstraSpec fingerprint 🌌', 2, 2);
+      return c.toDataURL().slice(-16);
+    }catch(e){ return 'Unavailable'; }
+  }
+
+  const rows = [
+    ['User agent', navigator.userAgent],
+    ['Platform', navigator.platform || 'Unavailable'],
+    ['Language(s)', navigator.languages ? navigator.languages.join(', ') : navigator.language],
+    ['Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone],
+    ['Screen resolution', `${screen.width}×${screen.height}`],
+    ['Color depth', screen.colorDepth + '-bit'],
+    ['Device pixel ratio', window.devicePixelRatio],
+    ['Cookies enabled', navigator.cookieEnabled ? 'Yes' : 'No'],
+    ['Do Not Track', navigator.doNotTrack || 'Not set'],
+    ['Touch support', ('ontouchstart' in window) ? 'Yes' : 'No'],
+    ['Connection type', (navigator.connection && navigator.connection.effectiveType) || 'Unavailable'],
+    ['Canvas fingerprint tail', canvasFingerprint()],
+    ['Referrer', document.referrer || '(none — direct visit)']
+  ];
+  const grid = document.getElementById('finger-grid');
+  grid.innerHTML = rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><span class="mono">${v}</span></div>`).join('');
+})();
+
+/* ================= security: username search ================= */
+(function(){
+  const platforms = [
+    ['GitHub', u=>`https://github.com/${u}`],
+    ['X / Twitter', u=>`https://x.com/${u}`],
+    ['Instagram', u=>`https://instagram.com/${u}`],
+    ['Reddit', u=>`https://reddit.com/user/${u}`],
+    ['TikTok', u=>`https://tiktok.com/@${u}`],
+    ['YouTube', u=>`https://youtube.com/@${u}`],
+    ['Pinterest', u=>`https://pinterest.com/${u}`],
+    ['Twitch', u=>`https://twitch.tv/${u}`]
+  ];
+  document.getElementById('username-search').addEventListener('click', ()=>{
+    const u = document.getElementById('username-input').value.trim();
+    const wrap = document.getElementById('username-links');
+    if(!u){ wrap.innerHTML = ''; return; }
+    wrap.innerHTML = platforms.map(([name,fn])=>
+      `<a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${name}</a>`
+    ).join('');
+  });
+})();
+
+/* ================= security: privacy warning / IP geolocation ================= */
+(function(){
+  const list = document.getElementById('warn-list');
+  let reportLines = [];
+
+  function addRow(label, value){
+    reportLines.push(`${label}: ${value}`);
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${label}</span><span class="mono">${value}</span>`;
+    list.appendChild(li);
+  }
+
+  addRow('User agent', navigator.userAgent);
+  addRow('Language', navigator.language);
+  addRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+  addRow('Screen', `${screen.width}×${screen.height}`);
+  addRow('Cookies enabled', navigator.cookieEnabled ? 'Yes' : 'No');
+
+  const ipRow = document.createElement('li');
+  ipRow.innerHTML = `<span>Public IP & location</span><span class="mono">Loading…</span>`;
+  list.appendChild(ipRow);
+
+  fetch('https://ipapi.co/json/')
+    .then(r=>r.json())
+    .then(data=>{
+      const text = `${data.ip} — ${data.city || ''}${data.city ? ', ' : ''}${data.country_name || ''} (${data.org || 'Unknown ISP'})`;
+      ipRow.querySelector('span:last-child').textContent = text;
+      reportLines.push(`Public IP & location: ${text}`);
+    })
+    .catch(()=>{
+      ipRow.querySelector('span:last-child').textContent = 'Unavailable (network blocked this request)';
+    });
+
+  document.getElementById('warn-copy').addEventListener('click', async ()=>{
+    const msg = document.getElementById('warn-msg');
+    try{
+      await navigator.clipboard.writeText(reportLines.join('\n'));
+      msg.className = 'msg ok';
+      msg.textContent = 'Report copied to clipboard.';
+    }catch(e){
+      msg.className = 'msg err';
+      msg.textContent = 'Could not copy — your browser blocked clipboard access.';
+    }
   });
 })();
 </script>
