@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics</title>
+<meta name="title" content="AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics" />
+<meta name="description" content="AstraSpec is a browser-based diagnostic suite for real-time PC spec detection, hardware benchmarking, peripheral testing, DNS latency checks, and offline encryption tools." />
+<meta name="keywords" content="AstraSpec, PC benchmark, hardware diagnostic tool, GPU specs, CPU test, peripheral latency, WebGL benchmark, DNS test, AES encryption" />
+<meta name="author" content="AstraSpec" />
+<meta name="robots" content="index, follow" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://astraspec.vercel.app/" />
+
+<!-- ===== Google Search Console verification =====
+     Paste your GSC meta tag on the next line, exactly as Google gives it to you, e.g.:
+     <meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE" />
+     ============================================== -->
+
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌌</text></svg>" />
+
+<!-- Open Graph / Facebook / Discord -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://astraspec.vercel.app/" />
+<meta property="og:title" content="AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics" />
+<meta property="og:description" content="Run real-time WebGL hardware benchmarks, spec checks, and network tests inside a 3D galaxy canvas interface." />
+<meta property="og:image" content="https://astraspec.vercel.app/og-image.png" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://astraspec.vercel.app/" />
+<meta property="twitter:title" content="AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics" />
+<meta property="twitter:description" content="Run real-time WebGL hardware benchmarks, spec checks, and network tests inside a 3D galaxy canvas interface." />
+<meta property="twitter:image" content="https://astraspec.vercel.app/og-image.png" />
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AstraSpec",
+  "url": "https://astraspec.vercel.app/",
+  "description": "A browser-based PC diagnostic and hardware benchmarking utility with real-time 3D particle visualization.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "All (Web-based)",
+  "browserRequirements": "Requires JavaScript and WebGL support",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#05050a;
+  --bg-raised:#0a0a14;
+  --cyan:#00f3ff;
+  --purple:#9d4edd;
+  --glass:rgba(255,255,255,0.045);
+  --glass-strong:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.09);
+  --text:#e9e9f2;
+  --muted:#9797ad;
+  --good:#2de08e;
+  --bad:#ff5470;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+h1,h2,h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  margin:0 0 .4em;
+  letter-spacing:-0.01em;
+}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:var(--cyan);}
+p{color:var(--muted);max-width:60ch;}
+button{
+  font-family:'Space Grotesk',sans-serif;
+  cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--glass);
+  color:var(--text);
+  padding:.7em 1.3em;
+  border-radius:999px;
+  font-size:.92rem;
+  transition:border-color .25s, background .25s, transform .15s;
+}
+button:hover{border-color:var(--cyan);background:var(--glass-strong);}
+button:active{transform:scale(.97);}
+button:focus-visible, a:focus-visible, input:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:2px;
+}
+input, textarea, select{
+  font-family:'IBM Plex Mono',monospace;
+  background:rgba(0,0,0,0.35);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:.7em .9em;
+  font-size:.9rem;
+  width:100%;
+}
+input:focus, textarea:focus{border-color:var(--cyan);outline:none;}
+
+/* ---------- background galaxy canvas ---------- */
+#galaxy{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  width:100%;
+  height:100%;
+  background:radial-gradient(ellipse at 50% 40%, #0d0d1c 0%, #05050a 70%);
+}
+
+/* ---------- floating nav ---------- */
+.floating-nav{
+  position:fixed;
+  top:24px;
+  left:24px;
+  z-index:50;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  padding:10px;
+  border-radius:16px;
+  background:var(--glass);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--border);
+}
+.floating-nav .brand{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:.95rem;
+  padding:6px 12px 10px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.floating-nav a{
+  text-decoration:none;
+  color:var(--muted);
+  font-size:.82rem;
+  padding:7px 12px;
+  border-radius:10px;
+  transition:background .2s,color .2s;
+}
+.floating-nav a:hover, .floating-nav a.active{
+  background:var(--glass-strong);
+  color:var(--text);
+}
+
+/* ---------- layout ---------- */
+section{
+  position:relative;
+  max-width:1040px;
+  margin:0 auto;
+  padding:140px 28px 60px;
+}
+#hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  max-width:100%;
+  padding-left:28px;
+  padding-right:28px;
+  text-align:left;
+}
+#hero .eyebrow{
+  color:var(--cyan);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.8rem;
+  margin-bottom:14px;
+}
+#hero h1{
+  font-size:clamp(2.4rem,6vw,4.6rem);
+  max-width:14ch;
+}
+#hero p{font-size:1.1rem;max-width:48ch;}
+.section-head{margin-bottom:36px;}
+.section-head .tag{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--purple);
+  font-size:.78rem;
+}
+
+/* ---------- glass panel ---------- */
+.panel{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  padding:26px;
+}
+.grid{
+  display:grid;
+  gap:18px;
+}
+.grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+
+/* ---------- reveal on scroll ---------- */
+.reveal{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.reveal.visible{opacity:1;transform:none;}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+}
+
+/* ---------- bench module ---------- */
+.bench-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media (max-width:720px){.bench-layout{grid-template-columns:1fr;}}
+#bench-canvas{width:100%;height:220px;border-radius:10px;background:rgba(0,0,0,.3);display:block;}
+.stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.88rem;}
+.stat-row span:first-child{color:var(--muted);}
+.score-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px;}
+.score-bar > div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));width:0%;transition:width 1s ease;}
+
+/* ---------- dns module ---------- */
+.dns-card h3{font-size:1.05rem;display:flex;align-items:center;gap:8px;}
+.dns-ip{font-size:.85rem;margin:8px 0;}
+.dns-ip button{padding:.3em .8em;font-size:.72rem;margin-left:8px;}
+.dns-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.68rem;
+  color:var(--cyan);
+  border:1px solid var(--border);
+  padding:2px 8px;
+  border-radius:99px;
+}
+.dns-result{font-size:.8rem;color:var(--good);margin-top:10px;min-height:1.2em;}
+
+/* ---------- peripherals ---------- */
+#keyboard{
+  display:flex;flex-direction:column;gap:6px;margin-top:16px;
+}
+.kb-row{display:flex;gap:6px;justify-content:center;}
+.kb-key{
+  min-width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.68rem;
+  color:var(--muted);
+  background:rgba(255,255,255,.02);
+  transition:background .1s, color .1s, border-color .1s;
+}
+.kb-key.active{background:var(--cyan);color:#000;border-color:var(--cyan);}
+.kb-wide{min-width:70px;}
+.kb-space{min-width:220px;}
+.swatch-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.swatch{width:40px;height:40px;border-radius:8px;border:1px solid var(--border);cursor:pointer;}
+#fullscreen-swatch{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;color:#fff;font-family:'IBM Plex Mono',monospace;}
+#mic-canvas{width:100%;height:100px;background:rgba(0,0,0,.3);border-radius:10px;}
+
+/* ---------- privacy ---------- */
+.hash-output, .aes-output{
+  margin-top:10px;
+  word-break:break-all;
+  font-size:.78rem;
+  color:var(--cyan);
+  background:rgba(0,0,0,.3);
+  padding:10px;
+  border-radius:8px;
+  min-height:1.4em;
+}
+.field-label{font-size:.78rem;color:var(--muted);margin:14px 0 6px;display:block;}
+.msg{font-size:.82rem;margin-top:8px;}
+.msg.err{color:var(--bad);}
+.msg.ok{color:var(--good);}
+
+footer{
+  text-align:center;
+  padding:60px 20px 40px;
+  color:var(--muted);
+  font-size:.82rem;
+}
+</style>
+</head>
+<body>
+
+<canvas id="galaxy"></canvas>
+
+<nav class="floating-nav" aria-label="Section navigation">
+  <span class="brand">AstraSpec</span>
+  <a href="#bench" data-section="bench">Benchmark</a>
+  <a href="#dns" data-section="dns">DNS</a>
+  <a href="#peripherals" data-section="peripherals">Peripherals</a>
+  <a href="#privacy" data-section="privacy">Privacy</a>
+</nav>
+
+<section id="hero">
+  <div class="eyebrow mono">Browser-based diagnostics, no install</div>
+  <h1>See exactly what your machine is capable of.</h1>
+  <p>AstraSpec benchmarks your hardware, tests your peripherals, checks DNS latency, and encrypts your files — entirely client-side, entirely free.</p>
+</section>
+
+<section id="bench" class="reveal">
+  <div class="section-head">
+    <div class="tag">MODULE 01</div>
+    <h2>Hardware Benchmark & System HUD</h2>
+    <p>Live FPS test and a read of what the browser can see about your machine.</p>
+  </div>
+  <div class="bench-layout">
+    <div class="panel">
+      <canvas id="bench-canvas"></canvas>
+      <div class="stat-row"><span>Live FPS</span><span class="mono" id="fps-val">—</span></div>
+      <div class="stat-row"><span>Estimated refresh rate</span><span class="mono" id="hz-val">—</span></div>
+    </div>
+    <div class="panel">
+      <div class="stat-row"><span>Operating system</span><span class="mono" id="os-val">—</span></div>
+      <div class="stat-row"><span>Logical CPU cores</span><span class="mono" id="cores-val">—</span></div>
+      <div class="stat-row"><span>Estimated RAM</span><span class="mono" id="ram-val">—</span></div>
+      <div class="stat-row"><span>GPU renderer</span><span class="mono" id="gpu-val">—</span></div>
+      <div class="stat-row"><span>Screen resolution</span><span class="mono" id="res-val">—</span></div>
+      <div style="margin-top:16px;">
+        <span class="field-label">Gaming capability</span>
+        <div class="score-bar"><div id="score-gaming"></div></div>
+        <span class="field-label">Productivity / multitasking</span>
+        <div class="score-bar"><div id="score-productivity"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dns" class="reveal">
+  <div class="section-head">
+    <div class="tag">MODULE 02</div>
+    <h2>DNS Server Directory</h2>
+    <p>Compare providers and check a rough round-trip time from your connection. Browser timing here is approximate — not a true ICMP ping.</p>
+  </div>
+  <div class="grid cols-2" id="dns-grid"></div>
+</section>
+
+<section id="peripherals" class="reveal">
+  <div class="section-head">
+    <div class="tag">MODULE 03</div>
+    <h2>Peripheral & Input Testing Lab</h2>
+    <p>Check your keyboard, monitor, and audio setup.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Keyboard tester</h3>
+    <p>Press keys to see them register. <span id="kb-count">0</span> key(s) currently held.</p>
+    <div id="keyboard"></div>
+  </div>
+
+  <div class="panel" style="margin-top:18px;">
+    <h3>Display test</h3>
+    <p>Click a swatch to fill the screen — useful for spotting dead pixels or backlight bleed. Press Esc or click to exit.</p>
+    <div class="swatch-row" id="swatch-row"></div>
+  </div>
+
+  <div class="panel" style="margin-top:18px;">
+    <h3>Audio test</h3>
+    <p>Frequency tone generator and channel balance.</p>
+    <input type="range" id="freq-slider" min="20" max="20000" value="440">
+    <div class="stat-row"><span>Frequency</span><span class="mono" id="freq-val">440 Hz</span></div>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button id="tone-play">Play tone</button>
+      <button id="pan-left">Left only</button>
+      <button id="pan-both">Both</button>
+      <button id="pan-right">Right only</button>
+    </div>
+    <span class="field-label">Mic input waveform</span>
+    <canvas id="mic-canvas"></canvas>
+    <div style="margin-top:10px;"><button id="mic-start">Start mic test</button></div>
+    <div class="msg" id="mic-msg"></div>
+  </div>
+</section>
+
+<div id="fullscreen-swatch"><span>Click anywhere or press Esc to exit</span></div>
+
+<section id="privacy" class="reveal">
+  <div class="section-head">
+    <div class="tag">MODULE 04</div>
+    <h2>Privacy & Data Security Hub</h2>
+    <p>AES-256 encryption and hashing, computed entirely in your browser. Nothing is uploaded.</p>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="panel">
+      <h3>File / text encryptor</h3>
+      <span class="field-label">Text to encrypt or decrypt</span>
+      <textarea id="aes-input" rows="4"></textarea>
+      <span class="field-label">Passphrase</span>
+      <input type="password" id="aes-pass">
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button id="aes-encrypt">Encrypt</button>
+        <button id="aes-decrypt">Decrypt</button>
+      </div>
+      <div class="aes-output mono" id="aes-output"></div>
+      <div class="msg" id="aes-msg"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Hash generator</h3>
+      <span class="field-label">Text to hash</span>
+      <textarea id="hash-input" rows="4"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+        <button id="hash-sha256">SHA-256</button>
+        <button id="hash-sha512">SHA-512</button>
+        <button id="hash-md5">MD5</button>
+      </div>
+      <div class="hash-output mono" id="hash-output"></div>
+    </div>
+  </div>
+</section>
+
+<footer>AstraSpec — all diagnostics run locally in your browser. No data leaves your device.</footer>
+
+<script>
+/* ================= galaxy particle background ================= */
+(function(){
+  const canvas = document.getElementById('galaxy');
+  const ctx = canvas.getContext('2d');
+  let w, h, cx, cy;
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    cx = w/2; cy = h/2;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const ARMS = 3;
+  const COUNT = 700;
+  const particles = [];
+  for(let i=0;i<COUNT;i++){
+    const arm = i % ARMS;
+    const t = Math.random();
+    particles.push({
+      arm,
+      t,
+      radius: t * Math.max(w,h) * 0.55 + 10,
+      z: Math.random()
+    });
+  }
+
+  let rotation = 0;
+  let speed = 0.0009, targetSpeed = 0.0009;
+  let expand = 1, targetExpand = 1;
+
+  window.addEventListener('scroll', ()=>{
+    const max = document.body.scrollHeight - window.innerHeight;
+    const frac = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+    targetSpeed = 0.0009 + frac * 0.006;
+    targetExpand = 1 + frac * 0.6;
+  });
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    speed += (targetSpeed - speed) * 0.04;
+    expand += (targetExpand - expand) * 0.04;
+    rotation += speed;
+
+    for(const p of particles){
+      const angle = p.t * 6 + rotation + (p.arm * (Math.PI*2/ARMS));
+      const r = p.radius * expand;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r * 0.55;
+      const depthScale = 0.3 + p.z * 1.2;
+      const norm = p.t;
+      const cyan = [0,243,255], purple = [157,78,221];
+      const col = cyan.map((c,i)=> Math.round(c + (purple[i]-c)*norm));
+      const alpha = 0.15 + p.z * 0.55;
+      ctx.beginPath();
+      ctx.arc(x, y, depthScale, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ================= scroll reveal ================= */
+(function(){
+  const items = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  items.forEach(i=>io.observe(i));
+
+  const navLinks = document.querySelectorAll('.floating-nav a');
+  const sections = [...navLinks].map(a=>document.querySelector(a.getAttribute('href')));
+  const navIo = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      const link = document.querySelector(`.floating-nav a[href="#${e.target.id}"]`);
+      if(!link) return;
+      if(e.isIntersecting) link.classList.add('active');
+      else link.classList.remove('active');
+    });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  sections.forEach(s=> s && navIo.observe(s));
+})();
+
+/* ================= bench module ================= */
+(function(){
+  const canvas = document.getElementById('bench-canvas');
+  const ctx = canvas.getContext('2d');
+  function resizeBench(){
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  }
+  resizeBench();
+  window.addEventListener('resize', resizeBench);
+
+  const verts = [
+    [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+    [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]
+  ];
+  const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+  let rot = 0;
+
+  let frames = 0, lastFpsTime = performance.now(), fps = 0;
+  let lastFrame = performance.now();
+  const frameTimes = [];
+
+  function project(v){
+    const [x,y,z] = v;
+    const cosA = Math.cos(rot), sinA = Math.sin(rot);
+    const x1 = x*cosA - z*sinA, z1 = x*sinA + z*cosA;
+    const cosB = Math.cos(rot*0.7), sinB = Math.sin(rot*0.7);
+    const y2 = y*cosB - z1*sinB, z2 = y*sinB + z1*cosB;
+    const scale = 60 / (4 + z2);
+    return [canvas.width/2 + x1*scale*40, canvas.height/2 + y2*scale*40];
+  }
+
+  function loop(now){
+    const dt = now - lastFrame;
+    lastFrame = now;
+    frameTimes.push(dt);
+    if(frameTimes.length > 90) frameTimes.shift();
+    frames++;
+    if(now - lastFpsTime > 500){
+      fps = Math.round(frames / ((now-lastFpsTime)/1000));
+      frames = 0; lastFpsTime = now;
+      document.getElementById('fps-val').textContent = fps + ' fps';
+      const avgDt = frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length;
+      const hz = Math.round(1000/avgDt);
+      const common = [30,60,75,90,120,144,165,240];
+      const nearest = common.reduce((a,b)=> Math.abs(b-hz)<Math.abs(a-hz)?b:a);
+      document.getElementById('hz-val').textContent = '~' + nearest + ' Hz';
+    }
+
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    rot += 0.01;
+    ctx.strokeStyle = '#00f3ff';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    edges.forEach(([a,b])=>{
+      const [x1,y1] = project(verts[a]);
+      const [x2,y2] = project(verts[b]);
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+    });
+    ctx.stroke();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // spec detection
+  const ua = navigator.userAgent;
+  let os = 'Unknown';
+  if(/Windows/.test(ua)) os = 'Windows';
+  else if(/Mac OS X/.test(ua)) os = 'macOS';
+  else if(/Android/.test(ua)) os = 'Android';
+  else if(/iPhone|iPad|iPod/.test(ua)) os = 'iOS';
+  else if(/Linux/.test(ua)) os = 'Linux';
+  document.getElementById('os-val').textContent = os;
+
+  const cores = navigator.hardwareConcurrency || 'Unavailable';
+  document.getElementById('cores-val').textContent = cores;
+
+  const ram = navigator.deviceMemory ? navigator.deviceMemory + ' GB (approx.)' : 'Unavailable in this browser';
+  document.getElementById('ram-val').textContent = ram;
+
+  document.getElementById('res-val').textContent = `${screen.width}×${screen.height} @ ${window.devicePixelRatio}x`;
+
+  let gpu = 'Unavailable';
+  try{
+    const glc = document.createElement('canvas');
+    const gl = glc.getContext('webgl') || glc.getContext('experimental-webgl');
+    const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
+    if(dbg) gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+  }catch(e){}
+  document.getElementById('gpu-val').textContent = gpu;
+
+  setTimeout(()=>{
+    const coreScore = Math.min(100, (navigator.hardwareConcurrency||2) * 12);
+    const ramScore = navigator.deviceMemory ? Math.min(100, navigator.deviceMemory*12) : 40;
+    const gamingScore = Math.round((coreScore*0.4 + Math.min(100,fps*1.2)*0.6));
+    const prodScore = Math.round((coreScore*0.5 + ramScore*0.5));
+    document.getElementById('score-gaming').style.width = Math.min(100,Math.max(5,gamingScore)) + '%';
+    document.getElementById('score-productivity').style.width = Math.min(100,Math.max(5,prodScore)) + '%';
+  }, 1500);
+})();
+
+/* ================= dns module ================= */
+(function(){
+  const providers = [
+    {name:'Cloudflare', primary:'1.1.1.1', secondary:'1.0.0.1', tag:'Speed', desc:'Optimized for UK, Europe & global speed.'},
+    {name:'Google Public DNS', primary:'8.8.8.8', secondary:'8.8.4.4', tag:'Uptime', desc:'Global uptime & broad regional routing.'},
+    {name:'Quad9', primary:'9.9.9.9', secondary:'149.112.112.112', tag:'Privacy', desc:'Swiss-based privacy & threat protection.'},
+    {name:'AdGuard DNS', primary:'94.140.14.14', secondary:'94.140.15.15', tag:'Blocking', desc:'Network-level ad & tracker blocking.'}
+  ];
+  const grid = document.getElementById('dns-grid');
+  providers.forEach((p,i)=>{
+    const card = document.createElement('div');
+    card.className = 'panel dns-card';
+    card.innerHTML = `
+      <h3>${p.name} <span class="dns-tag">${p.tag}</span></h3>
+      <p>${p.desc}</p>
+      <div class="dns-ip">Primary: <span class="mono">${p.primary}</span><button data-copy="${p.primary}">Copy</button></div>
+      <div class="dns-ip">Secondary: <span class="mono">${p.secondary}</span><button data-copy="${p.secondary}">Copy</button></div>
+      <button class="test-btn" data-ip="${p.primary}">Test latency</button>
+      <div class="dns-result" id="dns-result-${i}"></div>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.addEventListener('click', async (e)=>{
+    if(e.target.dataset.copy){
+      try{
+        await navigator.clipboard.writeText(e.target.dataset.copy);
+        const old = e.target.textContent;
+        e.target.textContent = 'Copied';
+        setTimeout(()=> e.target.textContent = old, 1200);
+      }catch(err){}
+    }
+    if(e.target.classList.contains('test-btn')){
+      const ip = e.target.dataset.ip;
+      const resultEl = e.target.nextElementSibling;
+      resultEl.textContent = 'Testing…';
+      const start = performance.now();
+      try{
+        await fetch(`https://${ip}/`, {mode:'no-cors', cache:'no-store'});
+        const ms = Math.round(performance.now() - start);
+        resultEl.textContent = `≈ ${ms} ms (approximate, browser-limited)`;
+      }catch(err){
+        const ms = Math.round(performance.now() - start);
+        resultEl.textContent = `≈ ${ms} ms round-trip (connection reachable)`;
+      }
+    }
+  });
+})();
+
+/* ================= peripherals: keyboard ================= */
+(function(){
+  const rows = [
+    ['Esc','1','2','3','4','5','6','7','8','9','0','-','='],
+    ['Tab','Q','W','E','R','T','Y','U','I','O','P'],
+    ['Caps','A','S','D','F','G','H','J','K','L'],
+    ['Shift','Z','X','C','V','B','N','M'],
+    ['Ctrl','Alt','Space','Alt','Ctrl']
+  ];
+  const kb = document.getElementById('keyboard');
+  const keyEls = {};
+  rows.forEach(row=>{
+    const rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    row.forEach(label=>{
+      const el = document.createElement('div');
+      el.className = 'kb-key';
+      if(['Tab','Caps','Shift','Ctrl','Alt','Esc'].includes(label)) el.classList.add('kb-wide');
+      if(label === 'Space') el.classList.add('kb-space');
+      el.textContent = label;
+      rowEl.appendChild(el);
+      keyEls[label.toLowerCase()] = el;
+    });
+    kb.appendChild(rowEl);
+  });
+
+  let held = new Set();
+  const countEl = document.getElementById('kb-count');
+  function matchEl(e){
+    const k = e.key.toLowerCase();
+    if(k === ' ') return keyEls['space'];
+    if(keyEls[k]) return keyEls[k];
+    if(k === 'control') return keyEls['ctrl'];
+    if(k === 'capslock') return keyEls['caps'];
+    if(k === 'escape') return keyEls['esc'];
+    return null;
+  }
+  window.addEventListener('keydown', (e)=>{
+    const el = matchEl(e);
+    if(el){ el.classList.add('active'); held.add(e.code); countEl.textContent = held.size; }
+  });
+  window.addEventListener('keyup', (e)=>{
+    const el = matchEl(e);
+    if(el){ el.classList.remove('active'); held.delete(e.code); countEl.textContent = held.size; }
+  });
+})();
+
+/* ================= peripherals: display test ================= */
+(function(){
+  const colors = ['#ff0000','#00ff00','#0000ff','#ffffff','#000000','#808080'];
+  const row = document.getElementById('swatch-row');
+  const overlay = document.getElementById('fullscreen-swatch');
+  colors.forEach(c=>{
+    const sw = document.createElement('div');
+    sw.className = 'swatch';
+    sw.style.background = c;
+    sw.addEventListener('click', ()=>{
+      overlay.style.background = c;
+      overlay.style.display = 'flex';
+      overlay.style.color = c === '#ffffff' ? '#000' : '#fff';
+      if(overlay.requestFullscreen) overlay.requestFullscreen().catch(()=>{});
+    });
+    row.appendChild(sw);
+  });
+  function exit(){
+    overlay.style.display = 'none';
+    if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  }
+  overlay.addEventListener('click', exit);
+  window.addEventListener('keydown', e=>{ if(e.key === 'Escape') exit(); });
+})();
+
+/* ================= peripherals: audio ================= */
+(function(){
+  let audioCtx, osc, gain, panner, playing = false;
+  const freqSlider = document.getElementById('freq-slider');
+  const freqVal = document.getElementById('freq-val');
+  freqSlider.addEventListener('input', ()=>{
+    freqVal.textContent = freqSlider.value + ' Hz';
+    if(osc) osc.frequency.value = freqSlider.value;
+  });
+
+  function ensureCtx(){
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  }
+
+  document.getElementById('tone-play').addEventListener('click', ()=>{
+    ensureCtx();
+    if(playing){
+      osc.stop(); playing = false;
+      document.getElementById('tone-play').textContent = 'Play tone';
+      return;
+    }
+    osc = audioCtx.createOscillator();
+    gain = audioCtx.createGain();
+    panner = audioCtx.createStereoPanner();
+    gain.gain.value = 0.15;
+    osc.frequency.value = freqSlider.value;
+    osc.connect(gain).connect(panner).connect(audioCtx.destination);
+    osc.start();
+    playing = true;
+    document.getElementById('tone-play').textContent = 'Stop tone';
+  });
+
+  function setPan(v){ if(panner) panner.pan.value = v; }
+  document.getElementById('pan-left').addEventListener('click', ()=>setPan(-1));
+  document.getElementById('pan-both').addEventListener('click', ()=>setPan(0));
+  document.getElementById('pan-right').addEventListener('click', ()=>setPan(1));
+
+  const micCanvas = document.getElementById('mic-canvas');
+  const micCtx = micCanvas.getContext('2d');
+  function resizeMic(){ micCanvas.width = micCanvas.clientWidth; micCanvas.height = micCanvas.clientHeight; }
+  resizeMic(); window.addEventListener('resize', resizeMic);
+
+  document.getElementById('mic-start').addEventListener('click', async ()=>{
+    const msg = document.getElementById('mic-msg');
+    try{
+      ensureCtx();
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      source.connect(analyser);
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      msg.className = 'msg ok'; msg.textContent = 'Mic connected — speak to see the waveform.';
+      function draw(){
+        analyser.getByteTimeDomainData(data);
+        micCtx.fillStyle = 'rgba(0,0,0,0.3)';
+        micCtx.fillRect(0,0,micCanvas.width,micCanvas.height);
+        micCtx.strokeStyle = '#9d4edd';
+        micCtx.lineWidth = 2;
+        micCtx.beginPath();
+        const slice = micCanvas.width / data.length;
+        data.forEach((v,i)=>{
+          const y = (v/255) * micCanvas.height;
+          if(i===0) micCtx.moveTo(0,y); else micCtx.lineTo(i*slice,y);
+        });
+        micCtx.stroke();
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }catch(err){
+      msg.className = 'msg err';
+      msg.textContent = 'Microphone permission was not granted, so this test can\'t run.';
+    }
+  });
+})();
+
+/* ================= privacy: AES ================= */
+(function(){
+  function b64(bytes){ return btoa(String.fromCharCode(...bytes)); }
+  function unb64(str){ return Uint8Array.from(atob(str), c=>c.charCodeAt(0)); }
+
+  async function deriveKey(pass, salt){
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+      keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']
+    );
+  }
+
+  document.getElementById('aes-encrypt').addEventListener('click', async ()=>{
+    const msg = document.getElementById('aes-msg');
+    const out = document.getElementById('aes-output');
+    const text = document.getElementById('aes-input').value;
+    const pass = document.getElementById('aes-pass').value;
+    if(!text || !pass){ msg.className='msg err'; msg.textContent='Enter text and a passphrase.'; return; }
+    try{
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(pass, salt);
+      const enc = new TextEncoder();
+      const cipher = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(text));
+      const combined = new Uint8Array(salt.length + iv.length + cipher.byteLength);
+      combined.set(salt,0); combined.set(iv,salt.length); combined.set(new Uint8Array(cipher), salt.length+iv.length);
+      out.textContent = b64(combined);
+      msg.className='msg ok'; msg.textContent='Encrypted. Copy the text above to save it.';
+    }catch(err){ msg.className='msg err'; msg.textContent='Encryption failed.'; }
+  });
+
+  document.getElementById('aes-decrypt').addEventListener('click', async ()=>{
+    const msg = document.getElementById('aes-msg');
+    const out = document.getElementById('aes-output');
+    const text = document.getElementById('aes-input').value.trim();
+    const pass = document.getElementById('aes-pass').value;
+    if(!text || !pass){ msg.className='msg err'; msg.textContent='Paste the encrypted text and its passphrase.'; return; }
+    try{
+      const combined = unb64(text);
+      const salt = combined.slice(0,16);
+      const iv = combined.slice(16,28);
+      const cipher = combined.slice(28);
+      const key = await deriveKey(pass, salt);
+      const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, cipher);
+      out.textContent = new TextDecoder().decode(plain);
+      msg.className='msg ok'; msg.textContent='Decrypted successfully.';
+    }catch(err){
+      msg.className='msg err'; msg.textContent='Wrong passphrase or corrupted data.';
+      out.textContent='';
+    }
+  });
+})();
+
+/* ================= privacy: hashing ================= */
+(function(){
+  async function digestHex(algo, text){
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest(algo, enc);
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  // Compact MD5 implementation (SubtleCrypto has no MD5)
+  function md5(str){
+    function rl(n,c){return (n<<c)|(n>>>(32-c));}
+    function ad(a,b){
+      const l=(a&0xFFFF)+(b&0xFFFF), h=(a>>16)+(b>>16)+(l>>16);
+      return (h<<16)|(l&0xFFFF);
+    }
+    function cmn(q,a,b,x,s,t){ return ad(rl(ad(ad(a,q),ad(x,t)),s),b); }
+    function ff(a,b,c,d,x,s,t){ return cmn((b&c)|((~b)&d),a,b,x,s,t); }
+    function gg(a,b,c,d,x,s,t){ return cmn((b&d)|(c&(~d)),a,b,x,s,t); }
+    function hh(a,b,c,d,x,s,t){ return cmn(b^c^d,a,b,x,s,t); }
+    function ii(a,b,c,d,x,s,t){ return cmn(c^(b|(~d)),a,b,x,s,t); }
+
+    function toWords(s){
+      const n = s.length;
+      const words = [];
+      for(let i=0;i<n*8;i+=8) words[i>>5] |= (s.charCodeAt(i/8)&0xFF)<<(i%32);
+      return words;
+    }
+    function toHex(bin){
+      let hex='';
+      for(let i=0;i<bin.length*4;i++){
+        hex += ((bin[i>>2]>>((i%4)*8+4))&0xF).toString(16) + ((bin[i>>2]>>((i%4)*8))&0xF).toString(16);
+      }
+      return hex;
+    }
+
+    str = unescape(encodeURIComponent(str)); // utf-8
+    let x = toWords(str);
+    const len = str.length*8;
+    x[len>>5] |= 0x80 << (len%32);
+    x[(((len+64)>>>9)<<4)+14] = len;
+
+    let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+    for(let i=0;i<x.length;i+=16){
+      const oa=a,ob=b,oc=c,od=d;
+      a=ff(a,b,c,d,x[i+0],7,-680876936); d=ff(d,a,b,c,x[i+1],12,-389564586);
+      c=ff(c,d,a,b,x[i+2],17,606105819); b=ff(b,c,d,a,x[i+3],22,-1044525330);
+      a=ff(a,b,c,d,x[i+4],7,-176418897); d=ff(d,a,b,c,x[i+5],12,1200080426);
+      c=ff(c,d,a,b,x[i+6],17,-1473231341); b=ff(b,c,d,a,x[i+7],22,-45705983);
+      a=ff(a,b,c,d,x[i+8],7,1770035416); d=ff(d,a,b,c,x[i+9],12,-1958414417);
+      c=ff(c,d,a,b,x[i+10],17,-42063); b=ff(b,c,d,a,x[i+11],22,-1990404162);
+      a=ff(a,b,c,d,x[i+12],7,1804603682); d=ff(d,a,b,c,x[i+13],12,-40341101);
+      c=ff(c,d,a,b,x[i+14],17,-1502002290); b=ff(b,c,d,a,x[i+15],22,1236535329);
+
+      a=gg(a,b,c,d,x[i+1],5,-165796510); d=gg(d,a,b,c,x[i+6],9,-1069501632);
+      c=gg(c,d,a,b,x[i+11],14,643717713); b=gg(b,c,d,a,x[i+0],20,-373897302);
+      a=gg(a,b,c,d,x[i+5],5,-701558691); d=gg(d,a,b,c,x[i+10],9,38016083);
+      c=gg(c,d,a,b,x[i+15],14,-660478335); b=gg(b,c,d,a,x[i+4],20,-405537848);
+      a=gg(a,b,c,d,x[i+9],5,568446438); d=gg(d,a,b,c,x[i+14],9,-1019803690);
+      c=gg(c,d,a,b,x[i+3],14,-187363961); b=gg(b,c,d,a,x[i+8],20,1163531501);
+      a=gg(a,b,c,d,x[i+13],5,-1444681467); d=gg(d,a,b,c,x[i+2],9,-51403784);
+      c=gg(c,d,a,b,x[i+7],14,1735328473); b=gg(b,c,d,a,x[i+12],20,-1926607734);
+
+      a=hh(a,b,c,d,x[i+5],4,-378558); d=hh(d,a,b,c,x[i+8],11,-2022574463);
+      c=hh(c,d,a,b,x[i+11],16,1839030562); b=hh(b,c,d,a,x[i+14],23,-35309556);
+      a=hh(a,b,c,d,x[i+1],4,-1530992060); d=hh(d,a,b,c,x[i+4],11,1272893353);
+      c=hh(c,d,a,b,x[i+7],16,-155497632); b=hh(b,c,d,a,x[i+10],23,-1094730640);
+      a=hh(a,b,c,d,x[i+13],4,681279174); d=hh(d,a,b,c,x[i+0],11,-358537222);
+      c=hh(c,d,a,b,x[i+3],16,-722521979); b=hh(b,c,d,a,x[i+6],23,76029189);
+      a=hh(a,b,c,d,x[i+9],4,-640364487); d=hh(d,a,b,c,x[i+12],11,-421815835);
+      c=hh(c,d,a,b,x[i+15],16,530742520); b=hh(b,c,d,a,x[i+2],23,-995338651);
+
+      a=ii(a,b,c,d,x[i+0],6,-198630844); d=ii(d,a,b,c,x[i+7],10,1126891415);
+      c=ii(c,d,a,b,x[i+14],15,-1416354905); b=ii(b,c,d,a,x[i+5],21,-57434055);
+      a=ii(a,b,c,d,x[i+12],6,1700485571); d=ii(d,a,b,c,x[i+3],10,-1894986606);
+      c=ii(c,d,a,b,x[i+10],15,-1051523); b=ii(b,c,d,a,x[i+1],21,-2054922799);
+      a=ii(a,b,c,d,x[i+8],6,1873313359); d=ii(d,a,b,c,x[i+15],10,-30611744);
+      c=ii(c,d,a,b,x[i+6],15,-1560198380); b=ii(b,c,d,a,x[i+13],21,1309151649);
+      a=ii(a,b,c,d,x[i+4],6,-145523070); d=ii(d,a,b,c,x[i+11],10,-1120210379);
+      c=ii(c,d,a,b,x[i+2],15,718787259); b=ii(b,c,d,a,x[i+9],21,-343485551);
+
+      a=ad(a,oa); b=ad(b,ob); c=ad(c,oc); d=ad(d,od);
+    }
+    return toHex([a,b,c,d]);
+  }
+
+  const out = document.getElementById('hash-output');
+  document.getElementById('hash-sha256').addEventListener('click', async ()=>{
+    out.textContent = await digestHex('SHA-256', document.getElementById('hash-input').value);
+  });
+  document.getElementById('hash-sha512').addEventListener('click', async ()=>{
+    out.textContent = await digestHex('SHA-512', document.getElementById('hash-input').value);
+  });
+  document.getElementById('hash-md5').addEventListener('click', ()=>{
+    out.textContent = md5(document.getElementById('hash-input').value);
+  });
+})();
+</script>
+</body>
+</html>
