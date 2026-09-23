@@ -2,27 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics</title>
 <meta name="title" content="AstraSpec — Futuristic PC Benchmark & Hardware Diagnostics" />
 <meta name="description" content="AstraSpec is a free browser-based toolkit for PC benchmarking, hardware diagnostics, DNS testing, peripheral checks, and password security tools." />
 <meta name="keywords" content="AstraSpec, PC benchmark, hardware diagnostic tool, GPU specs, CPU test, peripheral latency, WebGL benchmark, DNS test, AES encryption" />
 <meta name="author" content="AstraSpec" />
 <meta name="robots" content="index, follow" />
-
-<!-- Canonical URL -->
 <link rel="canonical" href="https://astraspec.vercel.app/" />
 
 <!-- ================================================================
-     GOOGLE SEARCH CONSOLE VERIFICATION — paste your tag on the blank
-     line directly below, exactly as Search Console gives it to you.
-     Example: <meta name="google-site-verification" content="abc123..." />
+     GOOGLE SEARCH CONSOLE VERIFICATION
      ================================================================ -->
-
 <meta name="google-site-verification" content="Z_pxgyDcSwZngAifaFQCyD4WpIxE-hCk6EZEUCrNmHA" />
 
-<!-- Favicon -->
+<!-- Favicon (real file — make sure favicon.svg sits next to this index.html in your repo root) -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
 <!-- Open Graph / Facebook / Discord -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="AstraSpec" />
@@ -38,7 +34,6 @@
 <meta property="twitter:description" content="Run real-time WebGL hardware benchmarks, spec checks, and network tests inside a 3D galaxy canvas interface." />
 <meta property="twitter:image" content="https://astraspec.vercel.app/og-image.png" />
 
-<!-- Schema.org JSON-LD -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -64,1215 +59,1341 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 :root{
-  --bg:#05050a;
-  --bg-raised:#0a0a14;
-  --cyan:#00f3ff;
-  --purple:#9d4edd;
-  --glass:rgba(255,255,255,0.045);
-  --glass-strong:rgba(255,255,255,0.08);
+  --bg:#05050a; --bg-raised:#0a0a14;
+  --cyan:#00f3ff; --purple:#9d4edd;
+  --glass:rgba(255,255,255,0.045); --glass-strong:rgba(255,255,255,0.08);
   --border:rgba(255,255,255,0.09);
-  --text:#e9e9f2;
-  --muted:#9797ad;
-  --good:#2de08e;
-  --bad:#ff5470;
+  --text:#e9e9f2; --muted:#9797ad;
+  --good:#2de08e; --bad:#ff5470;
   --radius:14px;
 }
 *{box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html,body{height:100%;}
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Inter',sans-serif;
-  line-height:1.6;
-  overflow-x:hidden;
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'Inter',sans-serif; line-height:1.6; overflow:hidden;
 }
-h1,h2,h3{
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:600;
-  margin:0 0 .4em;
-  letter-spacing:-0.01em;
-}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;margin:0 0 .4em;letter-spacing:-0.01em;}
 .mono{font-family:'IBM Plex Mono',monospace;}
 a{color:var(--cyan);}
 p{color:var(--muted);max-width:60ch;}
 button{
-  font-family:'Space Grotesk',sans-serif;
-  cursor:pointer;
-  border:1px solid var(--border);
-  background:var(--glass);
-  color:var(--text);
-  padding:.7em 1.3em;
-  border-radius:999px;
-  font-size:.92rem;
-  transition:border-color .25s, background .25s, transform .15s;
+  font-family:'Space Grotesk',sans-serif;cursor:pointer;border:1px solid var(--border);
+  background:var(--glass);color:var(--text);padding:.7em 1.3em;border-radius:999px;
+  font-size:.92rem;transition:border-color .25s,background .25s,transform .15s;
 }
 button:hover{border-color:var(--cyan);background:var(--glass-strong);}
 button:active{transform:scale(.97);}
-button:focus-visible, a:focus-visible, input:focus-visible{
-  outline:2px solid var(--cyan);
-  outline-offset:2px;
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+input,textarea,select{
+  font-family:'IBM Plex Mono',monospace;background:rgba(0,0,0,0.35);border:1px solid var(--border);
+  color:var(--text);border-radius:10px;padding:.7em .9em;font-size:.9rem;width:100%;
 }
-input, textarea, select{
-  font-family:'IBM Plex Mono',monospace;
-  background:rgba(0,0,0,0.35);
-  border:1px solid var(--border);
-  color:var(--text);
-  border-radius:10px;
-  padding:.7em .9em;
-  font-size:.9rem;
-  width:100%;
-}
-input:focus, textarea:focus{border-color:var(--cyan);outline:none;}
+input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
 
-/* ---------- background galaxy canvas ---------- */
-#galaxy{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  width:100%;
-  height:100%;
-  background:radial-gradient(ellipse at 50% 40%, #0d0d1c 0%, #05050a 70%);
+/* ---------- horizontal slide track ---------- */
+#track{
+  display:flex; height:100vh; width:100vw;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
 }
+#track::-webkit-scrollbar{display:none;}
+.slide{
+  flex:0 0 100vw; width:100vw; height:100vh;
+  overflow-y:auto; overflow-x:hidden;
+  scroll-snap-align:start; position:relative;
+  padding:120px 28px 80px;
+}
+.slide-inner{max-width:1040px;margin:0 auto;}
+.slide-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;}
 
-/* ---------- floating nav ---------- */
+/* ---------- floating nav (now horizontal-jump tabs) ---------- */
 .floating-nav{
-  position:fixed;
-  top:24px;
-  left:24px;
-  z-index:50;
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  padding:10px;
-  border-radius:16px;
-  background:var(--glass);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border:1px solid var(--border);
+  position:fixed; top:20px; left:20px; z-index:50;
+  display:flex; flex-direction:column; gap:2px; padding:10px;
+  border-radius:16px; background:var(--glass); backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px); border:1px solid var(--border);
+  max-height:85vh; overflow-y:auto;
 }
 .floating-nav .brand{
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;
-  font-size:.95rem;
-  padding:6px 12px 10px;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.9rem;
+  padding:6px 10px 10px;
   background:linear-gradient(90deg,var(--cyan),var(--purple));
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.floating-nav a{
-  text-decoration:none;
-  color:var(--muted);
-  font-size:.82rem;
-  padding:7px 12px;
-  border-radius:10px;
-  transition:background .2s,color .2s;
+.floating-nav button.navlink{
+  all:unset; cursor:pointer; text-decoration:none; color:var(--muted);
+  font-size:.78rem; padding:6px 10px; border-radius:10px;
+  transition:background .2s,color .2s; display:block; white-space:nowrap;
 }
-.floating-nav a:hover, .floating-nav a.active{
-  background:var(--glass-strong);
-  color:var(--text);
-}
+.floating-nav button.navlink:hover,.floating-nav button.navlink.active{background:var(--glass-strong);color:var(--text);}
 
-/* ---------- layout ---------- */
-section{
-  position:relative;
-  max-width:1040px;
-  margin:0 auto;
-  padding:140px 28px 60px;
+/* ---------- swipe hint (mobile) ---------- */
+.swipe-hint{
+  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  font-size:.72rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  z-index:40;display:none;background:var(--glass);padding:6px 14px;border-radius:999px;
+  border:1px solid var(--border);
 }
-#hero{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  max-width:100%;
-  padding-left:28px;
-  padding-right:28px;
-  text-align:left;
-}
-#hero .eyebrow{
-  color:var(--cyan);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:.8rem;
-  margin-bottom:14px;
-}
-#hero h1{
-  font-size:clamp(2.4rem,6vw,4.6rem);
-  max-width:14ch;
-}
-#hero p{font-size:1.1rem;max-width:48ch;}
-.section-head{margin-bottom:36px;}
-.section-head .tag{
-  font-family:'IBM Plex Mono',monospace;
-  color:var(--purple);
-  font-size:.78rem;
-}
+@media (hover:none) and (pointer:coarse){.swipe-hint{display:block;}}
+
+/* ---------- utility toggles (bottom-right) ---------- */
+.util-tray{position:fixed;bottom:16px;right:16px;z-index:50;display:flex;gap:8px;}
+.util-tray button{padding:.5em .8em;font-size:.75rem;}
+
+/* ---------- hero ---------- */
+#hero .slide-inner{min-height:calc(100vh - 200px);display:flex;flex-direction:column;justify-content:center;max-width:700px;}
+#hero .eyebrow{color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:.8rem;margin-bottom:14px;}
+#hero h1{font-size:clamp(2.2rem,5.5vw,4.2rem);}
+#hero p{font-size:1.05rem;max-width:48ch;}
+.section-head{margin-bottom:32px;}
+.section-head .tag{font-family:'IBM Plex Mono',monospace;color:var(--purple);font-size:.78rem;}
 
 /* ---------- glass panel ---------- */
-.panel{
-  background:var(--glass);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  padding:26px;
-}
-.grid{
-  display:grid;
-  gap:18px;
-}
+.panel{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:24px;}
+.grid{display:grid;gap:16px;}
 .grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
 
-/* ---------- reveal on scroll ---------- */
-.reveal{
-  opacity:0;
-  transform:translateY(24px);
-  transition:opacity .7s ease, transform .7s ease;
-}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
 .reveal.visible{opacity:1;transform:none;}
-@media (prefers-reduced-motion: reduce){
-  .reveal{opacity:1;transform:none;transition:none;}
-}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none;}}
 
-/* ---------- bench module ---------- */
-.bench-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+/* ---------- tab pattern (reused: security, peripherals, optimization, games) ---------- */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.tabbtn{padding:.5em 1.1em;border-radius:999px;border:1px solid var(--border);background:var(--glass);color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:.82rem;cursor:pointer;}
+.tabbtn.active{color:#000;background:linear-gradient(90deg,var(--cyan),var(--purple));border-color:transparent;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+
+/* ---------- bench ---------- */
+.bench-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media (max-width:720px){.bench-layout{grid-template-columns:1fr;}}
-#bench-canvas{width:100%;height:220px;border-radius:10px;background:rgba(0,0,0,.3);display:block;}
-.stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.88rem;}
+#bench-canvas{width:100%;height:200px;border-radius:10px;background:rgba(0,0,0,.3);display:block;}
+.stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.85rem;}
 .stat-row span:first-child{color:var(--muted);}
 .score-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:6px;}
-.score-bar > div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));width:0%;transition:width 1s ease;}
+.score-bar>div{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));width:0%;transition:width 1s ease;}
+.field-label{font-size:.78rem;color:var(--muted);margin:14px 0 6px;display:block;}
 
-/* ---------- dns module ---------- */
-.dns-card h3{font-size:1.05rem;display:flex;align-items:center;gap:8px;}
-.dns-ip{font-size:.85rem;margin:8px 0;}
-.dns-ip button{padding:.3em .8em;font-size:.72rem;margin-left:8px;}
-.dns-tag{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:.68rem;
-  color:var(--cyan);
-  border:1px solid var(--border);
-  padding:2px 8px;
-  border-radius:99px;
-}
-.dns-result{font-size:.8rem;color:var(--good);margin-top:10px;min-height:1.2em;}
+/* ---------- dns ---------- */
+.dns-card h3{font-size:1rem;display:flex;align-items:center;gap:8px;}
+.dns-ip{font-size:.82rem;margin:8px 0;}
+.dns-ip button{padding:.3em .8em;font-size:.7rem;margin-left:8px;}
+.dns-tag{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--cyan);border:1px solid var(--border);padding:2px 8px;border-radius:99px;}
+.dns-result{font-size:.78rem;color:var(--good);margin-top:8px;min-height:1.2em;}
 
-/* ---------- peripherals ---------- */
-#keyboard{
-  display:flex;flex-direction:column;gap:6px;margin-top:16px;
-}
-.kb-row{display:flex;gap:6px;justify-content:center;}
+/* ---------- keyboard (fixed for mobile) ---------- */
+#keyboard{display:flex;flex-direction:column;gap:5px;margin-top:14px;}
+.kb-row{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;}
 .kb-key{
-  min-width:34px;height:34px;
-  display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--border);
-  border-radius:6px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:.68rem;
-  color:var(--muted);
-  background:rgba(255,255,255,.02);
-  transition:background .1s, color .1s, border-color .1s;
+  min-width:28px;height:28px;padding:0 4px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);border-radius:5px;font-family:'IBM Plex Mono',monospace;
+  font-size:.6rem;color:var(--muted);background:rgba(255,255,255,.02);
+  transition:background .1s,color .1s,border-color .1s;flex-shrink:0;
 }
 .kb-key.active{background:var(--cyan);color:#000;border-color:var(--cyan);}
-.kb-wide{min-width:70px;}
-.kb-space{min-width:220px;}
+.kb-wide{min-width:52px;}
+.kb-space{min-width:140px;}
+@media (max-width:480px){
+  .kb-key{min-width:22px;height:24px;font-size:.55rem;}
+  .kb-wide{min-width:38px;}
+  .kb-space{min-width:90px;}
+}
+
+/* ---------- mouse test ---------- */
+#mouse-pad{width:100%;height:220px;border-radius:10px;background:rgba(0,0,0,.3);position:relative;overflow:hidden;cursor:crosshair;border:1px solid var(--border);}
+#mouse-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);pointer-events:none;transform:translate(-50%,-50%);}
+.mouse-btns{display:flex;gap:16px;margin-top:12px;font-size:.82rem;}
+.mouse-btns span{padding:.4em .9em;border-radius:999px;border:1px solid var(--border);color:var(--muted);}
+.mouse-btns span.hit{color:#000;background:var(--good);border-color:transparent;}
+
+/* ---------- swatch / display ---------- */
 .swatch-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
 .swatch{width:40px;height:40px;border-radius:8px;border:1px solid var(--border);cursor:pointer;}
 #fullscreen-swatch{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;color:#fff;font-family:'IBM Plex Mono',monospace;}
-#mic-canvas{width:100%;height:100px;background:rgba(0,0,0,.3);border-radius:10px;}
+#mic-canvas{width:100%;height:90px;background:rgba(0,0,0,.3);border-radius:10px;}
 
-/* ---------- privacy ---------- */
-.hash-output, .aes-output{
-  margin-top:10px;
-  word-break:break-all;
-  font-size:.78rem;
-  color:var(--cyan);
-  background:rgba(0,0,0,.3);
-  padding:10px;
-  border-radius:8px;
-  min-height:1.4em;
-}
-.field-label{font-size:.78rem;color:var(--muted);margin:14px 0 6px;display:block;}
-.msg{font-size:.82rem;margin-top:8px;}
-.msg.err{color:var(--bad);}
-.msg.ok{color:var(--good);}
-
-/* ---------- security module ---------- */
-.sec-tabs{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:22px;
-}
-.sec-tab{
-  padding:.55em 1.2em;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:var(--glass);
-  color:var(--muted);
-  font-family:'Space Grotesk',sans-serif;
-  font-size:.85rem;
-  cursor:pointer;
-}
-.sec-tab.active{
-  color:#000;
-  background:linear-gradient(90deg,var(--cyan),var(--purple));
-  border-color:transparent;
-}
-.sec-panel{display:none;}
-.sec-panel.active{display:block;}
+/* ---------- privacy / security ---------- */
+.hash-output,.aes-output{margin-top:10px;word-break:break-all;font-size:.76rem;color:var(--cyan);background:rgba(0,0,0,.3);padding:10px;border-radius:8px;min-height:1.4em;}
+.msg{font-size:.8rem;margin-top:8px;}
+.msg.err{color:var(--bad);} .msg.ok{color:var(--good);}
 .strength-meter{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin:12px 0 6px;}
-.strength-meter > div{height:100%;width:0%;transition:width .4s ease, background .4s ease;}
+.strength-meter>div{height:100%;width:0%;transition:width .4s ease,background .4s ease;}
 .strength-label{font-size:.85rem;font-weight:600;}
-.strength-list{margin:10px 0 0;padding-left:18px;font-size:.82rem;color:var(--muted);}
-.gen-options{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0;font-size:.85rem;color:var(--muted);}
+.strength-list{margin:10px 0 0;padding-left:18px;font-size:.8rem;color:var(--muted);}
+.gen-options{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0;font-size:.82rem;color:var(--muted);}
 .gen-options label{display:flex;align-items:center;gap:6px;}
-.pwned-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.85rem;}
-.pwned-safe{color:var(--good);}
-.pwned-bad{color:var(--bad);}
 .finger-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
 @media (max-width:600px){.finger-grid{grid-template-columns:1fr;}}
 .username-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
-.username-links a{
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:.5em 1.1em;
-  font-size:.82rem;
-  text-decoration:none;
-  color:var(--text);
-}
+.username-links a{border:1px solid var(--border);border-radius:999px;padding:.5em 1.1em;font-size:.8rem;text-decoration:none;color:var(--text);}
 .username-links a:hover{border-color:var(--cyan);}
 .warn-list{list-style:none;padding:0;margin:14px 0 0;}
-.warn-list li{
-  padding:10px 0;
-  border-bottom:1px dashed var(--border);
-  font-size:.85rem;
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-}
+.warn-list li{padding:9px 0;border-bottom:1px dashed var(--border);font-size:.82rem;display:flex;justify-content:space-between;gap:16px;}
 .warn-list li span:first-child{color:var(--muted);}
+#qr-output{margin-top:14px;display:flex;justify-content:center;}
+#qr-output img{border-radius:10px;background:#fff;padding:10px;}
 
-footer{
-  text-align:center;
-  padding:60px 20px 40px;
-  color:var(--muted);
-  font-size:.82rem;
+/* ---------- optimization ---------- */
+.os-btn{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px;width:100%;}
+.os-icon{width:46px;height:46px;}
+.os-guide{display:none;margin-top:18px;}
+.os-guide.active{display:block;}
+.guide-step{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border);}
+.guide-step .num{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cyan);min-width:26px;}
+.fps-badge{display:inline-block;margin-top:10px;padding:.3em 1em;border-radius:999px;background:rgba(45,224,142,.12);color:var(--good);font-size:.78rem;font-family:'IBM Plex Mono',monospace;}
+.video-embed{aspect-ratio:16/9;width:100%;border-radius:10px;overflow:hidden;margin-top:10px;border:1px solid var(--border);}
+.video-embed iframe{width:100%;height:100%;border:0;}
+
+/* ---------- terminal ---------- */
+#terminal-box{background:#000;border-radius:10px;border:1px solid var(--border);padding:16px;height:340px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:.82rem;}
+#terminal-log div{margin-bottom:4px;white-space:pre-wrap;word-break:break-word;}
+.term-line{color:var(--good);}
+.term-cmd-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.term-cmd-row span{color:var(--cyan);}
+#terminal-input{background:transparent;border:none;color:var(--text);flex:1;padding:0;font-size:.82rem;}
+#terminal-input:focus{outline:none;}
+
+/* ---------- games ---------- */
+#game-canvas{width:100%;height:340px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);display:block;touch-action:none;}
+.char-select{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;}
+.char-opt{border:1px solid var(--border);border-radius:10px;padding:10px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--glass);}
+.char-opt.active{border-color:var(--cyan);background:var(--glass-strong);}
+.char-opt svg{width:22px;height:22px;}
+.game-score{font-family:'IBM Plex Mono',monospace;font-size:.9rem;margin-top:8px;}
+
+/* ---------- roadmap ---------- */
+.timeline{border-left:2px solid var(--border);margin-left:8px;padding-left:22px;}
+.timeline-item{position:relative;padding-bottom:26px;}
+.timeline-item::before{content:"";position:absolute;left:-28px;top:4px;width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--cyan),var(--purple));}
+.timeline-item .date{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--purple);}
+
+/* ---------- change-os ---------- */
+.warn-note{border-left:3px solid var(--bad);padding:10px 14px;background:rgba(255,84,112,.08);border-radius:0 8px 8px 0;font-size:.82rem;color:var(--text);margin:14px 0;}
+
+/* ---------- achievements ---------- */
+#ach-tray-btn{position:relative;}
+#ach-count{position:absolute;top:-6px;right:-6px;background:var(--cyan);color:#000;font-size:.65rem;font-weight:700;border-radius:99px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+#ach-panel{position:fixed;bottom:60px;right:16px;width:270px;max-height:340px;overflow-y:auto;background:var(--bg-raised);border:1px solid var(--border);border-radius:12px;padding:14px;z-index:60;display:none;}
+#ach-panel.open{display:block;}
+.ach-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.78rem;opacity:.35;}
+.ach-item.unlocked{opacity:1;}
+.ach-item .icon{font-size:1.1rem;}
+.toast{position:fixed;top:20px;right:20px;background:var(--bg-raised);border:1px solid var(--cyan);border-radius:10px;padding:12px 18px;font-size:.82rem;z-index:100;transform:translateX(120%);transition:transform .4s ease;}
+.toast.show{transform:translateX(0);}
+
+/* ---------- retro mode ---------- */
+body.retro-mode{--cyan:#39ff14;--purple:#0aff9d;filter:contrast(1.05);}
+body.retro-mode::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.18) 3px,rgba(0,0,0,0) 4px);
+  mix-blend-mode:multiply;
 }
+body.retro-mode .panel,body.retro-mode h1,body.retro-mode h2,body.retro-mode h3{text-shadow:0 0 6px rgba(57,255,20,.5);}
+
+/* ---------- cursor trail ---------- */
+#cursor-canvas{position:fixed;inset:0;z-index:9998;pointer-events:none;display:none;}
+body.cursor-fx #cursor-canvas{display:block;}
+
+footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8rem;}
 </style>
 </head>
 <body>
 
-<canvas id="galaxy"></canvas>
-
 <nav class="floating-nav" aria-label="Section navigation">
   <span class="brand">AstraSpec</span>
-  <a href="#bench" data-section="bench">Benchmark</a>
-  <a href="#dns" data-section="dns">DNS</a>
-  <a href="#peripherals" data-section="peripherals">Peripherals</a>
-  <a href="#privacy" data-section="privacy">Privacy</a>
-  <a href="#security" data-section="security">Security</a>
+  <button class="navlink" data-target="hero">Home</button>
+  <button class="navlink" data-target="bench">Benchmark</button>
+  <button class="navlink" data-target="dns">Network</button>
+  <button class="navlink" data-target="peripherals">Peripherals</button>
+  <button class="navlink" data-target="privacy">Privacy</button>
+  <button class="navlink" data-target="security">Security</button>
+  <button class="navlink" data-target="health">Health Score</button>
+  <button class="navlink" data-target="optimization">Optimization</button>
+  <button class="navlink" data-target="changeos">Change OS</button>
+  <button class="navlink" data-target="terminal">Terminal</button>
+  <button class="navlink" data-target="games">Games</button>
+  <button class="navlink" data-target="roadmap">Roadmap</button>
 </nav>
 
-<section id="hero">
-  <div class="eyebrow mono">Browser-based diagnostics, no install</div>
-  <h1>See exactly what your machine is capable of.</h1>
-  <p>AstraSpec benchmarks your hardware, tests your peripherals, checks DNS latency, and encrypts your files — entirely client-side, entirely free.</p>
+<div class="swipe-hint">← swipe to explore →</div>
+
+<div class="util-tray">
+  <button id="retro-toggle" title="Retro CRT mode">CRT</button>
+  <button id="cursor-toggle" title="Cursor trail">✨ Cursor</button>
+  <button id="ach-tray-btn">🏆 <span id="ach-count">0</span></button>
+</div>
+<div id="ach-panel"></div>
+<div id="toast" class="toast"></div>
+<canvas id="cursor-canvas"></canvas>
+
+<div id="track">
+
+<section id="hero" class="slide">
+  <canvas class="slide-bg" data-bg="galaxy"></canvas>
+  <div class="slide-inner">
+    <div class="eyebrow mono">Browser-based diagnostics, no install</div>
+    <h1>See exactly what your machine is capable of.</h1>
+    <p>AstraSpec benchmarks your hardware, tests every peripheral, checks your network, secures your passwords, and even lets you optimize your OS — all client-side, entirely free.</p>
+  </div>
 </section>
 
-<section id="bench" class="reveal">
-  <div class="section-head">
-    <div class="tag">MODULE 01</div>
-    <h2>Hardware Benchmark & System HUD</h2>
-    <p>Live FPS test and a read of what the browser can see about your machine.</p>
-  </div>
-  <div class="bench-layout">
-    <div class="panel">
-      <canvas id="bench-canvas"></canvas>
-      <div class="stat-row"><span>Live FPS</span><span class="mono" id="fps-val">—</span></div>
-      <div class="stat-row"><span>Estimated refresh rate</span><span class="mono" id="hz-val">—</span></div>
-    </div>
-    <div class="panel">
-      <div class="stat-row"><span>Operating system</span><span class="mono" id="os-val">—</span></div>
-      <div class="stat-row"><span>Logical CPU cores</span><span class="mono" id="cores-val">—</span></div>
-      <div class="stat-row"><span>Estimated RAM</span><span class="mono" id="ram-val">—</span></div>
-      <div class="stat-row"><span>GPU renderer</span><span class="mono" id="gpu-val">—</span></div>
-      <div class="stat-row"><span>Screen resolution</span><span class="mono" id="res-val">—</span></div>
-      <div style="margin-top:16px;">
-        <span class="field-label">Gaming capability</span>
-        <div class="score-bar"><div id="score-gaming"></div></div>
-        <span class="field-label">Productivity / multitasking</span>
-        <div class="score-bar"><div id="score-productivity"></div></div>
+<section id="bench" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 01</div><h2>Hardware Benchmark &amp; System HUD</h2><p>Live FPS test and a read of what the browser can see about your machine.</p></div>
+    <div class="bench-layout">
+      <div class="panel">
+        <canvas id="bench-canvas"></canvas>
+        <div class="stat-row"><span>Live FPS</span><span class="mono" id="fps-val">—</span></div>
+        <div class="stat-row"><span>Estimated refresh rate</span><span class="mono" id="hz-val">—</span></div>
+      </div>
+      <div class="panel">
+        <div class="stat-row"><span>Operating system</span><span class="mono" id="os-val">—</span></div>
+        <div class="stat-row"><span>Logical CPU cores</span><span class="mono" id="cores-val">—</span></div>
+        <div class="stat-row"><span>Estimated RAM</span><span class="mono" id="ram-val">—</span></div>
+        <div class="stat-row"><span>GPU renderer</span><span class="mono" id="gpu-val">—</span></div>
+        <div class="stat-row"><span>Screen resolution</span><span class="mono" id="res-val">—</span></div>
+        <div style="margin-top:14px;">
+          <span class="field-label">Gaming capability</span><div class="score-bar"><div id="score-gaming"></div></div>
+          <span class="field-label">Productivity / multitasking</span><div class="score-bar"><div id="score-productivity"></div></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="dns" class="reveal">
-  <div class="section-head">
-    <div class="tag">MODULE 02</div>
-    <h2>DNS Server Directory</h2>
-    <p>Compare providers and check a rough round-trip time from your connection. Browser timing here is approximate — not a true ICMP ping.</p>
+<section id="dns" class="slide reveal">
+  <canvas class="slide-bg" data-bg="nodes"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 02</div><h2>Network: DNS &amp; Speed</h2><p>Compare DNS providers and get a rough speed estimate. Browser timing is approximate, not a lab-grade test.</p></div>
+    <div class="grid cols-2" id="dns-grid"></div>
+    <div class="panel" style="margin-top:16px;">
+      <h3>Network speed test</h3>
+      <p>Downloads a small file and times it — a rough estimate, not an ISP-grade result. Actual speed test services use much larger, purpose-built files.</p>
+      <button id="speed-test-btn">Run speed test</button>
+      <div class="stat-row"><span>Estimated download</span><span class="mono" id="speed-down">—</span></div>
+      <div class="msg" id="speed-msg"></div>
+    </div>
   </div>
-  <div class="grid cols-2" id="dns-grid"></div>
 </section>
 
-<section id="peripherals" class="reveal">
-  <div class="section-head">
-    <div class="tag">MODULE 03</div>
-    <h2>Peripheral & Input Testing Lab</h2>
-    <p>Check your keyboard, monitor, and audio setup.</p>
-  </div>
-
-  <div class="panel">
-    <h3>Keyboard tester</h3>
-    <p>Press keys to see them register. <span id="kb-count">0</span> key(s) currently held.</p>
-    <div id="keyboard"></div>
-  </div>
-
-  <div class="panel" style="margin-top:18px;">
-    <h3>Display test</h3>
-    <p>Click a swatch to fill the screen — useful for spotting dead pixels or backlight bleed. Press Esc or click to exit.</p>
-    <div class="swatch-row" id="swatch-row"></div>
-  </div>
-
-  <div class="panel" style="margin-top:18px;">
-    <h3>Audio test</h3>
-    <p>Frequency tone generator and channel balance.</p>
-    <input type="range" id="freq-slider" min="20" max="20000" value="440">
-    <div class="stat-row"><span>Frequency</span><span class="mono" id="freq-val">440 Hz</span></div>
-    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
-      <button id="tone-play">Play tone</button>
-      <button id="pan-left">Left only</button>
-      <button id="pan-both">Both</button>
-      <button id="pan-right">Right only</button>
+<section id="peripherals" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 03</div><h2>Peripheral &amp; Input Testing Lab</h2><p>Test every input and output device individually.</p></div>
+    <div class="tabs" id="peri-tabs">
+      <button class="tabbtn active" data-tab="p-keyboard">Keyboard</button>
+      <button class="tabbtn" data-tab="p-mouse">Mouse</button>
+      <button class="tabbtn" data-tab="p-monitor">Monitor</button>
+      <button class="tabbtn" data-tab="p-headset">Headset / Speakers</button>
+      <button class="tabbtn" data-tab="p-mic">Microphone</button>
     </div>
-    <span class="field-label">Mic input waveform</span>
-    <canvas id="mic-canvas"></canvas>
-    <div style="margin-top:10px;"><button id="mic-start">Start mic test</button></div>
-    <div class="msg" id="mic-msg"></div>
+    <div class="panel">
+      <div class="tabpanel active" id="p-keyboard">
+        <h3>Keyboard tester</h3>
+        <p>Press keys to see them register. <span id="kb-count">0</span> key(s) currently held.</p>
+        <div id="keyboard"></div>
+      </div>
+      <div class="tabpanel" id="p-mouse">
+        <h3>Mouse tester</h3>
+        <p>Move your cursor inside the pad and click the buttons to test registration.</p>
+        <div id="mouse-pad"><div id="mouse-dot"></div></div>
+        <div class="mouse-btns">
+          <span id="mb-left">Left click</span>
+          <span id="mb-right">Right click</span>
+          <span id="mb-middle">Middle click</span>
+          <span id="mb-scroll">Scroll wheel</span>
+        </div>
+      </div>
+      <div class="tabpanel" id="p-monitor">
+        <h3>Display test</h3>
+        <p>Click a swatch to fill the screen — useful for spotting dead pixels or backlight bleed. Press Esc or click to exit.</p>
+        <div class="swatch-row" id="swatch-row"></div>
+      </div>
+      <div class="tabpanel" id="p-headset">
+        <h3>Headset / speaker test</h3>
+        <p>Frequency tone generator and left/right channel balance.</p>
+        <input type="range" id="freq-slider" min="20" max="20000" value="440">
+        <div class="stat-row"><span>Frequency</span><span class="mono" id="freq-val">440 Hz</span></div>
+        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+          <button id="tone-play">Play tone</button>
+          <button id="pan-left">Left only</button>
+          <button id="pan-both">Both</button>
+          <button id="pan-right">Right only</button>
+        </div>
+      </div>
+      <div class="tabpanel" id="p-mic">
+        <h3>Microphone test</h3>
+        <span class="field-label">Live waveform</span>
+        <canvas id="mic-canvas"></canvas>
+        <div style="margin-top:10px;"><button id="mic-start">Start mic test</button></div>
+        <div class="msg" id="mic-msg"></div>
+      </div>
+    </div>
   </div>
 </section>
 
 <div id="fullscreen-swatch"><span>Click anywhere or press Esc to exit</span></div>
 
-<section id="privacy" class="reveal">
-  <div class="section-head">
-    <div class="tag">MODULE 04</div>
-    <h2>Privacy & Data Security Hub</h2>
-    <p>AES-256 encryption and hashing, computed entirely in your browser. Nothing is uploaded.</p>
-  </div>
-
-  <div class="grid cols-2">
-    <div class="panel">
-      <h3>File / text encryptor</h3>
-      <span class="field-label">Text to encrypt or decrypt</span>
-      <textarea id="aes-input" rows="4"></textarea>
-      <span class="field-label">Passphrase</span>
-      <input type="password" id="aes-pass">
-      <div style="display:flex;gap:10px;margin-top:12px;">
-        <button id="aes-encrypt">Encrypt</button>
-        <button id="aes-decrypt">Decrypt</button>
+<section id="privacy" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 04</div><h2>Privacy &amp; Data Security Hub</h2><p>AES-256 encryption and hashing, computed entirely in your browser. Nothing is uploaded.</p></div>
+    <div class="grid cols-2">
+      <div class="panel">
+        <h3>File / text encryptor</h3>
+        <span class="field-label">Text to encrypt or decrypt</span>
+        <textarea id="aes-input" rows="4"></textarea>
+        <span class="field-label">Passphrase</span>
+        <input type="password" id="aes-pass">
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button id="aes-encrypt">Encrypt</button>
+          <button id="aes-decrypt">Decrypt</button>
+        </div>
+        <div class="aes-output mono" id="aes-output"></div>
+        <div class="msg" id="aes-msg"></div>
       </div>
-      <div class="aes-output mono" id="aes-output"></div>
-      <div class="msg" id="aes-msg"></div>
-    </div>
-
-    <div class="panel">
-      <h3>Hash generator</h3>
-      <span class="field-label">Text to hash</span>
-      <textarea id="hash-input" rows="4"></textarea>
-      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
-        <button id="hash-sha256">SHA-256</button>
-        <button id="hash-sha512">SHA-512</button>
-        <button id="hash-md5">MD5</button>
+      <div class="panel">
+        <h3>Hash generator</h3>
+        <span class="field-label">Text to hash</span>
+        <textarea id="hash-input" rows="4"></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <button id="hash-sha256">SHA-256</button>
+          <button id="hash-sha512">SHA-512</button>
+          <button id="hash-md5">MD5</button>
+        </div>
+        <div class="hash-output mono" id="hash-output"></div>
       </div>
-      <div class="hash-output mono" id="hash-output"></div>
     </div>
   </div>
 </section>
 
-<section id="security" class="reveal">
-  <div class="section-head">
-    <div class="tag">MODULE 05</div>
-    <h2>Security Toolkit</h2>
-    <p>Password strength, breach checking, and a look at what sites can see about you — all computed in your browser.</p>
-  </div>
-
-  <div class="sec-tabs" id="sec-tabs">
-    <button class="sec-tab active" data-tab="strength">Strength Test</button>
-    <button class="sec-tab" data-tab="generator">Password Generator</button>
-    <button class="sec-tab" data-tab="breach">Breach Check</button>
-    <button class="sec-tab" data-tab="email">Email Check</button>
-    <button class="sec-tab" data-tab="fingerprint">Fingerprint</button>
-    <button class="sec-tab" data-tab="username">Username Search</button>
-    <button class="sec-tab" data-tab="warning">Privacy Warning</button>
-  </div>
-
-  <div class="panel">
-
-    <div class="sec-panel active" id="panel-strength">
-      <h3>Password strength tester</h3>
-      <p>Type a password to see how secure it is. Nothing is sent anywhere.</p>
-      <input type="password" id="pw-strength-input" placeholder="Type a password…" autocomplete="off">
-      <div class="strength-meter"><div id="strength-bar"></div></div>
-      <div class="strength-label" id="strength-label">—</div>
-      <ul class="strength-list" id="strength-tips"></ul>
+<section id="security" class="slide reveal">
+  <canvas class="slide-bg" data-bg="nodes"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 05</div><h2>Security Toolkit</h2><p>Password strength, breach checking, and what sites can see about you — all computed in your browser.</p></div>
+    <div class="tabs" id="sec-tabs">
+      <button class="tabbtn active" data-tab="strength">Strength Test</button>
+      <button class="tabbtn" data-tab="generator">Password Generator</button>
+      <button class="tabbtn" data-tab="breach">Breach Check</button>
+      <button class="tabbtn" data-tab="email">Email Check</button>
+      <button class="tabbtn" data-tab="fingerprint">Fingerprint</button>
+      <button class="tabbtn" data-tab="username">Username Search</button>
+      <button class="tabbtn" data-tab="warning">Privacy Warning</button>
+      <button class="tabbtn" data-tab="qr">QR Generator</button>
     </div>
-
-    <div class="sec-panel" id="panel-generator">
-      <h3>Password generator</h3>
-      <p>Generated locally using the browser's cryptographic random number generator.</p>
-      <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
-      <input type="range" id="gen-length" min="8" max="48" value="16">
-      <div class="gen-options">
-        <label><input type="checkbox" id="gen-upper" checked> Uppercase</label>
-        <label><input type="checkbox" id="gen-lower" checked> Lowercase</label>
-        <label><input type="checkbox" id="gen-numbers" checked> Numbers</label>
-        <label><input type="checkbox" id="gen-symbols" checked> Symbols</label>
+    <div class="panel">
+      <div class="tabpanel active" id="panel-strength">
+        <h3>Password strength tester</h3>
+        <p>Type a password to see how secure it is. Nothing is sent anywhere.</p>
+        <input type="password" id="pw-strength-input" placeholder="Type a password…" autocomplete="off">
+        <div class="strength-meter"><div id="strength-bar"></div></div>
+        <div class="strength-label" id="strength-label">—</div>
+        <ul class="strength-list" id="strength-tips"></ul>
       </div>
-      <button id="gen-generate">Generate password</button>
-      <div class="aes-output mono" id="gen-output"></div>
-      <button id="gen-copy" style="margin-top:10px;">Copy</button>
+      <div class="tabpanel" id="panel-generator">
+        <h3>Password generator</h3>
+        <p>Generated locally using the browser's cryptographic random number generator.</p>
+        <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
+        <input type="range" id="gen-length" min="8" max="48" value="16">
+        <div class="gen-options">
+          <label><input type="checkbox" id="gen-upper" checked> Uppercase</label>
+          <label><input type="checkbox" id="gen-lower" checked> Lowercase</label>
+          <label><input type="checkbox" id="gen-numbers" checked> Numbers</label>
+          <label><input type="checkbox" id="gen-symbols" checked> Symbols</label>
+        </div>
+        <button id="gen-generate">Generate password</button>
+        <div class="aes-output mono" id="gen-output"></div>
+        <button id="gen-copy" style="margin-top:10px;">Copy</button>
+      </div>
+      <div class="tabpanel" id="panel-breach">
+        <h3>Password breach check</h3>
+        <p>Checks against Have I Been Pwned using k-anonymity — only the first 5 characters of the password's hash ever leave your browser.</p>
+        <input type="password" id="pw-breach-input" placeholder="Type a password to check…" autocomplete="off">
+        <button id="pw-breach-check" style="margin-top:12px;">Check for breaches</button>
+        <div class="msg" id="breach-result"></div>
+      </div>
+      <div class="tabpanel" id="panel-email">
+        <h3>Email breach check</h3>
+        <p>Checks whether an email has appeared in a known data breach, via the Have I Been Pwned account API.</p>
+        <input type="email" id="email-breach-input" placeholder="you@example.com">
+        <button id="email-breach-check" style="margin-top:12px;">Check email</button>
+        <div class="msg" id="email-result"></div>
+      </div>
+      <div class="tabpanel" id="panel-fingerprint">
+        <h3>Browser fingerprint</h3>
+        <p>The kind of information almost any website can read about your browser without asking.</p>
+        <div class="finger-grid" id="finger-grid"></div>
+      </div>
+      <div class="tabpanel" id="panel-username">
+        <h3>Username search</h3>
+        <p>Most platforms block outside existence-checks from browser JS, so this builds direct profile links to check by eye.</p>
+        <input type="text" id="username-input" placeholder="Type a username…">
+        <button id="username-search" style="margin-top:12px;">Build search links</button>
+        <div class="username-links" id="username-links"></div>
+      </div>
+      <div class="tabpanel" id="panel-warning">
+        <h3>Privacy warning: what this site (and most sites) can see about you</h3>
+        <p>Live snapshot combining your network and browser exposure.</p>
+        <ul class="warn-list" id="warn-list"></ul>
+        <button id="warn-copy" style="margin-top:14px;">Copy full privacy report</button>
+        <div class="msg" id="warn-msg"></div>
+      </div>
+      <div class="tabpanel" id="panel-qr">
+        <h3>QR code generator</h3>
+        <p>Turns any text or URL into a scannable QR code, generated via a free public QR API (no data stored).</p>
+        <input type="text" id="qr-input" placeholder="Enter text or a URL…">
+        <button id="qr-generate" style="margin-top:12px;">Generate QR code</button>
+        <div id="qr-output"></div>
+      </div>
     </div>
-
-    <div class="sec-panel" id="panel-breach">
-      <h3>Password breach check</h3>
-      <p>Checks your password against the Have I Been Pwned Pwned Passwords database using k-anonymity — only the first 5 characters of the password's hash ever leave your browser, so the real password is never transmitted or revealed to anyone.</p>
-      <input type="password" id="pw-breach-input" placeholder="Type a password to check…" autocomplete="off">
-      <button id="pw-breach-check" style="margin-top:12px;">Check for breaches</button>
-      <div class="msg" id="breach-result"></div>
-    </div>
-
-    <div class="sec-panel" id="panel-email">
-      <h3>Email breach check</h3>
-      <p>Checks whether an email address has appeared in a known data breach, via the Have I Been Pwned account API.</p>
-      <input type="email" id="email-breach-input" placeholder="you@example.com">
-      <button id="email-breach-check" style="margin-top:12px;">Check email</button>
-      <div class="msg" id="email-result"></div>
-    </div>
-
-    <div class="sec-panel" id="panel-fingerprint">
-      <h3>Browser fingerprint</h3>
-      <p>This is the kind of information almost any website can read about your browser without asking permission.</p>
-      <div class="finger-grid" id="finger-grid"></div>
-    </div>
-
-    <div class="sec-panel" id="panel-username">
-      <h3>Username search</h3>
-      <p>Cross-site username lookups can't run silently in a browser due to how most platforms block outside requests — so this opens direct profile links for you to check by eye.</p>
-      <input type="text" id="username-input" placeholder="Type a username…">
-      <button id="username-search" style="margin-top:12px;">Build search links</button>
-      <div class="username-links" id="username-links"></div>
-    </div>
-
-    <div class="sec-panel" id="panel-warning">
-      <h3>Privacy warning: what this site (and most sites) can see about you</h3>
-      <p>Live snapshot combining your network and browser exposure.</p>
-      <ul class="warn-list" id="warn-list"></ul>
-      <button id="warn-copy" style="margin-top:14px;">Copy full privacy report</button>
-      <div class="msg" id="warn-msg"></div>
-    </div>
-
   </div>
 </section>
+
+<section id="health" class="slide reveal">
+  <canvas class="slide-bg" data-bg="galaxy"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 06</div><h2>System Health Score</h2><p>A combined read-out pulling from your Benchmark and Security results into one report card.</p></div>
+    <div class="panel">
+      <div style="text-align:center;padding:20px 0;">
+        <div class="mono" style="font-size:3.2rem;font-weight:700;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;" id="health-grade">—</div>
+        <p style="margin:0 auto;">Overall session score</p>
+      </div>
+      <div class="stat-row"><span>Hardware performance</span><span class="mono" id="health-hw">—</span></div>
+      <div class="score-bar"><div id="health-hw-bar"></div></div>
+      <div class="stat-row" style="margin-top:14px;"><span>Security tools used this session</span><span class="mono" id="health-sec">—</span></div>
+      <div class="score-bar"><div id="health-sec-bar"></div></div>
+      <p style="margin-top:16px;font-size:.8rem;">This score reflects your hardware's benchmark result plus how many of the Security tab's tools you've actually used this session — it's an engagement + hardware read-out, not a professional security audit of your device.</p>
+      <button id="health-refresh" style="margin-top:8px;">Refresh score</button>
+    </div>
+  </div>
+</section>
+
+<section id="optimization" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 07</div><h2>OS Optimization Guides</h2><p>Pick your OS for a step-by-step performance pass. FPS ranges below are general, well-established estimates — not a measurement of your exact hardware.</p></div>
+    <div class="grid cols-3">
+      <button class="panel os-btn" data-os="windows">
+        <svg class="os-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="9" height="8" fill="#00f3ff"/><rect x="13" y="4" width="9" height="8" fill="#9d4edd"/><rect x="2" y="13" width="9" height="7" fill="#9d4edd"/><rect x="13" y="13" width="9" height="7" fill="#00f3ff"/></svg>
+        <span>Windows</span>
+      </button>
+      <button class="panel os-btn" data-os="linux">
+        <svg class="os-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="10" rx="6" ry="7" fill="#e9e9f2"/><circle cx="9.5" cy="8.5" r="1.1" fill="#05050a"/><circle cx="14.5" cy="8.5" r="1.1" fill="#05050a"/><path d="M8 18 Q12 22 16 18 L15 21 Q12 23 9 21 Z" fill="#f5a623"/></svg>
+        <span>Linux</span>
+      </button>
+      <button class="panel os-btn" data-os="macos">
+        <svg class="os-icon" viewBox="0 0 24 24"><path d="M16.5 3c.2 1.4-.4 2.7-1.2 3.6-.9 1-2.2 1.7-3.5 1.6-.2-1.4.5-2.8 1.3-3.6C13.9 3.6 15.2 3 16.5 3z" fill="#9d4edd"/><path d="M20 17c-.6 1.4-.9 2-1.7 3.2-1.1 1.6-2.6 3.6-4.5 3.6-1.7 0-2.1-1.1-4.4-1.1-2.3 0-2.8 1.1-4.5 1.1-1.9 0-3.3-1.8-4.4-3.4C-1.9 16.9-1 10.4 2.6 8c1.8-1.2 3.4-1.2 4.7-.2.9.7 1.7 1.1 2.7 1.1.9 0 1.9-.5 3.1-1.2 1.4-.8 3.2-.8 4.8.2-3.1 1.9-2.6 6.3.1 8.1-.3.8-.6 1.4-.9 1.9z" fill="#00f3ff"/></svg>
+        <span>macOS</span>
+      </button>
+    </div>
+
+    <div class="os-guide" id="guide-windows">
+      <div class="panel">
+        <h3>Windows optimization pass</h3>
+        <div class="guide-step"><span class="num">01</span><div>Switch to the High Performance / Ultimate Performance power plan (Settings → Power &amp; Battery).</div></div>
+        <div class="guide-step"><span class="num">02</span><div>Update GPU drivers directly from NVIDIA/AMD/Intel — not just Windows Update.</div></div>
+        <div class="guide-step"><span class="num">03</span><div>Disable unnecessary startup apps via Task Manager → Startup apps.</div></div>
+        <div class="guide-step"><span class="num">04</span><div>Turn on Game Mode and disable Xbox Game Bar overlay if you don't use it.</div></div>
+        <div class="guide-step"><span class="num">05</span><div>Set your GPU control panel's power management mode to "Prefer maximum performance."</div></div>
+        <div class="guide-step"><span class="num">06</span><div>Disable visual effects: Settings → System → About → Advanced → Performance → Adjust for best performance.</div></div>
+        <div class="fps-badge">Typical gain: +5 to +15 FPS in most modern titles</div>
+        <div class="video-embed"><iframe src="https://www.youtube.com/embed/6vOxPzeTirY" title="Windows optimization guide" allowfullscreen loading="lazy"></iframe></div>
+        <div class="video-embed" style="margin-top:10px;"><iframe src="https://www.youtube.com/embed/Ntkc6PeImhU" title="Windows optimization guide 2" allowfullscreen loading="lazy"></iframe></div>
+      </div>
+    </div>
+
+    <div class="os-guide" id="guide-linux">
+      <div class="panel">
+        <h3>Linux optimization pass</h3>
+        <p style="font-size:.82rem;">Linux is already lean out of the box, so gains here are smaller and more about consistency (fewer stutters) than raw FPS.</p>
+        <div class="guide-step"><span class="num">01</span><div>Install your GPU's proprietary driver where available (NVIDIA proprietary, or Mesa updates for AMD/Intel) rather than relying on the default open driver.</div></div>
+        <div class="guide-step"><span class="num">02</span><div>Use a performance CPU governor: <span class="mono">sudo cpupower frequency-set -g performance</span>.</div></div>
+        <div class="guide-step"><span class="num">03</span><div>Enable GameMode (Feral Interactive's <span class="mono">gamemoded</span>) to auto-apply performance tweaks per game session.</div></div>
+        <div class="guide-step"><span class="num">04</span><div>If on Wayland and seeing stutter, try X11 as a quick comparison — some GPU/compositor combos still run smoother there.</div></div>
+        <div class="guide-step"><span class="num">05</span><div>Disable unnecessary background services with <span class="mono">systemctl list-unit-files --state=enabled</span> and trim what you don't need.</div></div>
+        <div class="fps-badge">Typical gain: +2 to +8 FPS, mostly smoother frame times</div>
+        <div class="video-embed"><iframe src="https://www.youtube.com/embed/Ktigx6iXUWs" title="Linux optimization guide" allowfullscreen loading="lazy"></iframe></div>
+      </div>
+    </div>
+
+    <div class="os-guide" id="guide-macos">
+      <div class="panel">
+        <h3>macOS optimization pass</h3>
+        <div class="guide-step"><span class="num">01</span><div>Close background apps eating CPU via Activity Monitor, sorted by % CPU.</div></div>
+        <div class="guide-step"><span class="num">02</span><div>Reduce motion and transparency: System Settings → Accessibility → Display.</div></div>
+        <div class="guide-step"><span class="num">03</span><div>Keep macOS and app updates current — Apple regularly ships GPU driver/Metal performance fixes.</div></div>
+        <div class="guide-step"><span class="num">04</span><div>Free up disk space — macOS slows noticeably under ~10-15% free storage.</div></div>
+        <div class="guide-step"><span class="num">05</span><div>For gaming specifically, use apps/ports built with Metal (native) over translation layers where possible.</div></div>
+        <div class="fps-badge">Typical gain: +5 to +12 FPS depending on the title</div>
+        <div class="video-embed"><iframe src="https://www.youtube.com/embed/_0xuN0cWF8k" title="macOS optimization guide" allowfullscreen loading="lazy"></iframe></div>
+        <div class="video-embed" style="margin-top:10px;"><iframe src="https://www.youtube.com/embed/979YuPxuvfo" title="macOS optimization guide 2" allowfullscreen loading="lazy"></iframe></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="changeos" class="slide reveal">
+  <canvas class="slide-bg" data-bg="nodes"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 08</div><h2>Change Your OS</h2><p>A general, OS-agnostic guide to doing a clean install from a USB drive.</p></div>
+    <div class="panel">
+      <div class="guide-step"><span class="num">01</span><div>Download the official ISO file for the new OS you're installing, from its official source.</div></div>
+      <div class="guide-step"><span class="num">02</span><div>Get a USB flash drive (8GB+) — everything on it will be erased.</div></div>
+      <div class="guide-step"><span class="num">03</span><div>Use a tool like Rufus (Windows) or balenaEtcher (cross-platform) to flash the ISO onto the USB drive as a bootable installer.</div></div>
+      <div class="guide-step"><span class="num">04</span><div>Back up anything important first — a clean install can wipe your drive depending on the options you choose.</div></div>
+      <div class="guide-step"><span class="num">05</span><div>Restart your PC and enter BIOS/UEFI — usually by tapping F2, F10, F12, Del, or Esc right at boot (varies by manufacturer).</div></div>
+      <div class="guide-step"><span class="num">06</span><div>In BIOS, find Boot Order and move your USB drive to the top. If installing an OS other than Windows, you may also need to disable Secure Boot.</div></div>
+      <div class="guide-step"><span class="num">07</span><div>Save and exit — your PC will boot from the USB drive into the installer. Follow its on-screen setup.</div></div>
+      <div class="warn-note">A clean install can permanently erase your drive. Back up your files first, and double-check you selected the correct drive during setup.</div>
+      <p>For a fuller step-by-step with screenshots, see <a href="https://keemop.github.io" target="_blank" rel="noopener noreferrer">keemop.github.io</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section id="terminal" class="slide reveal">
+  <canvas class="slide-bg" data-bg="matrix"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 09</div><h2>Interactive Terminal</h2><p>A themed simulated shell — type <span class="mono">help</span> to see what it can do. It doesn't touch your real system.</p></div>
+    <div class="panel">
+      <div id="terminal-box">
+        <div id="terminal-log"><div class="term-line">AstraSpec terminal v1.0 — type 'help' to get started.</div></div>
+      </div>
+      <div class="term-cmd-row"><span class="mono">&gt;</span><input type="text" id="terminal-input" class="mono" autocomplete="off" placeholder="type a command…"></div>
+    </div>
+  </div>
+</section>
+
+<section id="games" class="slide reveal">
+  <canvas class="slide-bg" data-bg="galaxy"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 10</div><h2>Games</h2><p>Two original mini-games, inspired by classics, built from scratch.</p></div>
+    <div class="tabs" id="game-tabs">
+      <button class="tabbtn active" data-tab="game-flap">Flappy Byte</button>
+      <button class="tabbtn" data-tab="game-glide">Glide</button>
+    </div>
+    <div class="panel">
+      <div class="tabpanel active" id="game-flap">
+        <p>Pick your character, then tap/click or press Space to flap through the gaps.</p>
+        <div class="char-select" id="flap-chars">
+          <div class="char-opt active" data-char="windows"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="9" height="8" fill="#00f3ff"/><rect x="13" y="4" width="9" height="8" fill="#9d4edd"/><rect x="2" y="13" width="9" height="7" fill="#9d4edd"/><rect x="13" y="13" width="9" height="7" fill="#00f3ff"/></svg> Windows</div>
+          <div class="char-opt" data-char="macos"><svg viewBox="0 0 24 24"><path d="M20 17c-.6 1.4-.9 2-1.7 3.2-1.1 1.6-2.6 3.6-4.5 3.6-1.7 0-2.1-1.1-4.4-1.1-2.3 0-2.8 1.1-4.5 1.1-1.9 0-3.3-1.8-4.4-3.4C-1.9 16.9-1 10.4 2.6 8c1.8-1.2 3.4-1.2 4.7-.2.9.7 1.7 1.1 2.7 1.1.9 0 1.9-.5 3.1-1.2 1.4-.8 3.2-.8 4.8.2-3.1 1.9-2.6 6.3.1 8.1-.3.8-.6 1.4-.9 1.9z" fill="#9d4edd"/></svg> macOS</div>
+          <div class="char-opt" data-char="linux"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="10" rx="6" ry="7" fill="#e9e9f2"/><circle cx="9.5" cy="8.5" r="1.1" fill="#05050a"/><circle cx="14.5" cy="8.5" r="1.1" fill="#05050a"/></svg> Tux</div>
+        </div>
+        <canvas id="flap-canvas" width="600" height="340" style="width:100%;height:340px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);touch-action:none;"></canvas>
+        <div class="game-score">Score: <span id="flap-score">0</span> · Best: <span id="flap-best">0</span></div>
+        <button id="flap-start" style="margin-top:8px;">Start / Restart</button>
+      </div>
+      <div class="tabpanel" id="game-glide">
+        <p>Hold to fly up, release to fall — dodge the corridor walls. Inspired by the flying segments of side-scrolling rhythm platformers, built as an original mode.</p>
+        <canvas id="glide-canvas" width="600" height="340" style="width:100%;height:340px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);touch-action:none;"></canvas>
+        <div class="game-score">Score: <span id="glide-score">0</span> · Best: <span id="glide-best">0</span></div>
+        <button id="glide-start" style="margin-top:8px;">Start / Restart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 11</div><h2>Roadmap &amp; Changelog</h2><p>What's shipped, and what's next.</p></div>
+    <div class="panel">
+      <div class="timeline">
+        <div class="timeline-item"><div class="date">Latest</div><h3>v2.0 — The Big Expansion</h3><p>Added Optimization guides, Change OS, interactive Terminal, Games, Health Score, Network Speed Test, QR Generator, Achievements, Retro Mode, and full per-device Peripheral testing.</p></div>
+        <div class="timeline-item"><div class="date">Previous</div><h3>v1.1 — Security Toolkit</h3><p>Added password strength testing, breach checking, browser fingerprinting, and username search.</p></div>
+        <div class="timeline-item"><div class="date">Initial</div><h3>v1.0 — Launch</h3><p>Hardware benchmark, DNS directory, keyboard/display/audio testing, AES encryption, and hashing.</p></div>
+        <div class="timeline-item"><div class="date">Planned</div><h3>Up next</h3><p>More achievements, more games, and whatever gets requested next.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
 
 <footer>AstraSpec — all diagnostics run locally in your browser. No data leaves your device.</footer>
 
 <script>
-/* ================= galaxy particle background ================= */
+/* ================= achievements + toast (used by many modules below) ================= */
+const ACHIEVEMENTS = [
+  {id:'breach', icon:'🛡️', name:'Breach Checked', desc:'Ran a password breach check'},
+  {id:'aes', icon:'🔐', name:'Encrypted', desc:'Used the AES encryptor'},
+  {id:'hash', icon:'#️⃣', name:'Hasher', desc:'Generated a hash'},
+  {id:'genpw', icon:'🎲', name:'Password Smith', desc:'Generated a password'},
+  {id:'fullkb', icon:'⌨️', name:'Every Key', desc:'Pressed every key in a QWERTY row'},
+  {id:'dns', icon:'🌐', name:'Latency Checker', desc:'Tested DNS latency'},
+  {id:'mic', icon:'🎙️', name:'Say Ahh', desc:'Started the mic test'},
+  {id:'terminal', icon:'💻', name:'Hacker Voice', desc:'Used the terminal'},
+  {id:'game', icon:'🎮', name:'Player One', desc:'Played a game'},
+  {id:'konami', icon:'⬆️', name:'Old School', desc:'Found the Konami code'}
+];
+let unlocked = new Set();
+try{ unlocked = new Set(JSON.parse(localStorage.getItem('astra-achievements')||'[]')); }catch(e){}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 3200);
+}
+function unlockAchievement(id){
+  if(unlocked.has(id)) return;
+  unlocked.add(id);
+  try{ localStorage.setItem('astra-achievements', JSON.stringify([...unlocked])); }catch(e){}
+  const a = ACHIEVEMENTS.find(x=>x.id===id);
+  if(a) showToast(`🏆 Achievement unlocked: ${a.name}`);
+  renderAchievements();
+}
+function renderAchievements(){
+  document.getElementById('ach-count').textContent = unlocked.size;
+  const panel = document.getElementById('ach-panel');
+  panel.innerHTML = ACHIEVEMENTS.map(a=>`
+    <div class="ach-item ${unlocked.has(a.id)?'unlocked':''}">
+      <span class="icon">${a.icon}</span>
+      <span><strong>${a.name}</strong><br><span style="color:var(--muted);">${a.desc}</span></span>
+    </div>
+  `).join('');
+}
+renderAchievements();
+document.getElementById('ach-tray-btn').addEventListener('click', ()=>{
+  document.getElementById('ach-panel').classList.toggle('open');
+});
+
+/* ================= retro mode + cursor trail toggles (persisted) ================= */
 (function(){
-  const canvas = document.getElementById('galaxy');
-  const ctx = canvas.getContext('2d');
-  let w, h, cx, cy;
-  function resize(){
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    cx = w/2; cy = h/2;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const ARMS = 3;
-  const COUNT = 700;
-  const particles = [];
-  for(let i=0;i<COUNT;i++){
-    const arm = i % ARMS;
-    const t = Math.random();
-    particles.push({
-      arm,
-      t,
-      radius: t * Math.max(w,h) * 0.55 + 10,
-      z: Math.random()
-    });
-  }
-
-  let rotation = 0;
-  let speed = 0.0009, targetSpeed = 0.0009;
-  let expand = 1, targetExpand = 1;
-
-  window.addEventListener('scroll', ()=>{
-    const max = document.body.scrollHeight - window.innerHeight;
-    const frac = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
-    targetSpeed = 0.0009 + frac * 0.006;
-    targetExpand = 1 + frac * 0.6;
+  const retroBtn = document.getElementById('retro-toggle');
+  const cursorBtn = document.getElementById('cursor-toggle');
+  if(localStorage.getItem('astra-retro')==='1') document.body.classList.add('retro-mode');
+  if(localStorage.getItem('astra-cursor')==='1') document.body.classList.add('cursor-fx');
+  retroBtn.addEventListener('click', ()=>{
+    document.body.classList.toggle('retro-mode');
+    localStorage.setItem('astra-retro', document.body.classList.contains('retro-mode')?'1':'0');
+  });
+  cursorBtn.addEventListener('click', ()=>{
+    document.body.classList.toggle('cursor-fx');
+    localStorage.setItem('astra-cursor', document.body.classList.contains('cursor-fx')?'1':'0');
   });
 
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    speed += (targetSpeed - speed) * 0.04;
-    expand += (targetExpand - expand) * 0.04;
-    rotation += speed;
-
-    for(const p of particles){
-      const angle = p.t * 6 + rotation + (p.arm * (Math.PI*2/ARMS));
-      const r = p.radius * expand;
-      const x = cx + Math.cos(angle) * r;
-      const y = cy + Math.sin(angle) * r * 0.55;
-      const depthScale = 0.3 + p.z * 1.2;
-      const norm = p.t;
-      const cyan = [0,243,255], purple = [157,78,221];
-      const col = cyan.map((c,i)=> Math.round(c + (purple[i]-c)*norm));
-      const alpha = 0.15 + p.z * 0.55;
-      ctx.beginPath();
-      ctx.arc(x, y, depthScale, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
-      ctx.fill();
-    }
-    requestAnimationFrame(draw);
+  const cc = document.getElementById('cursor-canvas');
+  const cctx = cc.getContext('2d');
+  function resizeCC(){ cc.width = innerWidth; cc.height = innerHeight; }
+  resizeCC(); window.addEventListener('resize', resizeCC);
+  let trail = [];
+  window.addEventListener('pointermove', e=>{
+    if(!document.body.classList.contains('cursor-fx')) return;
+    trail.push({x:e.clientX,y:e.clientY,life:1});
+    if(trail.length>60) trail.shift();
+  });
+  function drawTrail(){
+    cctx.clearRect(0,0,cc.width,cc.height);
+    trail.forEach(p=>{
+      cctx.beginPath();
+      cctx.arc(p.x,p.y,4*p.life,0,Math.PI*2);
+      cctx.fillStyle = `rgba(0,243,255,${p.life*0.6})`;
+      cctx.fill();
+      p.life -= 0.04;
+    });
+    trail = trail.filter(p=>p.life>0);
+    requestAnimationFrame(drawTrail);
   }
-  draw();
+  drawTrail();
 })();
 
-/* ================= scroll reveal ================= */
+/* ================= konami code easter egg ================= */
 (function(){
-  const items = document.querySelectorAll('.reveal');
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let pos = 0;
+  window.addEventListener('keydown', e=>{
+    if(e.key === seq[pos]){
+      pos++;
+      if(pos === seq.length){
+        pos = 0;
+        unlockAchievement('konami');
+        document.body.classList.add('retro-mode');
+        localStorage.setItem('astra-retro','1');
+        showToast('🎉 Konami code! Retro mode activated.');
+      }
+    } else { pos = (e.key === seq[0]) ? 1 : 0; }
+  });
+})();
+
+/* ================= horizontal track navigation ================= */
+(function(){
+  const track = document.getElementById('track');
+  const slides = [...document.querySelectorAll('.slide')];
+  const navBtns = document.querySelectorAll('.navlink');
+
+  navBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = document.getElementById(btn.dataset.target);
+      if(target) track.scrollTo({left: target.offsetLeft, behavior:'smooth'});
+    });
+  });
+
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
-      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+      const btn = document.querySelector(`.navlink[data-target="${e.target.id}"]`);
+      if(e.isIntersecting){
+        if(btn){ navBtns.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+        e.target.classList.add('visible');
+        activateBg(e.target);
+      } else {
+        deactivateBg(e.target);
+      }
     });
-  }, {threshold:0.15});
-  items.forEach(i=>io.observe(i));
-
-  const navLinks = document.querySelectorAll('.floating-nav a');
-  const sections = [...navLinks].map(a=>document.querySelector(a.getAttribute('href')));
-  const navIo = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      const link = document.querySelector(`.floating-nav a[href="#${e.target.id}"]`);
-      if(!link) return;
-      if(e.isIntersecting) link.classList.add('active');
-      else link.classList.remove('active');
-    });
-  }, {rootMargin:'-45% 0px -45% 0px'});
-  sections.forEach(s=> s && navIo.observe(s));
+  }, {root: track, threshold:0.6});
+  slides.forEach(s=>io.observe(s));
 })();
 
+/* ================= per-section background engine ================= */
+const bgEngines = {};
+function makeBgEngine(canvas, mode){
+  const ctx = canvas.getContext('2d');
+  let w,h,raf=null;
+  function resize(){ w=canvas.width=canvas.clientWidth; h=canvas.height=canvas.clientHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  let particles = [];
+  if(mode==='galaxy'){
+    for(let i=0;i<250;i++) particles.push({t:Math.random(), arm:i%3, z:Math.random()});
+  } else if(mode==='grid' || mode==='nodes'){
+    for(let i=0;i<40;i++) particles.push({x:Math.random(), y:Math.random(), vx:(Math.random()-.5)*0.0006, vy:(Math.random()-.5)*0.0006});
+  } else if(mode==='matrix'){
+    for(let i=0;i<28;i++) particles.push({x:Math.random(), y:Math.random()*-1, speed:0.002+Math.random()*0.004, ch:String.fromCharCode(33+Math.floor(Math.random()*90))});
+  }
+
+  let rot = 0;
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    if(mode==='galaxy'){
+      rot += 0.0015;
+      particles.forEach(p=>{
+        const angle = p.t*6 + rot + p.arm*(Math.PI*2/3);
+        const r = p.t * Math.max(w,h) * 0.55 + 10;
+        const x = w/2 + Math.cos(angle)*r, y = h/2 + Math.sin(angle)*r*0.55;
+        const col = [0 + (157)*p.t, 243 + (78-243)*p.t, 255 + (221-255)*p.t];
+        ctx.beginPath(); ctx.arc(x,y,0.3+p.z*1.2,0,Math.PI*2);
+        ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.12+p.z*0.4})`; ctx.fill();
+      });
+    } else if(mode==='grid'){
+      ctx.strokeStyle = 'rgba(0,243,255,0.06)'; ctx.lineWidth=1;
+      const step=40;
+      for(let x=0;x<w;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for(let y=0;y<h;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+      particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>1) p.vx*=-1; if(p.y<0||p.y>1) p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x*w,p.y*h,1.6,0,Math.PI*2);
+        ctx.fillStyle='rgba(157,78,221,0.5)'; ctx.fill();
+      });
+    } else if(mode==='nodes'){
+      particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>1) p.vx*=-1; if(p.y<0||p.y>1) p.vy*=-1; });
+      for(let i=0;i<particles.length;i++){
+        for(let j=i+1;j<particles.length;j++){
+          const a=particles[i], b=particles[j];
+          const dx=(a.x-b.x)*w, dy=(a.y-b.y)*h;
+          const dist = Math.sqrt(dx*dx+dy*dy);
+          if(dist<120){
+            ctx.beginPath(); ctx.moveTo(a.x*w,a.y*h); ctx.lineTo(b.x*w,b.y*h);
+            ctx.strokeStyle = `rgba(0,243,255,${0.15*(1-dist/120)})`; ctx.stroke();
+          }
+        }
+      }
+      particles.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x*w,p.y*h,2,0,Math.PI*2); ctx.fillStyle='rgba(0,243,255,0.5)'; ctx.fill(); });
+    } else if(mode==='matrix'){
+      ctx.font = '14px monospace';
+      particles.forEach(p=>{
+        p.y += p.speed;
+        if(p.y>1.1){ p.y=-0.1; p.x=Math.random(); }
+        ctx.fillStyle='rgba(45,224,142,0.35)';
+        ctx.fillText(p.ch, p.x*w, p.y*h);
+      });
+    }
+    raf = requestAnimationFrame(draw);
+  }
+  return {
+    start(){ if(!raf) draw(); },
+    stop(){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+  };
+}
+function activateBg(section){
+  const canvas = section.querySelector('.slide-bg');
+  if(!canvas) return;
+  const mode = canvas.dataset.bg;
+  if(!bgEngines[section.id]) bgEngines[section.id] = makeBgEngine(canvas, mode);
+  bgEngines[section.id].start();
+}
+function deactivateBg(section){
+  if(bgEngines[section.id]) bgEngines[section.id].stop();
+}
+activateBg(document.getElementById('hero'));
+
+/* ================= generic tab-switching (reused: peripherals, security, optimization games) ================= */
+document.querySelectorAll('.tabs').forEach(group=>{
+  group.querySelectorAll('.tabbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      group.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panelId = btn.dataset.tab;
+      const container = group.nextElementSibling;
+      container.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+      const target = container.querySelector('#'+panelId) || document.getElementById(panelId==='p-keyboard'?'p-keyboard':panelId);
+      const el = document.getElementById(panelId);
+      if(el) el.classList.add('active');
+    });
+  });
+});
+</script>
+<script>
 /* ================= bench module ================= */
 (function(){
   const canvas = document.getElementById('bench-canvas');
   const ctx = canvas.getContext('2d');
-  function resizeBench(){
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-  }
-  resizeBench();
-  window.addEventListener('resize', resizeBench);
+  function resizeBench(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
+  resizeBench(); window.addEventListener('resize', resizeBench);
 
-  const verts = [
-    [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
-    [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]
-  ];
+  const verts = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
   const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-  let rot = 0;
-
-  let frames = 0, lastFpsTime = performance.now(), fps = 0;
-  let lastFrame = performance.now();
-  const frameTimes = [];
+  let rot=0, frames=0, lastFpsTime=performance.now(), fps=0, lastFrame=performance.now();
+  const frameTimes=[];
 
   function project(v){
-    const [x,y,z] = v;
-    const cosA = Math.cos(rot), sinA = Math.sin(rot);
-    const x1 = x*cosA - z*sinA, z1 = x*sinA + z*cosA;
-    const cosB = Math.cos(rot*0.7), sinB = Math.sin(rot*0.7);
-    const y2 = y*cosB - z1*sinB, z2 = y*sinB + z1*cosB;
-    const scale = 60 / (4 + z2);
-    return [canvas.width/2 + x1*scale*40, canvas.height/2 + y2*scale*40];
+    const [x,y,z]=v;
+    const cosA=Math.cos(rot), sinA=Math.sin(rot);
+    const x1=x*cosA-z*sinA, z1=x*sinA+z*cosA;
+    const cosB=Math.cos(rot*0.7), sinB=Math.sin(rot*0.7);
+    const y2=y*cosB-z1*sinB, z2=y*sinB+z1*cosB;
+    const scale=60/(4+z2);
+    return [canvas.width/2+x1*scale*40, canvas.height/2+y2*scale*40];
   }
-
   function loop(now){
-    const dt = now - lastFrame;
-    lastFrame = now;
-    frameTimes.push(dt);
-    if(frameTimes.length > 90) frameTimes.shift();
+    const dt=now-lastFrame; lastFrame=now;
+    frameTimes.push(dt); if(frameTimes.length>90) frameTimes.shift();
     frames++;
-    if(now - lastFpsTime > 500){
-      fps = Math.round(frames / ((now-lastFpsTime)/1000));
-      frames = 0; lastFpsTime = now;
-      document.getElementById('fps-val').textContent = fps + ' fps';
-      const avgDt = frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length;
-      const hz = Math.round(1000/avgDt);
-      const common = [30,60,75,90,120,144,165,240];
-      const nearest = common.reduce((a,b)=> Math.abs(b-hz)<Math.abs(a-hz)?b:a);
-      document.getElementById('hz-val').textContent = '~' + nearest + ' Hz';
+    if(now-lastFpsTime>500){
+      fps=Math.round(frames/((now-lastFpsTime)/1000)); frames=0; lastFpsTime=now;
+      document.getElementById('fps-val').textContent=fps+' fps';
+      const avgDt=frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length;
+      const hz=Math.round(1000/avgDt);
+      const common=[30,60,75,90,120,144,165,240];
+      const nearest=common.reduce((a,b)=>Math.abs(b-hz)<Math.abs(a-hz)?b:a);
+      document.getElementById('hz-val').textContent='~'+nearest+' Hz';
     }
-
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    rot += 0.01;
-    ctx.strokeStyle = '#00f3ff';
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    edges.forEach(([a,b])=>{
-      const [x1,y1] = project(verts[a]);
-      const [x2,y2] = project(verts[b]);
-      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-    });
+    ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    rot+=0.01;
+    ctx.strokeStyle='#00f3ff'; ctx.lineWidth=1.4; ctx.beginPath();
+    edges.forEach(([a,b])=>{ const [x1,y1]=project(verts[a]), [x2,y2]=project(verts[b]); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); });
     ctx.stroke();
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 
-  // spec detection
-  const ua = navigator.userAgent;
-  let os = 'Unknown';
-  if(/Windows/.test(ua)) os = 'Windows';
-  else if(/Mac OS X/.test(ua)) os = 'macOS';
-  else if(/Android/.test(ua)) os = 'Android';
-  else if(/iPhone|iPad|iPod/.test(ua)) os = 'iOS';
-  else if(/Linux/.test(ua)) os = 'Linux';
-  document.getElementById('os-val').textContent = os;
-
-  const cores = navigator.hardwareConcurrency || 'Unavailable';
-  document.getElementById('cores-val').textContent = cores;
-
-  const ram = navigator.deviceMemory ? navigator.deviceMemory + ' GB (approx.)' : 'Unavailable in this browser';
-  document.getElementById('ram-val').textContent = ram;
-
-  document.getElementById('res-val').textContent = `${screen.width}×${screen.height} @ ${window.devicePixelRatio}x`;
-
-  let gpu = 'Unavailable';
+  const ua=navigator.userAgent;
+  let os='Unknown';
+  if(/Windows/.test(ua)) os='Windows'; else if(/Mac OS X/.test(ua)) os='macOS';
+  else if(/Android/.test(ua)) os='Android'; else if(/iPhone|iPad|iPod/.test(ua)) os='iOS'; else if(/Linux/.test(ua)) os='Linux';
+  document.getElementById('os-val').textContent=os;
+  document.getElementById('cores-val').textContent=navigator.hardwareConcurrency||'Unavailable';
+  document.getElementById('ram-val').textContent=navigator.deviceMemory?navigator.deviceMemory+' GB (approx.)':'Unavailable in this browser';
+  document.getElementById('res-val').textContent=`${screen.width}×${screen.height} @ ${window.devicePixelRatio}x`;
+  let gpu='Unavailable';
   try{
-    const glc = document.createElement('canvas');
-    const gl = glc.getContext('webgl') || glc.getContext('experimental-webgl');
-    const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
-    if(dbg) gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+    const glc=document.createElement('canvas');
+    const gl=glc.getContext('webgl')||glc.getContext('experimental-webgl');
+    const dbg=gl&&gl.getExtension('WEBGL_debug_renderer_info');
+    if(dbg) gpu=gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
   }catch(e){}
-  document.getElementById('gpu-val').textContent = gpu;
+  document.getElementById('gpu-val').textContent=gpu;
 
+  window.__astraBenchScores = {gaming:0, prod:0};
   setTimeout(()=>{
-    const coreScore = Math.min(100, (navigator.hardwareConcurrency||2) * 12);
-    const ramScore = navigator.deviceMemory ? Math.min(100, navigator.deviceMemory*12) : 40;
-    const gamingScore = Math.round((coreScore*0.4 + Math.min(100,fps*1.2)*0.6));
-    const prodScore = Math.round((coreScore*0.5 + ramScore*0.5));
-    document.getElementById('score-gaming').style.width = Math.min(100,Math.max(5,gamingScore)) + '%';
-    document.getElementById('score-productivity').style.width = Math.min(100,Math.max(5,prodScore)) + '%';
+    const coreScore=Math.min(100,(navigator.hardwareConcurrency||2)*12);
+    const ramScore=navigator.deviceMemory?Math.min(100,navigator.deviceMemory*12):40;
+    const gamingScore=Math.round(coreScore*0.4+Math.min(100,fps*1.2)*0.6);
+    const prodScore=Math.round(coreScore*0.5+ramScore*0.5);
+    document.getElementById('score-gaming').style.width=Math.min(100,Math.max(5,gamingScore))+'%';
+    document.getElementById('score-productivity').style.width=Math.min(100,Math.max(5,prodScore))+'%';
+    window.__astraBenchScores = {gaming:gamingScore, prod:prodScore};
   }, 1500);
 })();
 
 /* ================= dns module ================= */
 (function(){
-  const providers = [
-    {name:'Cloudflare', primary:'1.1.1.1', secondary:'1.0.0.1', tag:'Speed', desc:'Optimized for UK, Europe & global speed.'},
-    {name:'Google Public DNS', primary:'8.8.8.8', secondary:'8.8.4.4', tag:'Uptime', desc:'Global uptime & broad regional routing.'},
-    {name:'Quad9', primary:'9.9.9.9', secondary:'149.112.112.112', tag:'Privacy', desc:'Swiss-based privacy & threat protection.'},
-    {name:'AdGuard DNS', primary:'94.140.14.14', secondary:'94.140.15.15', tag:'Blocking', desc:'Network-level ad & tracker blocking.'}
+  const providers=[
+    {name:'Cloudflare',primary:'1.1.1.1',secondary:'1.0.0.1',tag:'Speed',desc:'Optimized for UK, Europe & global speed.'},
+    {name:'Google Public DNS',primary:'8.8.8.8',secondary:'8.8.4.4',tag:'Uptime',desc:'Global uptime & broad regional routing.'},
+    {name:'Quad9',primary:'9.9.9.9',secondary:'149.112.112.112',tag:'Privacy',desc:'Swiss-based privacy & threat protection.'},
+    {name:'AdGuard DNS',primary:'94.140.14.14',secondary:'94.140.15.15',tag:'Blocking',desc:'Network-level ad & tracker blocking.'}
   ];
-  const grid = document.getElementById('dns-grid');
+  const grid=document.getElementById('dns-grid');
   providers.forEach((p,i)=>{
-    const card = document.createElement('div');
-    card.className = 'panel dns-card';
-    card.innerHTML = `
-      <h3>${p.name} <span class="dns-tag">${p.tag}</span></h3>
-      <p>${p.desc}</p>
+    const card=document.createElement('div');
+    card.className='panel dns-card';
+    card.innerHTML=`<h3>${p.name} <span class="dns-tag">${p.tag}</span></h3><p>${p.desc}</p>
       <div class="dns-ip">Primary: <span class="mono">${p.primary}</span><button data-copy="${p.primary}">Copy</button></div>
       <div class="dns-ip">Secondary: <span class="mono">${p.secondary}</span><button data-copy="${p.secondary}">Copy</button></div>
       <button class="test-btn" data-ip="${p.primary}">Test latency</button>
-      <div class="dns-result" id="dns-result-${i}"></div>
-    `;
+      <div class="dns-result" id="dns-result-${i}"></div>`;
     grid.appendChild(card);
   });
-
   grid.addEventListener('click', async (e)=>{
     if(e.target.dataset.copy){
-      try{
-        await navigator.clipboard.writeText(e.target.dataset.copy);
-        const old = e.target.textContent;
-        e.target.textContent = 'Copied';
-        setTimeout(()=> e.target.textContent = old, 1200);
+      try{ await navigator.clipboard.writeText(e.target.dataset.copy);
+        const old=e.target.textContent; e.target.textContent='Copied'; setTimeout(()=>e.target.textContent=old,1200);
       }catch(err){}
     }
     if(e.target.classList.contains('test-btn')){
-      const ip = e.target.dataset.ip;
-      const resultEl = e.target.nextElementSibling;
-      resultEl.textContent = 'Testing…';
-      const start = performance.now();
+      unlockAchievement('dns');
+      const ip=e.target.dataset.ip;
+      const resultEl=e.target.nextElementSibling;
+      resultEl.textContent='Testing…';
+      const start=performance.now();
       try{
-        await fetch(`https://${ip}/`, {mode:'no-cors', cache:'no-store'});
-        const ms = Math.round(performance.now() - start);
-        resultEl.textContent = `≈ ${ms} ms (approximate, browser-limited)`;
+        await fetch(`https://${ip}/`,{mode:'no-cors',cache:'no-store'});
+        resultEl.textContent=`≈ ${Math.round(performance.now()-start)} ms (approximate, browser-limited)`;
       }catch(err){
-        const ms = Math.round(performance.now() - start);
-        resultEl.textContent = `≈ ${ms} ms round-trip (connection reachable)`;
+        resultEl.textContent=`≈ ${Math.round(performance.now()-start)} ms round-trip (connection reachable)`;
       }
+    }
+  });
+})();
+
+/* ================= network speed test ================= */
+(function(){
+  document.getElementById('speed-test-btn').addEventListener('click', async ()=>{
+    const msg=document.getElementById('speed-msg');
+    const out=document.getElementById('speed-down');
+    msg.className='msg'; msg.textContent='Testing… downloading a sample file.';
+    out.textContent='—';
+    const testUrl='https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMa2JL7SUc.woff2';
+    try{
+      const start=performance.now();
+      const res=await fetch(testUrl+'?cachebust='+Date.now(),{cache:'no-store'});
+      const blob=await res.blob();
+      const seconds=(performance.now()-start)/1000;
+      const bits=blob.size*8;
+      const mbps=(bits/seconds/1000000).toFixed(2);
+      out.textContent=`≈ ${mbps} Mbps`;
+      msg.className='msg ok';
+      msg.textContent='Rough estimate from a small file — real speed test services use much larger files and multiple connections for accuracy.';
+    }catch(err){
+      msg.className='msg err';
+      msg.textContent='Could not complete the test — check your connection.';
     }
   });
 })();
 
 /* ================= peripherals: keyboard ================= */
 (function(){
-  const rows = [
+  const rows=[
     ['Esc','1','2','3','4','5','6','7','8','9','0','-','='],
     ['Tab','Q','W','E','R','T','Y','U','I','O','P'],
     ['Caps','A','S','D','F','G','H','J','K','L'],
     ['Shift','Z','X','C','V','B','N','M'],
     ['Ctrl','Alt','Space','Alt','Ctrl']
   ];
-  const kb = document.getElementById('keyboard');
-  const keyEls = {};
+  const kb=document.getElementById('keyboard');
+  const keyEls={};
+  const qwertyRow=new Set(['q','w','e','r','t','y','u','i','o','p']);
+  const qwertyHit=new Set();
   rows.forEach(row=>{
-    const rowEl = document.createElement('div');
-    rowEl.className = 'kb-row';
+    const rowEl=document.createElement('div'); rowEl.className='kb-row';
     row.forEach(label=>{
-      const el = document.createElement('div');
-      el.className = 'kb-key';
+      const el=document.createElement('div'); el.className='kb-key';
       if(['Tab','Caps','Shift','Ctrl','Alt','Esc'].includes(label)) el.classList.add('kb-wide');
-      if(label === 'Space') el.classList.add('kb-space');
-      el.textContent = label;
-      rowEl.appendChild(el);
-      keyEls[label.toLowerCase()] = el;
+      if(label==='Space') el.classList.add('kb-space');
+      el.textContent=label; rowEl.appendChild(el); keyEls[label.toLowerCase()]=el;
     });
     kb.appendChild(rowEl);
   });
-
-  let held = new Set();
-  const countEl = document.getElementById('kb-count');
+  let held=new Set();
+  const countEl=document.getElementById('kb-count');
   function matchEl(e){
-    const k = e.key.toLowerCase();
-    if(k === ' ') return keyEls['space'];
+    const k=e.key.toLowerCase();
+    if(k===' ') return keyEls['space'];
     if(keyEls[k]) return keyEls[k];
-    if(k === 'control') return keyEls['ctrl'];
-    if(k === 'capslock') return keyEls['caps'];
-    if(k === 'escape') return keyEls['esc'];
+    if(k==='control') return keyEls['ctrl'];
+    if(k==='capslock') return keyEls['caps'];
+    if(k==='escape') return keyEls['esc'];
     return null;
   }
-  window.addEventListener('keydown', (e)=>{
-    const el = matchEl(e);
-    if(el){ el.classList.add('active'); held.add(e.code); countEl.textContent = held.size; }
+  window.addEventListener('keydown',(e)=>{
+    const el=matchEl(e);
+    if(el){ el.classList.add('active'); held.add(e.code); countEl.textContent=held.size; }
+    const k=e.key.toLowerCase();
+    if(qwertyRow.has(k)){ qwertyHit.add(k); if(qwertyHit.size===qwertyRow.size) unlockAchievement('fullkb'); }
   });
-  window.addEventListener('keyup', (e)=>{
-    const el = matchEl(e);
-    if(el){ el.classList.remove('active'); held.delete(e.code); countEl.textContent = held.size; }
+  window.addEventListener('keyup',(e)=>{
+    const el=matchEl(e);
+    if(el){ el.classList.remove('active'); held.delete(e.code); countEl.textContent=held.size; }
   });
+})();
+
+/* ================= peripherals: mouse ================= */
+(function(){
+  const pad=document.getElementById('mouse-pad');
+  const dot=document.getElementById('mouse-dot');
+  pad.addEventListener('mousemove', e=>{
+    const r=pad.getBoundingClientRect();
+    dot.style.left=(e.clientX-r.left)+'px'; dot.style.top=(e.clientY-r.top)+'px';
+  });
+  pad.addEventListener('mousedown', e=>{
+    if(e.button===0) document.getElementById('mb-left').classList.add('hit');
+    if(e.button===1) document.getElementById('mb-middle').classList.add('hit');
+    if(e.button===2) document.getElementById('mb-right').classList.add('hit');
+  });
+  pad.addEventListener('contextmenu', e=> e.preventDefault());
+  pad.addEventListener('wheel', ()=> document.getElementById('mb-scroll').classList.add('hit'));
 })();
 
 /* ================= peripherals: display test ================= */
 (function(){
-  const colors = ['#ff0000','#00ff00','#0000ff','#ffffff','#000000','#808080'];
-  const row = document.getElementById('swatch-row');
-  const overlay = document.getElementById('fullscreen-swatch');
+  const colors=['#ff0000','#00ff00','#0000ff','#ffffff','#000000','#808080'];
+  const row=document.getElementById('swatch-row');
+  const overlay=document.getElementById('fullscreen-swatch');
   colors.forEach(c=>{
-    const sw = document.createElement('div');
-    sw.className = 'swatch';
-    sw.style.background = c;
+    const sw=document.createElement('div'); sw.className='swatch'; sw.style.background=c;
     sw.addEventListener('click', ()=>{
-      overlay.style.background = c;
-      overlay.style.display = 'flex';
-      overlay.style.color = c === '#ffffff' ? '#000' : '#fff';
+      overlay.style.background=c; overlay.style.display='flex';
+      overlay.style.color=c==='#ffffff'?'#000':'#fff';
       if(overlay.requestFullscreen) overlay.requestFullscreen().catch(()=>{});
     });
     row.appendChild(sw);
   });
-  function exit(){
-    overlay.style.display = 'none';
-    if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-  }
+  function exit(){ overlay.style.display='none'; if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
   overlay.addEventListener('click', exit);
-  window.addEventListener('keydown', e=>{ if(e.key === 'Escape') exit(); });
+  window.addEventListener('keydown', e=>{ if(e.key==='Escape') exit(); });
 })();
 
 /* ================= peripherals: audio ================= */
 (function(){
-  let audioCtx, osc, gain, panner, playing = false;
-  const freqSlider = document.getElementById('freq-slider');
-  const freqVal = document.getElementById('freq-val');
-  freqSlider.addEventListener('input', ()=>{
-    freqVal.textContent = freqSlider.value + ' Hz';
-    if(osc) osc.frequency.value = freqSlider.value;
-  });
-
-  function ensureCtx(){
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  }
-
+  let audioCtx,osc,gain,panner,playing=false;
+  const freqSlider=document.getElementById('freq-slider');
+  const freqVal=document.getElementById('freq-val');
+  freqSlider.addEventListener('input', ()=>{ freqVal.textContent=freqSlider.value+' Hz'; if(osc) osc.frequency.value=freqSlider.value; });
+  function ensureCtx(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
   document.getElementById('tone-play').addEventListener('click', ()=>{
     ensureCtx();
-    if(playing){
-      osc.stop(); playing = false;
-      document.getElementById('tone-play').textContent = 'Play tone';
-      return;
-    }
-    osc = audioCtx.createOscillator();
-    gain = audioCtx.createGain();
-    panner = audioCtx.createStereoPanner();
-    gain.gain.value = 0.15;
-    osc.frequency.value = freqSlider.value;
-    osc.connect(gain).connect(panner).connect(audioCtx.destination);
-    osc.start();
-    playing = true;
-    document.getElementById('tone-play').textContent = 'Stop tone';
+    if(playing){ osc.stop(); playing=false; document.getElementById('tone-play').textContent='Play tone'; return; }
+    osc=audioCtx.createOscillator(); gain=audioCtx.createGain(); panner=audioCtx.createStereoPanner();
+    gain.gain.value=0.15; osc.frequency.value=freqSlider.value;
+    osc.connect(gain).connect(panner).connect(audioCtx.destination); osc.start(); playing=true;
+    document.getElementById('tone-play').textContent='Stop tone';
   });
-
-  function setPan(v){ if(panner) panner.pan.value = v; }
+  function setPan(v){ if(panner) panner.pan.value=v; }
   document.getElementById('pan-left').addEventListener('click', ()=>setPan(-1));
   document.getElementById('pan-both').addEventListener('click', ()=>setPan(0));
   document.getElementById('pan-right').addEventListener('click', ()=>setPan(1));
 
-  const micCanvas = document.getElementById('mic-canvas');
-  const micCtx = micCanvas.getContext('2d');
-  function resizeMic(){ micCanvas.width = micCanvas.clientWidth; micCanvas.height = micCanvas.clientHeight; }
+  const micCanvas=document.getElementById('mic-canvas');
+  const micCtx=micCanvas.getContext('2d');
+  function resizeMic(){ micCanvas.width=micCanvas.clientWidth; micCanvas.height=micCanvas.clientHeight; }
   resizeMic(); window.addEventListener('resize', resizeMic);
-
   document.getElementById('mic-start').addEventListener('click', async ()=>{
-    const msg = document.getElementById('mic-msg');
+    const msg=document.getElementById('mic-msg');
+    unlockAchievement('mic');
     try{
       ensureCtx();
-      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 1024;
-      source.connect(analyser);
-      const data = new Uint8Array(analyser.frequencyBinCount);
-      msg.className = 'msg ok'; msg.textContent = 'Mic connected — speak to see the waveform.';
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      const source=audioCtx.createMediaStreamSource(stream);
+      const analyser=audioCtx.createAnalyser(); analyser.fftSize=1024; source.connect(analyser);
+      const data=new Uint8Array(analyser.frequencyBinCount);
+      msg.className='msg ok'; msg.textContent='Mic connected — speak to see the waveform.';
       function draw(){
         analyser.getByteTimeDomainData(data);
-        micCtx.fillStyle = 'rgba(0,0,0,0.3)';
-        micCtx.fillRect(0,0,micCanvas.width,micCanvas.height);
-        micCtx.strokeStyle = '#9d4edd';
-        micCtx.lineWidth = 2;
-        micCtx.beginPath();
-        const slice = micCanvas.width / data.length;
-        data.forEach((v,i)=>{
-          const y = (v/255) * micCanvas.height;
-          if(i===0) micCtx.moveTo(0,y); else micCtx.lineTo(i*slice,y);
-        });
-        micCtx.stroke();
-        requestAnimationFrame(draw);
+        micCtx.fillStyle='rgba(0,0,0,0.3)'; micCtx.fillRect(0,0,micCanvas.width,micCanvas.height);
+        micCtx.strokeStyle='#9d4edd'; micCtx.lineWidth=2; micCtx.beginPath();
+        const slice=micCanvas.width/data.length;
+        data.forEach((v,i)=>{ const y=(v/255)*micCanvas.height; if(i===0) micCtx.moveTo(0,y); else micCtx.lineTo(i*slice,y); });
+        micCtx.stroke(); requestAnimationFrame(draw);
       }
       draw();
-    }catch(err){
-      msg.className = 'msg err';
-      msg.textContent = 'Microphone permission was not granted, so this test can\'t run.';
-    }
+    }catch(err){ msg.className='msg err'; msg.textContent="Microphone permission was not granted, so this test can't run."; }
   });
 })();
-
+</script>
+<script>
 /* ================= privacy: AES ================= */
 (function(){
   function b64(bytes){ return btoa(String.fromCharCode(...bytes)); }
   function unb64(str){ return Uint8Array.from(atob(str), c=>c.charCodeAt(0)); }
-
   async function deriveKey(pass, salt){
-    const enc = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
-    return crypto.subtle.deriveKey(
-      {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
-      keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']
-    );
+    const enc=new TextEncoder();
+    const keyMaterial=await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
   }
-
   document.getElementById('aes-encrypt').addEventListener('click', async ()=>{
-    const msg = document.getElementById('aes-msg');
-    const out = document.getElementById('aes-output');
-    const text = document.getElementById('aes-input').value;
-    const pass = document.getElementById('aes-pass').value;
-    if(!text || !pass){ msg.className='msg err'; msg.textContent='Enter text and a passphrase.'; return; }
+    const msg=document.getElementById('aes-msg'), out=document.getElementById('aes-output');
+    const text=document.getElementById('aes-input').value, pass=document.getElementById('aes-pass').value;
+    if(!text||!pass){ msg.className='msg err'; msg.textContent='Enter text and a passphrase.'; return; }
     try{
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const key = await deriveKey(pass, salt);
-      const enc = new TextEncoder();
-      const cipher = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(text));
-      const combined = new Uint8Array(salt.length + iv.length + cipher.byteLength);
+      const salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+      const key=await deriveKey(pass, salt);
+      const cipher=await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(text));
+      const combined=new Uint8Array(salt.length+iv.length+cipher.byteLength);
       combined.set(salt,0); combined.set(iv,salt.length); combined.set(new Uint8Array(cipher), salt.length+iv.length);
-      out.textContent = b64(combined);
-      msg.className='msg ok'; msg.textContent='Encrypted. Copy the text above to save it.';
+      out.textContent=b64(combined); msg.className='msg ok'; msg.textContent='Encrypted. Copy the text above to save it.';
+      unlockAchievement('aes');
     }catch(err){ msg.className='msg err'; msg.textContent='Encryption failed.'; }
   });
-
   document.getElementById('aes-decrypt').addEventListener('click', async ()=>{
-    const msg = document.getElementById('aes-msg');
-    const out = document.getElementById('aes-output');
-    const text = document.getElementById('aes-input').value.trim();
-    const pass = document.getElementById('aes-pass').value;
-    if(!text || !pass){ msg.className='msg err'; msg.textContent='Paste the encrypted text and its passphrase.'; return; }
+    const msg=document.getElementById('aes-msg'), out=document.getElementById('aes-output');
+    const text=document.getElementById('aes-input').value.trim(), pass=document.getElementById('aes-pass').value;
+    if(!text||!pass){ msg.className='msg err'; msg.textContent='Paste the encrypted text and its passphrase.'; return; }
     try{
-      const combined = unb64(text);
-      const salt = combined.slice(0,16);
-      const iv = combined.slice(16,28);
-      const cipher = combined.slice(28);
-      const key = await deriveKey(pass, salt);
-      const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, cipher);
-      out.textContent = new TextDecoder().decode(plain);
-      msg.className='msg ok'; msg.textContent='Decrypted successfully.';
-    }catch(err){
-      msg.className='msg err'; msg.textContent='Wrong passphrase or corrupted data.';
-      out.textContent='';
-    }
+      const combined=unb64(text);
+      const salt=combined.slice(0,16), iv=combined.slice(16,28), cipher=combined.slice(28);
+      const key=await deriveKey(pass, salt);
+      const plain=await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, cipher);
+      out.textContent=new TextDecoder().decode(plain); msg.className='msg ok'; msg.textContent='Decrypted successfully.';
+    }catch(err){ msg.className='msg err'; msg.textContent='Wrong passphrase or corrupted data.'; out.textContent=''; }
   });
 })();
 
 /* ================= privacy: hashing ================= */
 (function(){
-  async function digestHex(algo, text){
-    const enc = new TextEncoder().encode(text);
-    const buf = await crypto.subtle.digest(algo, enc);
+  async function digestHex(algo,text){
+    const buf=await crypto.subtle.digest(algo, new TextEncoder().encode(text));
     return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
   }
-
-  // Compact MD5 implementation (SubtleCrypto has no MD5)
   function md5(str){
     function rl(n,c){return (n<<c)|(n>>>(32-c));}
-    function ad(a,b){
-      const l=(a&0xFFFF)+(b&0xFFFF), h=(a>>16)+(b>>16)+(l>>16);
-      return (h<<16)|(l&0xFFFF);
-    }
+    function ad(a,b){ const l=(a&0xFFFF)+(b&0xFFFF), h=(a>>16)+(b>>16)+(l>>16); return (h<<16)|(l&0xFFFF); }
     function cmn(q,a,b,x,s,t){ return ad(rl(ad(ad(a,q),ad(x,t)),s),b); }
     function ff(a,b,c,d,x,s,t){ return cmn((b&c)|((~b)&d),a,b,x,s,t); }
     function gg(a,b,c,d,x,s,t){ return cmn((b&d)|(c&(~d)),a,b,x,s,t); }
     function hh(a,b,c,d,x,s,t){ return cmn(b^c^d,a,b,x,s,t); }
     function ii(a,b,c,d,x,s,t){ return cmn(c^(b|(~d)),a,b,x,s,t); }
-
-    function toWords(s){
-      const n = s.length;
-      const words = [];
-      for(let i=0;i<n*8;i+=8) words[i>>5] |= (s.charCodeAt(i/8)&0xFF)<<(i%32);
-      return words;
-    }
-    function toHex(bin){
-      let hex='';
-      for(let i=0;i<bin.length*4;i++){
-        hex += ((bin[i>>2]>>((i%4)*8+4))&0xF).toString(16) + ((bin[i>>2]>>((i%4)*8))&0xF).toString(16);
-      }
-      return hex;
-    }
-
-    str = unescape(encodeURIComponent(str)); // utf-8
-    let x = toWords(str);
-    const len = str.length*8;
-    x[len>>5] |= 0x80 << (len%32);
-    x[(((len+64)>>>9)<<4)+14] = len;
-
+    function toWords(s){ const n=s.length; const words=[]; for(let i=0;i<n*8;i+=8) words[i>>5]|=(s.charCodeAt(i/8)&0xFF)<<(i%32); return words; }
+    function toHex(bin){ let hex=''; for(let i=0;i<bin.length*4;i++){ hex+=((bin[i>>2]>>((i%4)*8+4))&0xF).toString(16)+((bin[i>>2]>>((i%4)*8))&0xF).toString(16); } return hex; }
+    str=unescape(encodeURIComponent(str));
+    let x=toWords(str); const len=str.length*8;
+    x[len>>5]|=0x80<<(len%32); x[(((len+64)>>>9)<<4)+14]=len;
     let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
     for(let i=0;i<x.length;i+=16){
       const oa=a,ob=b,oc=c,od=d;
-      a=ff(a,b,c,d,x[i+0],7,-680876936); d=ff(d,a,b,c,x[i+1],12,-389564586);
-      c=ff(c,d,a,b,x[i+2],17,606105819); b=ff(b,c,d,a,x[i+3],22,-1044525330);
-      a=ff(a,b,c,d,x[i+4],7,-176418897); d=ff(d,a,b,c,x[i+5],12,1200080426);
-      c=ff(c,d,a,b,x[i+6],17,-1473231341); b=ff(b,c,d,a,x[i+7],22,-45705983);
-      a=ff(a,b,c,d,x[i+8],7,1770035416); d=ff(d,a,b,c,x[i+9],12,-1958414417);
-      c=ff(c,d,a,b,x[i+10],17,-42063); b=ff(b,c,d,a,x[i+11],22,-1990404162);
-      a=ff(a,b,c,d,x[i+12],7,1804603682); d=ff(d,a,b,c,x[i+13],12,-40341101);
-      c=ff(c,d,a,b,x[i+14],17,-1502002290); b=ff(b,c,d,a,x[i+15],22,1236535329);
-
-      a=gg(a,b,c,d,x[i+1],5,-165796510); d=gg(d,a,b,c,x[i+6],9,-1069501632);
-      c=gg(c,d,a,b,x[i+11],14,643717713); b=gg(b,c,d,a,x[i+0],20,-373897302);
-      a=gg(a,b,c,d,x[i+5],5,-701558691); d=gg(d,a,b,c,x[i+10],9,38016083);
-      c=gg(c,d,a,b,x[i+15],14,-660478335); b=gg(b,c,d,a,x[i+4],20,-405537848);
-      a=gg(a,b,c,d,x[i+9],5,568446438); d=gg(d,a,b,c,x[i+14],9,-1019803690);
-      c=gg(c,d,a,b,x[i+3],14,-187363961); b=gg(b,c,d,a,x[i+8],20,1163531501);
-      a=gg(a,b,c,d,x[i+13],5,-1444681467); d=gg(d,a,b,c,x[i+2],9,-51403784);
-      c=gg(c,d,a,b,x[i+7],14,1735328473); b=gg(b,c,d,a,x[i+12],20,-1926607734);
-
-      a=hh(a,b,c,d,x[i+5],4,-378558); d=hh(d,a,b,c,x[i+8],11,-2022574463);
-      c=hh(c,d,a,b,x[i+11],16,1839030562); b=hh(b,c,d,a,x[i+14],23,-35309556);
-      a=hh(a,b,c,d,x[i+1],4,-1530992060); d=hh(d,a,b,c,x[i+4],11,1272893353);
-      c=hh(c,d,a,b,x[i+7],16,-155497632); b=hh(b,c,d,a,x[i+10],23,-1094730640);
-      a=hh(a,b,c,d,x[i+13],4,681279174); d=hh(d,a,b,c,x[i+0],11,-358537222);
-      c=hh(c,d,a,b,x[i+3],16,-722521979); b=hh(b,c,d,a,x[i+6],23,76029189);
-      a=hh(a,b,c,d,x[i+9],4,-640364487); d=hh(d,a,b,c,x[i+12],11,-421815835);
-      c=hh(c,d,a,b,x[i+15],16,530742520); b=hh(b,c,d,a,x[i+2],23,-995338651);
-
-      a=ii(a,b,c,d,x[i+0],6,-198630844); d=ii(d,a,b,c,x[i+7],10,1126891415);
-      c=ii(c,d,a,b,x[i+14],15,-1416354905); b=ii(b,c,d,a,x[i+5],21,-57434055);
-      a=ii(a,b,c,d,x[i+12],6,1700485571); d=ii(d,a,b,c,x[i+3],10,-1894986606);
-      c=ii(c,d,a,b,x[i+10],15,-1051523); b=ii(b,c,d,a,x[i+1],21,-2054922799);
-      a=ii(a,b,c,d,x[i+8],6,1873313359); d=ii(d,a,b,c,x[i+15],10,-30611744);
-      c=ii(c,d,a,b,x[i+6],15,-1560198380); b=ii(b,c,d,a,x[i+13],21,1309151649);
-      a=ii(a,b,c,d,x[i+4],6,-145523070); d=ii(d,a,b,c,x[i+11],10,-1120210379);
-      c=ii(c,d,a,b,x[i+2],15,718787259); b=ii(b,c,d,a,x[i+9],21,-343485551);
-
+      a=ff(a,b,c,d,x[i+0],7,-680876936); d=ff(d,a,b,c,x[i+1],12,-389564586); c=ff(c,d,a,b,x[i+2],17,606105819); b=ff(b,c,d,a,x[i+3],22,-1044525330);
+      a=ff(a,b,c,d,x[i+4],7,-176418897); d=ff(d,a,b,c,x[i+5],12,1200080426); c=ff(c,d,a,b,x[i+6],17,-1473231341); b=ff(b,c,d,a,x[i+7],22,-45705983);
+      a=ff(a,b,c,d,x[i+8],7,1770035416); d=ff(d,a,b,c,x[i+9],12,-1958414417); c=ff(c,d,a,b,x[i+10],17,-42063); b=ff(b,c,d,a,x[i+11],22,-1990404162);
+      a=ff(a,b,c,d,x[i+12],7,1804603682); d=ff(d,a,b,c,x[i+13],12,-40341101); c=ff(c,d,a,b,x[i+14],17,-1502002290); b=ff(b,c,d,a,x[i+15],22,1236535329);
+      a=gg(a,b,c,d,x[i+1],5,-165796510); d=gg(d,a,b,c,x[i+6],9,-1069501632); c=gg(c,d,a,b,x[i+11],14,643717713); b=gg(b,c,d,a,x[i+0],20,-373897302);
+      a=gg(a,b,c,d,x[i+5],5,-701558691); d=gg(d,a,b,c,x[i+10],9,38016083); c=gg(c,d,a,b,x[i+15],14,-660478335); b=gg(b,c,d,a,x[i+4],20,-405537848);
+      a=gg(a,b,c,d,x[i+9],5,568446438); d=gg(d,a,b,c,x[i+14],9,-1019803690); c=gg(c,d,a,b,x[i+3],14,-187363961); b=gg(b,c,d,a,x[i+8],20,1163531501);
+      a=gg(a,b,c,d,x[i+13],5,-1444681467); d=gg(d,a,b,c,x[i+2],9,-51403784); c=gg(c,d,a,b,x[i+7],14,1735328473); b=gg(b,c,d,a,x[i+12],20,-1926607734);
+      a=hh(a,b,c,d,x[i+5],4,-378558); d=hh(d,a,b,c,x[i+8],11,-2022574463); c=hh(c,d,a,b,x[i+11],16,1839030562); b=hh(b,c,d,a,x[i+14],23,-35309556);
+      a=hh(a,b,c,d,x[i+1],4,-1530992060); d=hh(d,a,b,c,x[i+4],11,1272893353); c=hh(c,d,a,b,x[i+7],16,-155497632); b=hh(b,c,d,a,x[i+10],23,-1094730640);
+      a=hh(a,b,c,d,x[i+13],4,681279174); d=hh(d,a,b,c,x[i+0],11,-358537222); c=hh(c,d,a,b,x[i+3],16,-722521979); b=hh(b,c,d,a,x[i+6],23,76029189);
+      a=hh(a,b,c,d,x[i+9],4,-640364487); d=hh(d,a,b,c,x[i+12],11,-421815835); c=hh(c,d,a,b,x[i+15],16,530742520); b=hh(b,c,d,a,x[i+2],23,-995338651);
+      a=ii(a,b,c,d,x[i+0],6,-198630844); d=ii(d,a,b,c,x[i+7],10,1126891415); c=ii(c,d,a,b,x[i+14],15,-1416354905); b=ii(b,c,d,a,x[i+5],21,-57434055);
+      a=ii(a,b,c,d,x[i+12],6,1700485571); d=ii(d,a,b,c,x[i+3],10,-1894986606); c=ii(c,d,a,b,x[i+10],15,-1051523); b=ii(b,c,d,a,x[i+1],21,-2054922799);
+      a=ii(a,b,c,d,x[i+8],6,1873313359); d=ii(d,a,b,c,x[i+15],10,-30611744); c=ii(c,d,a,b,x[i+6],15,-1560198380); b=ii(b,c,d,a,x[i+13],21,1309151649);
+      a=ii(a,b,c,d,x[i+4],6,-145523070); d=ii(d,a,b,c,x[i+11],10,-1120210379); c=ii(c,d,a,b,x[i+2],15,718787259); b=ii(b,c,d,a,x[i+9],21,-343485551);
       a=ad(a,oa); b=ad(b,ob); c=ad(c,oc); d=ad(d,od);
     }
     return toHex([a,b,c,d]);
   }
-
-  const out = document.getElementById('hash-output');
-  document.getElementById('hash-sha256').addEventListener('click', async ()=>{
-    out.textContent = await digestHex('SHA-256', document.getElementById('hash-input').value);
-  });
-  document.getElementById('hash-sha512').addEventListener('click', async ()=>{
-    out.textContent = await digestHex('SHA-512', document.getElementById('hash-input').value);
-  });
-  document.getElementById('hash-md5').addEventListener('click', ()=>{
-    out.textContent = md5(document.getElementById('hash-input').value);
-  });
-  window.__astraMd5 = md5; // reused by the security module below
-})();
-
-/* ================= security: tab switching ================= */
-(function(){
-  const tabs = document.querySelectorAll('.sec-tab');
-  tabs.forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      tabs.forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.sec-panel').forEach(p=>p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
-    });
-  });
+  const out=document.getElementById('hash-output');
+  document.getElementById('hash-sha256').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-256', document.getElementById('hash-input').value); unlockAchievement('hash'); });
+  document.getElementById('hash-sha512').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-512', document.getElementById('hash-input').value); unlockAchievement('hash'); });
+  document.getElementById('hash-md5').addEventListener('click', ()=>{ out.textContent=md5(document.getElementById('hash-input').value); unlockAchievement('hash'); });
 })();
 
 /* ================= security: password strength ================= */
 (function(){
-  const input = document.getElementById('pw-strength-input');
-  const bar = document.getElementById('strength-bar');
-  const label = document.getElementById('strength-label');
-  const tips = document.getElementById('strength-tips');
-
+  const input=document.getElementById('pw-strength-input');
+  const bar=document.getElementById('strength-bar'), label=document.getElementById('strength-label'), tips=document.getElementById('strength-tips');
   function evaluate(pw){
-    if(!pw) return {score:0, tips:[]};
-    let score = 0;
-    const notes = [];
-    if(pw.length >= 8) score += 20; else notes.push('Use at least 8 characters.');
-    if(pw.length >= 12) score += 15;
-    if(/[a-z]/.test(pw)) score += 10; else notes.push('Add a lowercase letter.');
-    if(/[A-Z]/.test(pw)) score += 15; else notes.push('Add an uppercase letter.');
-    if(/[0-9]/.test(pw)) score += 15; else notes.push('Add a number.');
-    if(/[^A-Za-z0-9]/.test(pw)) score += 20; else notes.push('Add a symbol.');
-    if(/(.)\1\1/.test(pw)){ score -= 10; notes.push('Avoid repeating the same character three times.'); }
-    if(/^(123|abc|password|qwerty)/i.test(pw)){ score -= 25; notes.push('Avoid common patterns and words.'); }
-    return {score: Math.max(0, Math.min(100, score)), tips: notes};
+    if(!pw) return {score:0,tips:[]};
+    let score=0; const notes=[];
+    if(pw.length>=8) score+=20; else notes.push('Use at least 8 characters.');
+    if(pw.length>=12) score+=15;
+    if(/[a-z]/.test(pw)) score+=10; else notes.push('Add a lowercase letter.');
+    if(/[A-Z]/.test(pw)) score+=15; else notes.push('Add an uppercase letter.');
+    if(/[0-9]/.test(pw)) score+=15; else notes.push('Add a number.');
+    if(/[^A-Za-z0-9]/.test(pw)) score+=20; else notes.push('Add a symbol.');
+    if(/(.)\1\1/.test(pw)){ score-=10; notes.push('Avoid repeating the same character three times.'); }
+    if(/^(123|abc|password|qwerty)/i.test(pw)){ score-=25; notes.push('Avoid common patterns and words.'); }
+    return {score:Math.max(0,Math.min(100,score)), tips:notes};
   }
-
   input.addEventListener('input', ()=>{
-    const {score, tips: notes} = evaluate(input.value);
-    bar.style.width = score + '%';
-    let color = '#ff5470', text = 'Very weak';
-    if(score >= 80){ color = '#2de08e'; text = 'Strong'; }
-    else if(score >= 60){ color = '#00f3ff'; text = 'Good'; }
-    else if(score >= 35){ color = '#9d4edd'; text = 'Weak'; }
-    bar.style.background = color;
-    label.textContent = input.value ? text : '—';
-    tips.innerHTML = notes.map(n=>`<li>${n}</li>`).join('');
+    const {score, tips:notes}=evaluate(input.value);
+    bar.style.width=score+'%';
+    let color='#ff5470', text='Very weak';
+    if(score>=80){ color='#2de08e'; text='Strong'; } else if(score>=60){ color='#00f3ff'; text='Good'; } else if(score>=35){ color='#9d4edd'; text='Weak'; }
+    bar.style.background=color; label.textContent=input.value?text:'—'; tips.innerHTML=notes.map(n=>`<li>${n}</li>`).join('');
   });
 })();
 
 /* ================= security: password generator ================= */
 (function(){
-  const lenInput = document.getElementById('gen-length');
-  const lenVal = document.getElementById('gen-length-val');
-  lenInput.addEventListener('input', ()=> lenVal.textContent = lenInput.value);
-
-  const sets = {
-    upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
-    lower: 'abcdefghijkmnpqrstuvwxyz',
-    numbers: '23456789',
-    symbols: '!@#$%^&*()-_=+[]{}'
-  };
-
+  const lenInput=document.getElementById('gen-length'), lenVal=document.getElementById('gen-length-val');
+  lenInput.addEventListener('input', ()=> lenVal.textContent=lenInput.value);
+  const sets={upper:'ABCDEFGHJKLMNPQRSTUVWXYZ', lower:'abcdefghijkmnpqrstuvwxyz', numbers:'23456789', symbols:'!@#$%^&*()-_=+[]{}'};
   document.getElementById('gen-generate').addEventListener('click', ()=>{
-    let pool = '';
-    if(document.getElementById('gen-upper').checked) pool += sets.upper;
-    if(document.getElementById('gen-lower').checked) pool += sets.lower;
-    if(document.getElementById('gen-numbers').checked) pool += sets.numbers;
-    if(document.getElementById('gen-symbols').checked) pool += sets.symbols;
-    const out = document.getElementById('gen-output');
-    if(!pool){ out.textContent = 'Select at least one character type.'; return; }
-    const len = parseInt(lenInput.value,10);
-    const bytes = new Uint32Array(len);
-    crypto.getRandomValues(bytes);
-    let pw = '';
-    for(let i=0;i<len;i++) pw += pool[bytes[i] % pool.length];
-    out.textContent = pw;
+    let pool='';
+    if(document.getElementById('gen-upper').checked) pool+=sets.upper;
+    if(document.getElementById('gen-lower').checked) pool+=sets.lower;
+    if(document.getElementById('gen-numbers').checked) pool+=sets.numbers;
+    if(document.getElementById('gen-symbols').checked) pool+=sets.symbols;
+    const out=document.getElementById('gen-output');
+    if(!pool){ out.textContent='Select at least one character type.'; return; }
+    const len=parseInt(lenInput.value,10);
+    const bytes=new Uint32Array(len); crypto.getRandomValues(bytes);
+    let pw=''; for(let i=0;i<len;i++) pw+=pool[bytes[i]%pool.length];
+    out.textContent=pw; unlockAchievement('genpw');
   });
-
   document.getElementById('gen-copy').addEventListener('click', async ()=>{
-    const text = document.getElementById('gen-output').textContent;
-    if(!text) return;
+    const text=document.getElementById('gen-output').textContent; if(!text) return;
     try{ await navigator.clipboard.writeText(text); }catch(e){}
   });
 })();
 
-/* ================= security: pwned password check (k-anonymity) ================= */
+/* ================= security: pwned password check ================= */
 (function(){
   async function sha1Hex(str){
-    const enc = new TextEncoder().encode(str);
-    const buf = await crypto.subtle.digest('SHA-1', enc);
+    const buf=await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
     return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
   }
-
   document.getElementById('pw-breach-check').addEventListener('click', async ()=>{
-    const result = document.getElementById('breach-result');
-    const pw = document.getElementById('pw-breach-input').value;
+    const result=document.getElementById('breach-result');
+    const pw=document.getElementById('pw-breach-input').value;
     if(!pw){ result.className='msg err'; result.textContent='Type a password first.'; return; }
     result.className='msg'; result.textContent='Checking…';
     try{
-      const hash = await sha1Hex(pw);
-      const prefix = hash.slice(0,5), suffix = hash.slice(5);
-      const res = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
-      const text = await res.text();
-      const lines = text.split('\n');
-      const match = lines.find(l => l.split(':')[0] === suffix);
+      const hash=await sha1Hex(pw);
+      const prefix=hash.slice(0,5), suffix=hash.slice(5);
+      const res=await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+      const text=await res.text();
+      const match=text.split('\n').find(l=>l.split(':')[0]===suffix);
       if(match){
-        const count = parseInt(match.split(':')[1],10);
-        result.className='msg err';
-        result.textContent = `Found in ${count.toLocaleString()} known breaches — don't use this password.`;
-      } else {
-        result.className='msg ok';
-        result.textContent = 'Not found in any known breach database.';
-      }
-    }catch(err){
-      result.className='msg err';
-      result.textContent = 'Could not reach the breach database — check your connection.';
-    }
+        const count=parseInt(match.split(':')[1],10);
+        result.className='msg err'; result.textContent=`Found in ${count.toLocaleString()} known breaches — don't use this password.`;
+      } else { result.className='msg ok'; result.textContent='Not found in any known breach database.'; }
+      unlockAchievement('breach');
+    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach database — check your connection.'; }
   });
 })();
 
 /* ================= security: email breach check ================= */
 (function(){
-  // Paste a Have I Been Pwned API key here to enable this tool: https://haveibeenpwned.com/API/Key
   const HIBP_API_KEY = "";
-
   document.getElementById('email-breach-check').addEventListener('click', async ()=>{
-    const result = document.getElementById('email-result');
-    const email = document.getElementById('email-breach-input').value.trim();
+    const result=document.getElementById('email-result');
+    const email=document.getElementById('email-breach-input').value.trim();
     if(!email){ result.className='msg err'; result.textContent='Enter an email address.'; return; }
-    if(!HIBP_API_KEY){
-      result.className='msg err';
-      result.textContent = 'Email Check needs a free/paid Have I Been Pwned API key — see the HIBP_API_KEY line near the top of the script.';
-      return;
-    }
+    if(!HIBP_API_KEY){ result.className='msg err'; result.textContent='Email Check needs a free/paid Have I Been Pwned API key — see the HIBP_API_KEY line near this block in the script.'; return; }
     result.className='msg'; result.textContent='Checking…';
     try{
-      const res = await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}`, {
-        headers: { 'hibp-api-key': HIBP_API_KEY }
-      });
-      if(res.status === 404){
-        result.className='msg ok'; result.textContent='No known breaches found for this address.';
-      } else if(res.ok){
-        const data = await res.json();
-        result.className='msg err';
-        result.textContent = `Found in ${data.length} breach(es): ${data.map(b=>b.Name).join(', ')}`;
-      } else {
-        result.className='msg err'; result.textContent='The breach lookup service returned an error.';
-      }
-    }catch(err){
-      result.className='msg err'; result.textContent='Could not reach the breach lookup service.';
-    }
+      const res=await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}`, {headers:{'hibp-api-key':HIBP_API_KEY}});
+      if(res.status===404){ result.className='msg ok'; result.textContent='No known breaches found for this address.'; }
+      else if(res.ok){ const data=await res.json(); result.className='msg err'; result.textContent=`Found in ${data.length} breach(es): ${data.map(b=>b.Name).join(', ')}`; }
+      else { result.className='msg err'; result.textContent='The breach lookup service returned an error.'; }
+    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach lookup service.'; }
   });
 })();
 
@@ -1280,101 +1401,248 @@ footer{
 (function(){
   function canvasFingerprint(){
     try{
-      const c = document.createElement('canvas');
-      const ctx = c.getContext('2d');
-      ctx.textBaseline = 'top';
-      ctx.font = '14px Arial';
-      ctx.fillText('AstraSpec fingerprint 🌌', 2, 2);
+      const c=document.createElement('canvas'); const ctx=c.getContext('2d');
+      ctx.textBaseline='top'; ctx.font='14px Arial'; ctx.fillText('AstraSpec fingerprint 🌌',2,2);
       return c.toDataURL().slice(-16);
     }catch(e){ return 'Unavailable'; }
   }
-
-  const rows = [
-    ['User agent', navigator.userAgent],
-    ['Platform', navigator.platform || 'Unavailable'],
-    ['Language(s)', navigator.languages ? navigator.languages.join(', ') : navigator.language],
+  const rows=[
+    ['User agent', navigator.userAgent],['Platform', navigator.platform||'Unavailable'],
+    ['Language(s)', navigator.languages?navigator.languages.join(', '):navigator.language],
     ['Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone],
-    ['Screen resolution', `${screen.width}×${screen.height}`],
-    ['Color depth', screen.colorDepth + '-bit'],
-    ['Device pixel ratio', window.devicePixelRatio],
-    ['Cookies enabled', navigator.cookieEnabled ? 'Yes' : 'No'],
-    ['Do Not Track', navigator.doNotTrack || 'Not set'],
-    ['Touch support', ('ontouchstart' in window) ? 'Yes' : 'No'],
-    ['Connection type', (navigator.connection && navigator.connection.effectiveType) || 'Unavailable'],
-    ['Canvas fingerprint tail', canvasFingerprint()],
-    ['Referrer', document.referrer || '(none — direct visit)']
+    ['Screen resolution', `${screen.width}×${screen.height}`],['Color depth', screen.colorDepth+'-bit'],
+    ['Device pixel ratio', window.devicePixelRatio],['Cookies enabled', navigator.cookieEnabled?'Yes':'No'],
+    ['Do Not Track', navigator.doNotTrack||'Not set'],['Touch support', ('ontouchstart' in window)?'Yes':'No'],
+    ['Connection type', (navigator.connection&&navigator.connection.effectiveType)||'Unavailable'],
+    ['Canvas fingerprint tail', canvasFingerprint()],['Referrer', document.referrer||'(none — direct visit)']
   ];
-  const grid = document.getElementById('finger-grid');
-  grid.innerHTML = rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><span class="mono">${v}</span></div>`).join('');
+  document.getElementById('finger-grid').innerHTML = rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><span class="mono">${v}</span></div>`).join('');
 })();
 
 /* ================= security: username search ================= */
 (function(){
-  const platforms = [
-    ['GitHub', u=>`https://github.com/${u}`],
-    ['X / Twitter', u=>`https://x.com/${u}`],
-    ['Instagram', u=>`https://instagram.com/${u}`],
-    ['Reddit', u=>`https://reddit.com/user/${u}`],
-    ['TikTok', u=>`https://tiktok.com/@${u}`],
-    ['YouTube', u=>`https://youtube.com/@${u}`],
-    ['Pinterest', u=>`https://pinterest.com/${u}`],
-    ['Twitch', u=>`https://twitch.tv/${u}`]
-  ];
+  const platforms=[['GitHub',u=>`https://github.com/${u}`],['X / Twitter',u=>`https://x.com/${u}`],['Instagram',u=>`https://instagram.com/${u}`],
+    ['Reddit',u=>`https://reddit.com/user/${u}`],['TikTok',u=>`https://tiktok.com/@${u}`],['YouTube',u=>`https://youtube.com/@${u}`],
+    ['Pinterest',u=>`https://pinterest.com/${u}`],['Twitch',u=>`https://twitch.tv/${u}`]];
   document.getElementById('username-search').addEventListener('click', ()=>{
-    const u = document.getElementById('username-input').value.trim();
-    const wrap = document.getElementById('username-links');
-    if(!u){ wrap.innerHTML = ''; return; }
-    wrap.innerHTML = platforms.map(([name,fn])=>
-      `<a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${name}</a>`
-    ).join('');
+    const u=document.getElementById('username-input').value.trim();
+    const wrap=document.getElementById('username-links');
+    if(!u){ wrap.innerHTML=''; return; }
+    wrap.innerHTML = platforms.map(([name,fn])=>`<a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${name}</a>`).join('');
   });
 })();
 
-/* ================= security: privacy warning / IP geolocation ================= */
+/* ================= security: privacy warning ================= */
 (function(){
-  const list = document.getElementById('warn-list');
-  let reportLines = [];
-
-  function addRow(label, value){
-    reportLines.push(`${label}: ${value}`);
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${label}</span><span class="mono">${value}</span>`;
-    list.appendChild(li);
-  }
-
-  addRow('User agent', navigator.userAgent);
-  addRow('Language', navigator.language);
-  addRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
-  addRow('Screen', `${screen.width}×${screen.height}`);
-  addRow('Cookies enabled', navigator.cookieEnabled ? 'Yes' : 'No');
-
-  const ipRow = document.createElement('li');
-  ipRow.innerHTML = `<span>Public IP & location</span><span class="mono">Loading…</span>`;
-  list.appendChild(ipRow);
-
-  fetch('https://ipapi.co/json/')
-    .then(r=>r.json())
-    .then(data=>{
-      const text = `${data.ip} — ${data.city || ''}${data.city ? ', ' : ''}${data.country_name || ''} (${data.org || 'Unknown ISP'})`;
-      ipRow.querySelector('span:last-child').textContent = text;
-      reportLines.push(`Public IP & location: ${text}`);
-    })
-    .catch(()=>{
-      ipRow.querySelector('span:last-child').textContent = 'Unavailable (network blocked this request)';
-    });
-
+  const list=document.getElementById('warn-list'); let reportLines=[];
+  function addRow(label,value){ reportLines.push(`${label}: ${value}`); const li=document.createElement('li'); li.innerHTML=`<span>${label}</span><span class="mono">${value}</span>`; list.appendChild(li); }
+  addRow('User agent', navigator.userAgent); addRow('Language', navigator.language);
+  addRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone); addRow('Screen', `${screen.width}×${screen.height}`);
+  addRow('Cookies enabled', navigator.cookieEnabled?'Yes':'No');
+  const ipRow=document.createElement('li'); ipRow.innerHTML=`<span>Public IP & location</span><span class="mono">Loading…</span>`; list.appendChild(ipRow);
+  fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>{
+    const text=`${data.ip} — ${data.city||''}${data.city?', ':''}${data.country_name||''} (${data.org||'Unknown ISP'})`;
+    ipRow.querySelector('span:last-child').textContent=text; reportLines.push(`Public IP & location: ${text}`);
+  }).catch(()=>{ ipRow.querySelector('span:last-child').textContent='Unavailable (network blocked this request)'; });
   document.getElementById('warn-copy').addEventListener('click', async ()=>{
-    const msg = document.getElementById('warn-msg');
-    try{
-      await navigator.clipboard.writeText(reportLines.join('\n'));
-      msg.className = 'msg ok';
-      msg.textContent = 'Report copied to clipboard.';
-    }catch(e){
-      msg.className = 'msg err';
-      msg.textContent = 'Could not copy — your browser blocked clipboard access.';
-    }
+    const msg=document.getElementById('warn-msg');
+    try{ await navigator.clipboard.writeText(reportLines.join('\n')); msg.className='msg ok'; msg.textContent='Report copied to clipboard.'; }
+    catch(e){ msg.className='msg err'; msg.textContent='Could not copy — your browser blocked clipboard access.'; }
   });
 })();
+
+/* ================= security: QR generator ================= */
+(function(){
+  document.getElementById('qr-generate').addEventListener('click', ()=>{
+    const text=document.getElementById('qr-input').value.trim();
+    const out=document.getElementById('qr-output');
+    if(!text){ out.innerHTML=''; return; }
+    const url=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(text)}`;
+    out.innerHTML=`<img src="${url}" alt="QR code" width="220" height="220">`;
+  });
+})();
+
+/* ================= health score ================= */
+(function(){
+  function refresh(){
+    const bench = window.__astraBenchScores || {gaming:0,prod:0};
+    const hw = Math.round((bench.gaming+bench.prod)/2);
+    const secToolsUsed = ['breach','aes','hash','genpw'].filter(id=>unlocked.has(id)).length;
+    const secScore = Math.round((secToolsUsed/4)*100);
+    const overall = Math.round((hw+secScore)/2);
+    let grade='D';
+    if(overall>=85) grade='A'; else if(overall>=70) grade='B'; else if(overall>=50) grade='C';
+    document.getElementById('health-grade').textContent=grade;
+    document.getElementById('health-hw').textContent=hw+' / 100';
+    document.getElementById('health-hw-bar').style.width=hw+'%';
+    document.getElementById('health-sec').textContent=secToolsUsed+' / 4 tools used';
+    document.getElementById('health-sec-bar').style.width=secScore+'%';
+  }
+  document.getElementById('health-refresh').addEventListener('click', refresh);
+  setTimeout(refresh, 2000);
+})();
+
+/* ================= optimization tab logic ================= */
+(function(){
+  document.querySelectorAll('.os-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.os-guide').forEach(g=>g.classList.remove('active'));
+      document.getElementById('guide-'+btn.dataset.os).classList.add('active');
+    });
+  });
+})();
+</script>
+<script>
+/* ================= interactive terminal ================= */
+(function(){
+  const log=document.getElementById('terminal-log');
+  const input=document.getElementById('terminal-input');
+  const box=document.getElementById('terminal-box');
+  function print(text, cls){
+    const d=document.createElement('div'); if(cls) d.className=cls; d.textContent=text;
+    log.appendChild(d); box.scrollTop=box.scrollHeight;
+  }
+  const commands = {
+    help(){ print('Available commands: help, about, whoami, date, echo <text>, neofetch, sudo, theme <retro|default>, clear'); },
+    about(){ print('AstraSpec — a browser-based PC diagnostic and security toolkit. Everything here runs client-side.'); },
+    whoami(){ print('You are a visitor to AstraSpec. No login, no tracking of identity.'); },
+    date(){ print(new Date().toString()); },
+    echo(args){ print(args.join(' ')||''); },
+    neofetch(){
+      const os = document.getElementById('os-val').textContent;
+      const cores = document.getElementById('cores-val').textContent;
+      const gpu = document.getElementById('gpu-val').textContent;
+      print(`OS: ${os}\nCores: ${cores}\nGPU: ${gpu}\nSite: AstraSpec v2.0`);
+    },
+    sudo(){ print("Nice try — this terminal doesn't touch your real system. 😄"); },
+    theme(args){
+      const mode = args[0];
+      if(mode==='retro'){ document.body.classList.add('retro-mode'); localStorage.setItem('astra-retro','1'); print('Retro mode enabled.'); }
+      else if(mode==='default'){ document.body.classList.remove('retro-mode'); localStorage.setItem('astra-retro','0'); print('Theme reset.'); }
+      else print('Usage: theme <retro|default>');
+    },
+    clear(){ log.innerHTML=''; },
+    konami(){ print('Try the arrow keys and B, A on your actual keyboard... 👀'); }
+  };
+  input.addEventListener('keydown', e=>{
+    if(e.key!=='Enter') return;
+    const raw=input.value.trim(); input.value='';
+    if(!raw) return;
+    print('> '+raw, 'term-line');
+    unlockAchievement('terminal');
+    const parts=raw.split(' ');
+    const cmd=parts[0].toLowerCase();
+    const args=parts.slice(1);
+    if(commands[cmd]) commands[cmd](args);
+    else print(`Command not found: ${cmd}. Type 'help' for a list.`);
+  });
+})();
+
+/* ================= shared mini-game engine (used by both games) ================= */
+function buildFlappyGame(opts){
+  const canvas=document.getElementById(opts.canvasId);
+  const ctx=canvas.getContext('2d');
+  const scoreEl=document.getElementById(opts.scoreId);
+  const bestEl=document.getElementById(opts.bestId);
+  let best = parseInt(localStorage.getItem(opts.bestKey)||'0',10);
+  bestEl.textContent = best;
+
+  let bird, pipes, score, running, gravity, flapPower;
+  function resize(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  function reset(){
+    bird = {x:canvas.width*0.25, y:canvas.height/2, vy:0, r:14};
+    pipes = [];
+    score = 0; running = true;
+    gravity = opts.gravity; flapPower = opts.flapPower;
+    scoreEl.textContent = '0';
+    spawnPipe();
+  }
+  function spawnPipe(){
+    const gap = 130;
+    const y = 40 + Math.random()*(canvas.height-80-gap);
+    pipes.push({x:canvas.width+20, gapY:y, gap, passed:false});
+  }
+  function flap(){ if(!running) return; bird.vy = flapPower; }
+  function drawChar(){
+    ctx.save(); ctx.translate(bird.x, bird.y);
+    const rot = Math.max(-0.5, Math.min(0.9, bird.vy*0.05));
+    ctx.rotate(rot);
+    if(opts.getChar && opts.getChar()==='windows'){
+      ctx.fillStyle='#00f3ff'; ctx.fillRect(-12,-12,11,11);
+      ctx.fillStyle='#9d4edd'; ctx.fillRect(1,-12,11,11);
+      ctx.fillStyle='#9d4edd'; ctx.fillRect(-12,1,11,11);
+      ctx.fillStyle='#00f3ff'; ctx.fillRect(1,1,11,11);
+    } else if(opts.getChar && opts.getChar()==='macos'){
+      ctx.fillStyle='#9d4edd'; ctx.beginPath(); ctx.arc(0,0,13,0,Math.PI*2); ctx.fill();
+    } else if(opts.getChar && opts.getChar()==='ship'){
+      ctx.fillStyle='#00f3ff';
+      ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(-10,-9); ctx.lineTo(-5,0); ctx.lineTo(-10,9); ctx.closePath(); ctx.fill();
+    } else {
+      ctx.fillStyle='#e9e9f2'; ctx.beginPath(); ctx.ellipse(0,0,11,14,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#f5a623'; ctx.beginPath(); ctx.moveTo(-6,10); ctx.lineTo(6,10); ctx.lineTo(0,16); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function loop(){
+    if(!running) return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    bird.vy += gravity; bird.y += bird.vy;
+    ctx.fillStyle='rgba(0,243,255,0.08)';
+    for(let i=0;i<5;i++) ctx.fillRect((i*80+((Date.now()/20)%80)) % canvas.width, 0, 2, canvas.height);
+
+    pipes.forEach(p=>{
+      p.x -= opts.speed;
+      ctx.fillStyle='#9d4edd';
+      ctx.fillRect(p.x, 0, 26, p.gapY);
+      ctx.fillRect(p.x, p.gapY+p.gap, 26, canvas.height-(p.gapY+p.gap));
+      if(!p.passed && p.x+26 < bird.x){ p.passed=true; score++; scoreEl.textContent=score; }
+      if(bird.x+bird.r > p.x && bird.x-bird.r < p.x+26){
+        if(bird.y-bird.r < p.gapY || bird.y+bird.r > p.gapY+p.gap) endGame();
+      }
+    });
+    pipes = pipes.filter(p=>p.x > -30);
+    if(pipes.length===0 || pipes[pipes.length-1].x < canvas.width-220) spawnPipe();
+
+    if(bird.y+bird.r > canvas.height || bird.y-bird.r < 0) endGame();
+    drawChar();
+    if(running) requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;
+    if(score>best){ best=score; localStorage.setItem(opts.bestKey, best); bestEl.textContent=best; }
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#fff'; ctx.font='20px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Game over — press Start to retry', canvas.width/2, canvas.height/2);
+    unlockAchievement('game');
+  }
+  canvas.addEventListener('pointerdown', flap);
+  window.addEventListener('keydown', e=>{ if(e.code==='Space' && document.getElementById(opts.canvasId).offsetParent) { e.preventDefault(); flap(); } });
+  document.getElementById(opts.startId).addEventListener('click', reset);
+  return {reset};
+}
+
+/* Flappy Byte */
+let flapChar = 'windows';
+document.querySelectorAll('#flap-chars .char-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('#flap-chars .char-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active'); flapChar = opt.dataset.char;
+  });
+});
+buildFlappyGame({
+  canvasId:'flap-canvas', scoreId:'flap-score', bestId:'flap-best', startId:'flap-start',
+  bestKey:'astra-flap-best', gravity:0.45, flapPower:-7, speed:2.6,
+  getChar: ()=>flapChar
+});
+
+/* Glide — same engine, different pacing, no character select (uses a simple ship shape) */
+buildFlappyGame({
+  canvasId:'glide-canvas', scoreId:'glide-score', bestId:'glide-best', startId:'glide-start',
+  bestKey:'astra-glide-best', gravity:0.28, flapPower:-5.5, speed:3.4,
+  getChar: ()=> 'ship'
+});
 </script>
 </body>
 </html>
