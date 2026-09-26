@@ -73,7 +73,7 @@
 html,body{height:100%;}
 body{
   margin:0; background:var(--bg); color:var(--text);
-  font-family:'Inter',sans-serif; line-height:1.6; overflow:hidden;
+  font-family:'Inter',sans-serif; line-height:1.6;
 }
 h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;margin:0 0 .4em;letter-spacing:-0.01em;}
 .mono{font-family:'IBM Plex Mono',monospace;}
@@ -93,24 +93,18 @@ input,textarea,select{
 }
 input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
 
-/* ---------- horizontal slide track ---------- */
-#track{
-  display:flex; height:100vh; width:100vw;
-  overflow-x:auto; overflow-y:hidden;
-  scroll-snap-type:x mandatory; scroll-behavior:smooth;
-  -webkit-overflow-scrolling:touch;
-}
-#track::-webkit-scrollbar{display:none;}
+/* ---------- vertical scroll track ---------- */
+#track{ display:block; width:100%; }
 .slide{
-  flex:0 0 100vw; width:100vw; height:100vh;
-  overflow-y:auto; overflow-x:hidden;
-  scroll-snap-align:start; position:relative;
+  width:100%; min-height:100vh;
+  overflow:visible; position:relative;
   padding:120px 28px 80px;
+  display:flex; flex-direction:column; justify-content:center;
 }
-.slide-inner{max-width:1040px;margin:0 auto;}
+.slide-inner{max-width:1040px;margin:0 auto;width:100%;}
 .slide-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;}
 
-/* ---------- floating nav (now horizontal-jump tabs) ---------- */
+/* ---------- floating nav (desktop: sidebar / mobile: toggled drawer) ---------- */
 .floating-nav{
   position:fixed; top:20px; left:20px; z-index:50;
   display:flex; flex-direction:column; gap:2px; padding:10px;
@@ -130,6 +124,20 @@ input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
   transition:background .2s,color .2s; display:block; white-space:nowrap;
 }
 .floating-nav button.navlink:hover,.floating-nav button.navlink.active{background:var(--glass-strong);color:var(--text);}
+
+/* ---------- mobile layout: nav becomes a toggled drawer, sections get tighter padding ---------- */
+body.is-mobile .floating-nav{
+  top:auto; bottom:0; left:0; right:0; max-height:70vh;
+  border-radius:16px 16px 0 0; transform:translateY(calc(100% - 52px));
+  transition:transform .3s ease; width:100%;
+}
+body.is-mobile .floating-nav.open{ transform:translateY(0); }
+body.is-mobile .floating-nav .brand{ cursor:pointer; padding:14px 16px; }
+body.is-mobile .slide{ padding:90px 18px 100px; }
+body.is-mobile #hero .slide-inner{ max-width:100%; }
+body.is-mobile .util-tray{ bottom:auto; top:16px; right:12px; }
+body.is-mobile .util-tray button{ font-size:.68rem; padding:.4em .6em; }
+body.is-mobile #ach-panel{ right:12px; left:12px; width:auto; bottom:70px; }
 
 /* ---------- swipe hint (mobile) ---------- */
 .swipe-hint{
@@ -158,8 +166,8 @@ input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
 .grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
 .grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
 
-.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
-.reveal.visible{opacity:1;transform:none;}
+.reveal{opacity:0;transform:translateY(40px) scale(.96);filter:blur(6px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1),filter .8s ease;}
+.reveal.visible{opacity:1;transform:none;filter:blur(0);}
 @media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none;}}
 
 /* ---------- tab pattern (reused: security, peripherals, optimization, games) ---------- */
@@ -320,7 +328,7 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
   <button class="navlink" data-target="roadmap">Roadmap</button>
 </nav>
 
-<div class="swipe-hint">← swipe to explore →</div>
+<div class="swipe-hint">↓ scroll to explore</div>
 
 <div class="util-tray">
   <button id="retro-toggle" title="Retro CRT mode">CRT</button>
@@ -488,7 +496,7 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
       <button class="tabbtn" data-tab="qr">QR Generator</button>
     </div>
     <div class="panel">
-      <div class="tabpanel active" id="panel-strength">
+      <div class="tabpanel active" id="strength">
         <h3>Password strength tester</h3>
         <p>Type a password to see how secure it is. Nothing is sent anywhere.</p>
         <input type="password" id="pw-strength-input" placeholder="Type a password…" autocomplete="off">
@@ -496,7 +504,7 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
         <div class="strength-label" id="strength-label">—</div>
         <ul class="strength-list" id="strength-tips"></ul>
       </div>
-      <div class="tabpanel" id="panel-generator">
+      <div class="tabpanel" id="generator">
         <h3>Password generator</h3>
         <p>Generated locally using the browser's cryptographic random number generator.</p>
         <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
@@ -511,40 +519,40 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
         <div class="aes-output mono" id="gen-output"></div>
         <button id="gen-copy" style="margin-top:10px;">Copy</button>
       </div>
-      <div class="tabpanel" id="panel-breach">
+      <div class="tabpanel" id="breach">
         <h3>Password breach check</h3>
         <p>Checks against Have I Been Pwned using k-anonymity — only the first 5 characters of the password's hash ever leave your browser.</p>
         <input type="password" id="pw-breach-input" placeholder="Type a password to check…" autocomplete="off">
         <button id="pw-breach-check" style="margin-top:12px;">Check for breaches</button>
         <div class="msg" id="breach-result"></div>
       </div>
-      <div class="tabpanel" id="panel-email">
+      <div class="tabpanel" id="email">
         <h3>Email breach check</h3>
         <p>Checks whether an email has appeared in a known data breach, via the Have I Been Pwned account API.</p>
         <input type="email" id="email-breach-input" placeholder="you@example.com">
         <button id="email-breach-check" style="margin-top:12px;">Check email</button>
         <div class="msg" id="email-result"></div>
       </div>
-      <div class="tabpanel" id="panel-fingerprint">
+      <div class="tabpanel" id="fingerprint">
         <h3>Browser fingerprint</h3>
         <p>The kind of information almost any website can read about your browser without asking.</p>
         <div class="finger-grid" id="finger-grid"></div>
       </div>
-      <div class="tabpanel" id="panel-username">
+      <div class="tabpanel" id="username">
         <h3>Username search</h3>
         <p>Most platforms block outside existence-checks from browser JS, so this builds direct profile links to check by eye.</p>
         <input type="text" id="username-input" placeholder="Type a username…">
         <button id="username-search" style="margin-top:12px;">Build search links</button>
         <div class="username-links" id="username-links"></div>
       </div>
-      <div class="tabpanel" id="panel-warning">
+      <div class="tabpanel" id="warning">
         <h3>Privacy warning: what this site (and most sites) can see about you</h3>
         <p>Live snapshot combining your network and browser exposure.</p>
         <ul class="warn-list" id="warn-list"></ul>
         <button id="warn-copy" style="margin-top:14px;">Copy full privacy report</button>
         <div class="msg" id="warn-msg"></div>
       </div>
-      <div class="tabpanel" id="panel-qr">
+      <div class="tabpanel" id="qr">
         <h3>QR code generator</h3>
         <p>Turns any text or URL into a scannable QR code, generated via a free public QR API (no data stored).</p>
         <input type="text" id="qr-input" placeholder="Enter text or a URL…">
@@ -822,16 +830,32 @@ document.getElementById('ach-tray-btn').addEventListener('click', ()=>{
   });
 })();
 
-/* ================= horizontal track navigation ================= */
+/* ================= mobile detection ================= */
 (function(){
-  const track = document.getElementById('track');
+  function checkMobile(){
+    const isMobile = window.matchMedia('(max-width: 720px), (hover: none) and (pointer: coarse)').matches;
+    document.body.classList.toggle('is-mobile', isMobile);
+  }
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+})();
+
+/* ================= vertical scroll navigation ================= */
+(function(){
   const slides = [...document.querySelectorAll('.slide')];
   const navBtns = document.querySelectorAll('.navlink');
+  const navPanel = document.querySelector('.floating-nav');
+  const brand = navPanel.querySelector('.brand');
+
+  brand.addEventListener('click', ()=>{
+    if(document.body.classList.contains('is-mobile')) navPanel.classList.toggle('open');
+  });
 
   navBtns.forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const target = document.getElementById(btn.dataset.target);
-      if(target) track.scrollTo({left: target.offsetLeft, behavior:'smooth'});
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      if(document.body.classList.contains('is-mobile')) navPanel.classList.remove('open');
     });
   });
 
@@ -846,12 +870,29 @@ document.getElementById('ach-tray-btn').addEventListener('click', ()=>{
         deactivateBg(e.target);
       }
     });
-  }, {root: track, threshold:0.6});
+  }, {root:null, threshold:0.45});
   slides.forEach(s=>io.observe(s));
 })();
 
 /* ================= per-section background engine ================= */
 const bgEngines = {};
+/* ================= shared scroll-velocity signal (drives all background modes) ================= */
+window.__scrollBoost = 0;
+(function(){
+  let lastY = window.scrollY, target = 0;
+  window.addEventListener('scroll', ()=>{
+    const dy = window.scrollY - lastY;
+    lastY = window.scrollY;
+    target = Math.max(-1, Math.min(1, dy / 40));
+  }, {passive:true});
+  function decay(){
+    target *= 0.9;
+    window.__scrollBoost += (target - window.__scrollBoost) * 0.08;
+    requestAnimationFrame(decay);
+  }
+  decay();
+})();
+
 function makeBgEngine(canvas, mode){
   const ctx = canvas.getContext('2d');
   let w,h,raf=null;
@@ -867,32 +908,36 @@ function makeBgEngine(canvas, mode){
     for(let i=0;i<28;i++) particles.push({x:Math.random(), y:Math.random()*-1, speed:0.002+Math.random()*0.004, ch:String.fromCharCode(33+Math.floor(Math.random()*90))});
   }
 
-  let rot = 0;
+  let rot = 0, expand = 1;
   function draw(){
     ctx.clearRect(0,0,w,h);
+    const boost = window.__scrollBoost || 0;
     if(mode==='galaxy'){
-      rot += 0.0015;
+      rot += 0.0015 + boost*0.03;
+      expand += ((1 + Math.abs(boost)*0.5) - expand) * 0.05;
       particles.forEach(p=>{
         const angle = p.t*6 + rot + p.arm*(Math.PI*2/3);
-        const r = p.t * Math.max(w,h) * 0.55 + 10;
+        const r = (p.t * Math.max(w,h) * 0.55 + 10) * expand;
         const x = w/2 + Math.cos(angle)*r, y = h/2 + Math.sin(angle)*r*0.55;
         const col = [0 + (157)*p.t, 243 + (78-243)*p.t, 255 + (221-255)*p.t];
         ctx.beginPath(); ctx.arc(x,y,0.3+p.z*1.2,0,Math.PI*2);
         ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.12+p.z*0.4})`; ctx.fill();
       });
     } else if(mode==='grid'){
+      const speedMul = 1 + Math.abs(boost)*4;
       ctx.strokeStyle = 'rgba(0,243,255,0.06)'; ctx.lineWidth=1;
       const step=40;
       for(let x=0;x<w;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
       for(let y=0;y<h;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
       particles.forEach(p=>{
-        p.x+=p.vx; p.y+=p.vy;
+        p.x+=p.vx*speedMul; p.y+=p.vy*speedMul;
         if(p.x<0||p.x>1) p.vx*=-1; if(p.y<0||p.y>1) p.vy*=-1;
         ctx.beginPath(); ctx.arc(p.x*w,p.y*h,1.6,0,Math.PI*2);
         ctx.fillStyle='rgba(157,78,221,0.5)'; ctx.fill();
       });
     } else if(mode==='nodes'){
-      particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>1) p.vx*=-1; if(p.y<0||p.y>1) p.vy*=-1; });
+      const speedMul = 1 + Math.abs(boost)*4;
+      particles.forEach(p=>{ p.x+=p.vx*speedMul; p.y+=p.vy*speedMul; if(p.x<0||p.x>1) p.vx*=-1; if(p.y<0||p.y>1) p.vy*=-1; });
       for(let i=0;i<particles.length;i++){
         for(let j=i+1;j<particles.length;j++){
           const a=particles[i], b=particles[j];
@@ -906,9 +951,10 @@ function makeBgEngine(canvas, mode){
       }
       particles.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x*w,p.y*h,2,0,Math.PI*2); ctx.fillStyle='rgba(0,243,255,0.5)'; ctx.fill(); });
     } else if(mode==='matrix'){
+      const speedMul = 1 + Math.abs(boost)*3;
       ctx.font = '14px monospace';
       particles.forEach(p=>{
-        p.y += p.speed;
+        p.y += p.speed*speedMul;
         if(p.y>1.1){ p.y=-0.1; p.x=Math.random(); }
         ctx.fillStyle='rgba(45,224,142,0.35)';
         ctx.fillText(p.ch, p.x*w, p.y*h);
@@ -945,6 +991,7 @@ document.querySelectorAll('.tabs').forEach(group=>{
       const target = container.querySelector('#'+panelId) || document.getElementById(panelId==='p-keyboard'?'p-keyboard':panelId);
       const el = document.getElementById(panelId);
       if(el) el.classList.add('active');
+      requestAnimationFrame(()=> window.dispatchEvent(new Event('resize')));
     });
   });
 });
@@ -1558,6 +1605,7 @@ function buildFlappyGame(opts){
     gravity = opts.gravity; flapPower = opts.flapPower;
     scoreEl.textContent = '0';
     spawnPipe();
+    requestAnimationFrame(loop);
   }
   function spawnPipe(){
     const gap = 130;
