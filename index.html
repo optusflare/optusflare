@@ -16,9 +16,19 @@
      ================================================================ -->
 <meta name="google-site-verification" content="Z_pxgyDcSwZngAifaFQCyD4WpIxE-hCk6EZEUCrNmHA" />
 
-<!-- Favicon: SVG for browsers, PNG for Google Search — Google Search does not support SVG favicons (only BMP, GIF, ICO, PNG, JPEG, PPM, TIFF) -->
+<!-- Favicon: SVG for modern browsers, PNG for Google Search (SVG unsupported there), ICO for legacy/OS-level lookups -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
 <link rel="icon" type="image/png" sizes="144x144" href="/favicon.png" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#05050a" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="AstraSpec" />
 
 <!-- Open Graph / Facebook / Discord -->
 <meta property="og:type" content="website" />
@@ -103,7 +113,7 @@ input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
   display:flex; flex-direction:column; justify-content:center;
 }
 .slide-inner{max-width:1040px;margin:0 auto;width:100%;}
-.slide-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;}
+.slide-bg{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block;}
 
 /* ---------- floating nav (desktop: sidebar / mobile: toggled drawer) ---------- */
 .floating-nav{
@@ -260,6 +270,9 @@ body.is-mobile #ach-panel{ right:12px; left:12px; width:auto; bottom:70px; }
 
 /* ---------- terminal ---------- */
 #terminal-box{background:#000;border-radius:10px;border:1px solid var(--border);padding:16px;height:340px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:.82rem;}
+#terminal-box.matrix-flash{box-shadow:0 0 30px rgba(45,224,142,0.6) inset;animation:matrix-pulse 0.5s ease-in-out 4;}
+@keyframes matrix-pulse{0%,100%{background:#000;}50%{background:#031a0d;}}
+@keyframes party-spin{0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}
 #terminal-log div{margin-bottom:4px;white-space:pre-wrap;word-break:break-word;}
 .term-line{color:var(--good);}
 .term-cmd-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
@@ -326,6 +339,8 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
   <button class="navlink" data-target="changeos">Change OS</button>
   <button class="navlink" data-target="terminal">Terminal</button>
   <button class="navlink" data-target="games">Games</button>
+  <button class="navlink" data-target="toolkit">Toolkit</button>
+  <button class="navlink" data-target="quicktools">Quick Tools</button>
   <button class="navlink" data-target="roadmap">Roadmap</button>
 </nav>
 
@@ -401,6 +416,10 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
       <button class="tabbtn" data-tab="p-monitor">Monitor</button>
       <button class="tabbtn" data-tab="p-headset">Headset / Speakers</button>
       <button class="tabbtn" data-tab="p-mic">Microphone</button>
+      <button class="tabbtn" data-tab="p-typing">Typing Speed</button>
+      <button class="tabbtn" data-tab="p-color">Color Test</button>
+      <button class="tabbtn" data-tab="p-battery">Battery</button>
+      <button class="tabbtn" data-tab="p-reaction">Reaction Time</button>
     </div>
     <div class="panel">
       <div class="tabpanel active" id="p-keyboard">
@@ -442,6 +461,40 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
         <canvas id="mic-canvas"></canvas>
         <div style="margin-top:10px;"><button id="mic-start">Start mic test</button></div>
         <div class="msg" id="mic-msg"></div>
+      </div>
+      <div class="tabpanel" id="p-typing">
+        <h3>Typing speed test</h3>
+        <p>Type the prompt below as fast and accurately as you can.</p>
+        <div class="panel mono" id="typing-prompt" style="margin-bottom:12px;"></div>
+        <textarea id="typing-input" rows="3" placeholder="Start typing here…"></textarea>
+        <div class="stat-row"><span>WPM</span><span class="mono" id="typing-wpm">—</span></div>
+        <div class="stat-row"><span>Accuracy</span><span class="mono" id="typing-acc">—</span></div>
+        <button id="typing-restart" style="margin-top:10px;">New prompt</button>
+      </div>
+      <div class="tabpanel" id="p-color">
+        <h3>Color blindness check</h3>
+        <p>A quick Ishihara-style plate. This is a screening tool, not a medical diagnosis.</p>
+        <canvas id="color-plate" width="260" height="260" style="width:100%;max-width:260px;height:260px;border-radius:50%;display:block;margin:0 auto;"></canvas>
+        <div style="margin-top:14px;text-align:center;">
+          <button id="color-next">Next plate</button>
+        </div>
+        <div class="msg" id="color-msg" style="text-align:center;"></div>
+      </div>
+      <div class="tabpanel" id="p-battery">
+        <h3>Battery health report</h3>
+        <p>Uses the Battery API — supported in Chrome/Edge; Firefox and Safari don't expose this to websites, so you'll see an honest "unavailable" message there instead.</p>
+        <div class="stat-row"><span>Charge level</span><span class="mono" id="batt-level">—</span></div>
+        <div class="stat-row"><span>Charging</span><span class="mono" id="batt-charging">—</span></div>
+        <div class="stat-row"><span>Time to full / empty</span><span class="mono" id="batt-time">—</span></div>
+      </div>
+      <div class="tabpanel" id="p-reaction">
+        <h3>Reaction time tester</h3>
+        <p>Click as soon as the box turns green. Clicking too early resets the test.</p>
+        <div id="reaction-box" class="panel" style="text-align:center;padding:60px 20px;cursor:pointer;user-select:none;">
+          <span id="reaction-text">Click to start</span>
+        </div>
+        <div class="stat-row"><span>Last result</span><span class="mono" id="reaction-result">—</span></div>
+        <div class="stat-row"><span>Best</span><span class="mono" id="reaction-best">—</span></div>
       </div>
     </div>
   </div>
@@ -495,6 +548,8 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
       <button class="tabbtn" data-tab="username">Username Search</button>
       <button class="tabbtn" data-tab="warning">Privacy Warning</button>
       <button class="tabbtn" data-tab="qr">QR Generator</button>
+      <button class="tabbtn" data-tab="notes">Secure Notes</button>
+      <button class="tabbtn" data-tab="storage">What We Store</button>
     </div>
     <div class="panel">
       <div class="tabpanel active" id="strength">
@@ -508,15 +563,26 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
       <div class="tabpanel" id="generator">
         <h3>Password generator</h3>
         <p>Generated locally using the browser's cryptographic random number generator.</p>
-        <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
-        <input type="range" id="gen-length" min="8" max="48" value="16">
-        <div class="gen-options">
-          <label><input type="checkbox" id="gen-upper" checked> Uppercase</label>
-          <label><input type="checkbox" id="gen-lower" checked> Lowercase</label>
-          <label><input type="checkbox" id="gen-numbers" checked> Numbers</label>
-          <label><input type="checkbox" id="gen-symbols" checked> Symbols</label>
+        <div class="tabs" style="margin-bottom:14px;" id="gen-mode-tabs" data-generic-skip="true">
+          <button class="tabbtn active minitab" data-genmode="chars">Character-based</button>
+          <button class="tabbtn minitab" data-genmode="phrase">Memorable passphrase</button>
         </div>
-        <button id="gen-generate">Generate password</button>
+        <div id="gen-mode-chars">
+          <div class="stat-row"><span>Length</span><span class="mono" id="gen-length-val">16</span></div>
+          <input type="range" id="gen-length" min="8" max="48" value="16">
+          <div class="gen-options">
+            <label><input type="checkbox" id="gen-upper" checked> Uppercase</label>
+            <label><input type="checkbox" id="gen-lower" checked> Lowercase</label>
+            <label><input type="checkbox" id="gen-numbers" checked> Numbers</label>
+            <label><input type="checkbox" id="gen-symbols" checked> Symbols</label>
+          </div>
+          <button id="gen-generate">Generate password</button>
+        </div>
+        <div id="gen-mode-phrase" style="display:none;">
+          <div class="stat-row"><span>Number of words</span><span class="mono" id="phrase-count-val">4</span></div>
+          <input type="range" id="phrase-count" min="3" max="8" value="4">
+          <button id="phrase-generate">Generate passphrase</button>
+        </div>
         <div class="aes-output mono" id="gen-output"></div>
         <button id="gen-copy" style="margin-top:10px;">Copy</button>
       </div>
@@ -559,6 +625,27 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
         <input type="text" id="qr-input" placeholder="Enter text or a URL…">
         <button id="qr-generate" style="margin-top:12px;">Generate QR code</button>
         <div id="qr-output"></div>
+      </div>
+      <div class="tabpanel" id="notes">
+        <h3>Password-protected notes</h3>
+        <p>Same AES-256 engine as your encryptor above — write a note, lock it with a passphrase, and copy out the encrypted blob to store anywhere. Decrypt it later with the same passphrase.</p>
+        <span class="field-label">Note</span>
+        <textarea id="notes-input" rows="4"></textarea>
+        <span class="field-label">Passphrase</span>
+        <input type="password" id="notes-pass">
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button id="notes-encrypt">Lock note</button>
+          <button id="notes-decrypt">Unlock note</button>
+        </div>
+        <div class="aes-output mono" id="notes-output"></div>
+        <div class="msg" id="notes-msg"></div>
+      </div>
+      <div class="tabpanel" id="storage">
+        <h3>What this site stores about you</h3>
+        <p>Full transparency — everything AstraSpec has saved in your browser's local storage. Nothing here ever leaves your device.</p>
+        <div id="storage-list"></div>
+        <button id="storage-clear" style="margin-top:12px;">Clear all site data</button>
+        <div class="msg" id="storage-msg"></div>
       </div>
     </div>
   </div>
@@ -685,6 +772,9 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
     <div class="tabs" id="game-tabs">
       <button class="tabbtn active" data-tab="game-flap">Flappy Byte</button>
       <button class="tabbtn" data-tab="game-glide">Glide</button>
+      <button class="tabbtn" data-tab="game-aim">Aim Trainer</button>
+      <button class="tabbtn" data-tab="game-crosshair">Crosshair Generator</button>
+      <button class="tabbtn" data-tab="game-framepacing">Frame Pacing Visualizer</button>
     </div>
     <div class="panel">
       <div class="tabpanel active" id="game-flap">
@@ -704,6 +794,193 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
         <div class="game-score">Score: <span id="glide-score">0</span> · Best: <span id="glide-best">0</span></div>
         <button id="glide-start" style="margin-top:8px;">Start / Restart</button>
       </div>
+      <div class="tabpanel" id="game-aim">
+        <p>Click the targets as fast as you can. Measures raw accuracy and speed.</p>
+        <canvas id="aim-canvas" width="600" height="340" style="width:100%;height:340px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);cursor:crosshair;"></canvas>
+        <div class="game-score">Hits: <span id="aim-hits">0</span> · Misses: <span id="aim-misses">0</span> · Avg reaction: <span id="aim-avg">—</span></div>
+        <button id="aim-start" style="margin-top:8px;">Start (15s)</button>
+      </div>
+      <div class="tabpanel" id="game-crosshair">
+        <p>Build a custom crosshair and preview it live. Export it as a PNG overlay image.</p>
+        <div class="grid cols-2">
+          <div>
+            <span class="field-label">Color</span>
+            <input type="color" id="ch-color" value="#00f3ff" style="height:40px;">
+            <span class="field-label">Size</span>
+            <input type="range" id="ch-size" min="4" max="40" value="14">
+            <span class="field-label">Thickness</span>
+            <input type="range" id="ch-thickness" min="1" max="6" value="2">
+            <span class="field-label">Gap</span>
+            <input type="range" id="ch-gap" min="0" max="20" value="4">
+            <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.85rem;color:var(--muted);"><input type="checkbox" id="ch-dot"> Center dot</label>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <canvas id="ch-preview" width="160" height="160" style="background:#111;border-radius:10px;"></canvas>
+            <button id="ch-export" style="margin-top:12px;">Export as PNG</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabpanel" id="game-framepacing">
+        <p>A side-by-side demo of what smooth vs. stuttery frame pacing actually looks like — the same rotation, rendered at two different simulated frame rates.</p>
+        <div class="grid cols-2">
+          <div style="text-align:center;">
+            <canvas id="fp-smooth" width="200" height="200" style="width:100%;max-width:200px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);"></canvas>
+            <div class="field-label">144 Hz — smooth</div>
+          </div>
+          <div style="text-align:center;">
+            <canvas id="fp-stutter" width="200" height="200" style="width:100%;max-width:200px;background:#0a0a14;border-radius:10px;border:1px solid var(--border);"></canvas>
+            <div class="field-label">30 Hz on a 144 Hz panel — stutter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="toolkit" class="slide reveal">
+  <canvas class="slide-bg" data-bg="grid"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 12</div><h2>Dev &amp; Utility Toolkit</h2><p>Small tools developers and power users reach for constantly.</p></div>
+    <div class="tabs" id="toolkit-tabs">
+      <button class="tabbtn active" data-tab="tk-json">JSON Formatter</button>
+      <button class="tabbtn" data-tab="tk-base64">Base64 / URL</button>
+      <button class="tabbtn" data-tab="tk-units">Unit Converter</button>
+      <button class="tabbtn" data-tab="tk-dpi">Resolution Simulator</button>
+      <button class="tabbtn" data-tab="tk-ascii">ASCII Art</button>
+    </div>
+    <div class="panel">
+      <div class="tabpanel active" id="tk-json">
+        <h3>JSON formatter &amp; validator</h3>
+        <textarea id="json-input" rows="6" placeholder='Paste JSON here, e.g. {"a":1,"b":[2,3]}'></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button id="json-format">Format</button>
+          <button id="json-minify">Minify</button>
+        </div>
+        <div class="hash-output mono" id="json-output" style="white-space:pre-wrap;"></div>
+      </div>
+      <div class="tabpanel" id="tk-base64">
+        <h3>Base64 / URL encoder-decoder</h3>
+        <textarea id="b64-input" rows="4" placeholder="Text to encode/decode…"></textarea>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <button id="b64-encode">Base64 Encode</button>
+          <button id="b64-decode">Base64 Decode</button>
+          <button id="url-encode">URL Encode</button>
+          <button id="url-decode">URL Decode</button>
+        </div>
+        <div class="hash-output mono" id="b64-output"></div>
+      </div>
+      <div class="tabpanel" id="tk-units">
+        <h3>Unit &amp; storage converter</h3>
+        <div class="grid cols-2">
+          <div>
+            <span class="field-label">GB → GiB</span>
+            <input type="number" id="conv-gb" placeholder="Enter GB" value="100">
+            <div class="stat-row"><span>Result</span><span class="mono" id="conv-gb-out">—</span></div>
+          </div>
+          <div>
+            <span class="field-label">Mbps → MB/s</span>
+            <input type="number" id="conv-mbps" placeholder="Enter Mbps" value="100">
+            <div class="stat-row"><span>Result</span><span class="mono" id="conv-mbps-out">—</span></div>
+          </div>
+          <div>
+            <span class="field-label">Hz → ms (frame time)</span>
+            <input type="number" id="conv-hz" placeholder="Enter Hz" value="60">
+            <div class="stat-row"><span>Result</span><span class="mono" id="conv-hz-out">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabpanel" id="tk-dpi">
+        <h3>Screen resolution / DPI simulator</h3>
+        <p>Preview how text looks scaled to common resolutions, without resizing your window.</p>
+        <select id="dpi-preset">
+          <option value="1">Your screen (100%)</option>
+          <option value="0.67">1080p equivalent</option>
+          <option value="0.89">1440p equivalent</option>
+          <option value="1.33">4K equivalent</option>
+          <option value="0.5">Small phone DPI</option>
+        </select>
+        <div id="dpi-preview" class="panel" style="margin-top:14px;">Sample text at this simulated scale — AstraSpec toolkit preview.</div>
+      </div>
+      <div class="tabpanel" id="tk-ascii">
+        <h3>ASCII art generator</h3>
+        <input type="text" id="ascii-input" placeholder="Type a short word…" maxlength="10">
+        <button id="ascii-generate" style="margin-top:12px;">Generate</button>
+        <pre class="hash-output mono" id="ascii-output" style="overflow-x:auto;"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quicktools" class="slide reveal">
+  <canvas class="slide-bg" data-bg="nodes"></canvas>
+  <div class="slide-inner">
+    <div class="section-head"><div class="tag">MODULE 13</div><h2>Quick Tools</h2><p>Small everyday utilities, no install required.</p></div>
+    <div class="tabs" id="qt-tabs">
+      <button class="tabbtn active" data-tab="qt-clock">World Clock</button>
+      <button class="tabbtn" data-tab="qt-down">Is It Down?</button>
+      <button class="tabbtn" data-tab="qt-clipboard">Clipboard History</button>
+      <button class="tabbtn" data-tab="qt-weather">Weather</button>
+      <button class="tabbtn" data-tab="qt-currency">Currency Converter</button>
+      <button class="tabbtn" data-tab="qt-bill">Bill Splitter</button>
+      <button class="tabbtn" data-tab="qt-speech">Speech ⇄ Text</button>
+    </div>
+    <div class="panel">
+      <div class="tabpanel active" id="qt-clock">
+        <h3>World clock</h3>
+        <div class="grid cols-3" id="clock-grid"></div>
+      </div>
+      <div class="tabpanel" id="qt-down">
+        <h3>"Is it down?" checker</h3>
+        <p>Rough reachability check — browser CORS limits mean this is approximate, same honest caveat as the DNS latency test.</p>
+        <input type="text" id="down-input" placeholder="example.com">
+        <button id="down-check" style="margin-top:12px;">Check</button>
+        <div class="msg" id="down-result"></div>
+      </div>
+      <div class="tabpanel" id="qt-clipboard">
+        <h3>Clipboard history</h3>
+        <p>Remembers the last few things you've copied <strong>within this site</strong> — not system-wide, browsers don't allow that.</p>
+        <textarea id="clip-input" rows="2" placeholder="Type or paste something, then click Save…"></textarea>
+        <button id="clip-save" style="margin-top:10px;">Save to history</button>
+        <div id="clip-list" style="margin-top:14px;"></div>
+      </div>
+      <div class="tabpanel" id="qt-weather">
+        <h3>Current weather</h3>
+        <button id="weather-fetch">Get weather for my location</button>
+        <div class="msg" id="weather-msg"></div>
+        <div id="weather-output" style="margin-top:10px;"></div>
+      </div>
+      <div class="tabpanel" id="qt-currency">
+        <h3>Currency converter</h3>
+        <div class="grid cols-2">
+          <div><span class="field-label">Amount</span><input type="number" id="cur-amount" value="100"></div>
+          <div><span class="field-label">From → To</span>
+            <select id="cur-from"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option></select>
+            →
+            <select id="cur-to"><option>EUR</option><option>USD</option><option>GBP</option><option>JPY</option></select>
+          </div>
+        </div>
+        <button id="cur-convert" style="margin-top:12px;">Convert</button>
+        <div class="msg" id="cur-result"></div>
+      </div>
+      <div class="tabpanel" id="qt-bill">
+        <h3>Bill splitter / tip calculator</h3>
+        <div class="grid cols-2">
+          <div><span class="field-label">Bill total</span><input type="number" id="bill-total" value="50"></div>
+          <div><span class="field-label">Tip %</span><input type="number" id="bill-tip" value="15"></div>
+          <div><span class="field-label">Number of people</span><input type="number" id="bill-people" value="2"></div>
+        </div>
+        <div class="stat-row"><span>Total with tip</span><span class="mono" id="bill-total-out">—</span></div>
+        <div class="stat-row"><span>Per person</span><span class="mono" id="bill-per-out">—</span></div>
+      </div>
+      <div class="tabpanel" id="qt-speech">
+        <h3>Speech ⇄ text demo</h3>
+        <p>Uses your browser's built-in Web Speech API — support varies by browser.</p>
+        <button id="speech-start">🎙️ Start listening</button>
+        <div class="aes-output mono" id="speech-output" style="min-height:2.4em;"></div>
+        <span class="field-label">Type below to hear it read aloud</span>
+        <textarea id="speech-text" rows="2" placeholder="Type something…"></textarea>
+        <button id="speech-play" style="margin-top:10px;">🔊 Read aloud</button>
+      </div>
     </div>
   </div>
 </section>
@@ -711,7 +988,7 @@ footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8r
 <section id="roadmap" class="slide reveal">
   <canvas class="slide-bg" data-bg="grid"></canvas>
   <div class="slide-inner">
-    <div class="section-head"><div class="tag">MODULE 11</div><h2>Roadmap &amp; Changelog</h2><p>What's shipped, and what's next.</p></div>
+    <div class="section-head"><div class="tag">MODULE 14</div><h2>Roadmap &amp; Changelog</h2><p>What's shipped, and what's next.</p></div>
     <div class="panel">
       <div class="timeline">
         <div class="timeline-item"><div class="date">Latest</div><h3>v2.0 — The Big Expansion</h3><p>Added Optimization guides, Change OS, interactive Terminal, Games, Health Score, Network Speed Test, QR Generator, Achievements, Retro Mode, and full per-device Peripheral testing.</p></div>
@@ -739,7 +1016,13 @@ const ACHIEVEMENTS = [
   {id:'mic', icon:'🎙️', name:'Say Ahh', desc:'Started the mic test'},
   {id:'terminal', icon:'💻', name:'Hacker Voice', desc:'Used the terminal'},
   {id:'game', icon:'🎮', name:'Player One', desc:'Played a game'},
-  {id:'konami', icon:'⬆️', name:'Old School', desc:'Found the Konami code'}
+  {id:'konami', icon:'⬆️', name:'Old School', desc:'Found the Konami code'},
+  {id:'typing', icon:'⌨️', name:'Speed Demon', desc:'Finished a typing speed test'},
+  {id:'crosshair', icon:'🎯', name:'Locked On', desc:'Built a custom crosshair'},
+  {id:'aimtrainer', icon:'🔫', name:'Sharpshooter', desc:'Played the aim trainer'},
+  {id:'json', icon:'{ }', name:'Data Wrangler', desc:'Formatted some JSON'},
+  {id:'ascii', icon:'🖼️', name:'Text Artist', desc:'Generated ASCII art'},
+  {id:'search', icon:'🔍', name:'Explorer', desc:'Used the site search'}
 ];
 let unlocked = new Set();
 try{ unlocked = new Set(JSON.parse(localStorage.getItem('astra-achievements')||'[]')); }catch(e){}
@@ -902,7 +1185,7 @@ function makeBgEngine(canvas, mode){
 
   let particles = [];
   if(mode==='galaxy'){
-    for(let i=0;i<250;i++) particles.push({t:Math.random(), arm:i%3, z:Math.random()});
+    for(let i=0;i<450;i++) particles.push({t:Math.random(), arm:i%4, z:Math.random()});
   } else if(mode==='grid' || mode==='nodes'){
     for(let i=0;i<40;i++) particles.push({x:Math.random(), y:Math.random(), vx:(Math.random()-.5)*0.0006, vy:(Math.random()-.5)*0.0006});
   } else if(mode==='matrix'){
@@ -916,13 +1199,23 @@ function makeBgEngine(canvas, mode){
     if(mode==='galaxy'){
       rot += 0.0015 + boost*0.03;
       expand += ((1 + Math.abs(boost)*0.5) - expand) * 0.05;
+      // bright glowing core
+      const coreGrad = ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,60);
+      coreGrad.addColorStop(0,'rgba(255,255,255,0.9)');
+      coreGrad.addColorStop(0.3,'rgba(0,243,255,0.35)');
+      coreGrad.addColorStop(1,'rgba(0,243,255,0)');
+      ctx.fillStyle = coreGrad;
+      ctx.beginPath(); ctx.arc(w/2,h/2,60,0,Math.PI*2); ctx.fill();
       particles.forEach(p=>{
-        const angle = p.t*6 + rot + p.arm*(Math.PI*2/3);
+        const angle = p.t*6 + rot + p.arm*(Math.PI*2/4);
         const r = (p.t * Math.max(w,h) * 0.55 + 10) * expand;
         const x = w/2 + Math.cos(angle)*r, y = h/2 + Math.sin(angle)*r*0.55;
         const col = [0 + (157)*p.t, 243 + (78-243)*p.t, 255 + (221-255)*p.t];
-        ctx.beginPath(); ctx.arc(x,y,0.3+p.z*1.2,0,Math.PI*2);
-        ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.12+p.z*0.4})`; ctx.fill();
+        ctx.shadowBlur = 6 + p.z*8;
+        ctx.shadowColor = `rgba(${col[0]},${col[1]},${col[2]},0.8)`;
+        ctx.beginPath(); ctx.arc(x,y,0.4+p.z*1.6,0,Math.PI*2);
+        ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.2+p.z*0.6})`; ctx.fill();
+        ctx.shadowBlur = 0;
       });
     } else if(mode==='grid'){
       const speedMul = 1 + Math.abs(boost)*4;
@@ -982,6 +1275,7 @@ activateBg(document.getElementById('hero'));
 
 /* ================= generic tab-switching (reused: peripherals, security, optimization games) ================= */
 document.querySelectorAll('.tabs').forEach(group=>{
+  if(group.dataset.genericSkip === 'true') return;
   group.querySelectorAll('.tabbtn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       group.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
@@ -1264,6 +1558,124 @@ document.querySelectorAll('.tabs').forEach(group=>{
     }catch(err){ msg.className='msg err'; msg.textContent="Microphone permission was not granted, so this test can't run."; }
   });
 })();
+
+/* ================= peripherals: typing speed test ================= */
+(function(){
+  const PROMPTS=[
+    'The quick brown fox jumps over the lazy dog near the riverbank.',
+    'Great hardware means nothing without software that actually uses it well.',
+    'Every keystroke here is measured locally, right in your own browser.',
+    'Space is big, but your keyboard only needs to cover a few dozen keys.',
+    'Practice makes progress, not perfection, and that is perfectly fine.'
+  ];
+  const promptEl=document.getElementById('typing-prompt');
+  const input=document.getElementById('typing-input');
+  const wpmEl=document.getElementById('typing-wpm');
+  const accEl=document.getElementById('typing-acc');
+  let currentPrompt='', startTime=null;
+  function newPrompt(){
+    currentPrompt = PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
+    promptEl.textContent = currentPrompt;
+    input.value=''; startTime=null;
+    wpmEl.textContent='—'; accEl.textContent='—';
+  }
+  input.addEventListener('input', ()=>{
+    if(!startTime) startTime=performance.now();
+    const typed = input.value;
+    let correct=0;
+    for(let i=0;i<typed.length;i++){ if(typed[i]===currentPrompt[i]) correct++; }
+    const acc = typed.length ? Math.round((correct/typed.length)*100) : 100;
+    accEl.textContent = acc+'%';
+    if(typed.length >= currentPrompt.length){
+      const minutes = (performance.now()-startTime)/60000;
+      const words = currentPrompt.split(' ').length;
+      wpmEl.textContent = Math.round(words/Math.max(minutes,0.01)) + ' WPM';
+      unlockAchievement('typing');
+    }
+  });
+  document.getElementById('typing-restart').addEventListener('click', newPrompt);
+  newPrompt();
+})();
+
+/* ================= peripherals: color blindness check ================= */
+(function(){
+  const canvas=document.getElementById('color-plate');
+  const ctx=canvas.getContext('2d');
+  const plates=[
+    {digit:'8', bg:'#e07a3f', fg:'#4a7a3f'},
+    {digit:'3', bg:'#7fae6b', fg:'#c76b6b'},
+    {digit:'5', bg:'#c9a86a', fg:'#7a6b4a'}
+  ];
+  let idx=0;
+  function drawPlate(){
+    const p=plates[idx%plates.length]; idx++;
+    ctx.clearRect(0,0,260,260);
+    for(let i=0;i<900;i++){
+      const x=Math.random()*260, y=Math.random()*260;
+      ctx.beginPath(); ctx.arc(x,y,2+Math.random()*3,0,Math.PI*2);
+      ctx.fillStyle=p.bg; ctx.fill();
+    }
+    ctx.font='bold 120px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle=p.fg; ctx.fillText(p.digit, 130, 135);
+    for(let i=0;i<200;i++){
+      const x=Math.random()*260, y=Math.random()*260;
+      ctx.beginPath(); ctx.arc(x,y,1.5+Math.random()*2,0,Math.PI*2);
+      ctx.fillStyle=p.bg; ctx.fill();
+    }
+    document.getElementById('color-msg').textContent = "If you can't make out a number, mention it to an eye care professional — this is only a rough screening.";
+  }
+  document.getElementById('color-next').addEventListener('click', drawPlate);
+  drawPlate();
+})();
+
+/* ================= peripherals: battery health ================= */
+(function(){
+  if('getBattery' in navigator){
+    navigator.getBattery().then(bat=>{
+      function update(){
+        document.getElementById('batt-level').textContent = Math.round(bat.level*100)+'%';
+        document.getElementById('batt-charging').textContent = bat.charging ? 'Yes' : 'No';
+        const t = bat.charging ? bat.chargingTime : bat.dischargingTime;
+        document.getElementById('batt-time').textContent = (t===Infinity||isNaN(t)) ? 'Unavailable' : Math.round(t/60)+' min';
+      }
+      update();
+      bat.addEventListener('levelchange', update);
+      bat.addEventListener('chargingchange', update);
+    });
+  } else {
+    document.getElementById('batt-level').textContent='Unavailable in this browser';
+    document.getElementById('batt-charging').textContent='Unavailable in this browser';
+    document.getElementById('batt-time').textContent='Chrome/Edge only';
+  }
+})();
+
+/* ================= peripherals: reaction time ================= */
+(function(){
+  const box=document.getElementById('reaction-box');
+  const text=document.getElementById('reaction-text');
+  const resultEl=document.getElementById('reaction-result');
+  const bestEl=document.getElementById('reaction-best');
+  let best=parseInt(localStorage.getItem('astra-reaction-best')||'0',10);
+  if(best) bestEl.textContent=best+' ms';
+  let state='idle', timer=null, startTime=0;
+  box.addEventListener('click', ()=>{
+    if(state==='idle'){
+      state='waiting'; text.textContent='Wait for green…'; box.style.background='rgba(255,84,112,0.15)';
+      const delay = 1000+Math.random()*2500;
+      timer=setTimeout(()=>{
+        state='ready'; startTime=performance.now();
+        text.textContent='Click now!'; box.style.background='rgba(45,224,142,0.25)';
+      }, delay);
+    } else if(state==='waiting'){
+      clearTimeout(timer); state='idle'; text.textContent='Too early — click to try again'; box.style.background='';
+    } else if(state==='ready'){
+      const ms=Math.round(performance.now()-startTime);
+      resultEl.textContent=ms+' ms';
+      if(!best || ms<best){ best=ms; bestEl.textContent=ms+' ms'; localStorage.setItem('astra-reaction-best', best); }
+      state='idle'; text.textContent='Click to try again'; box.style.background='';
+    }
+  });
+})();
 </script>
 <script>
 /* ================= privacy: AES ================= */
@@ -1341,357 +1753,4 @@ document.querySelectorAll('.tabs').forEach(group=>{
       a=ii(a,b,c,d,x[i+12],6,1700485571); d=ii(d,a,b,c,x[i+3],10,-1894986606); c=ii(c,d,a,b,x[i+10],15,-1051523); b=ii(b,c,d,a,x[i+1],21,-2054922799);
       a=ii(a,b,c,d,x[i+8],6,1873313359); d=ii(d,a,b,c,x[i+15],10,-30611744); c=ii(c,d,a,b,x[i+6],15,-1560198380); b=ii(b,c,d,a,x[i+13],21,1309151649);
       a=ii(a,b,c,d,x[i+4],6,-145523070); d=ii(d,a,b,c,x[i+11],10,-1120210379); c=ii(c,d,a,b,x[i+2],15,718787259); b=ii(b,c,d,a,x[i+9],21,-343485551);
-      a=ad(a,oa); b=ad(b,ob); c=ad(c,oc); d=ad(d,od);
-    }
-    return toHex([a,b,c,d]);
-  }
-  const out=document.getElementById('hash-output');
-  document.getElementById('hash-sha256').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-256', document.getElementById('hash-input').value); unlockAchievement('hash'); });
-  document.getElementById('hash-sha512').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-512', document.getElementById('hash-input').value); unlockAchievement('hash'); });
-  document.getElementById('hash-md5').addEventListener('click', ()=>{ out.textContent=md5(document.getElementById('hash-input').value); unlockAchievement('hash'); });
-})();
-
-/* ================= security: password strength ================= */
-(function(){
-  const input=document.getElementById('pw-strength-input');
-  const bar=document.getElementById('strength-bar'), label=document.getElementById('strength-label'), tips=document.getElementById('strength-tips');
-  function evaluate(pw){
-    if(!pw) return {score:0,tips:[]};
-    let score=0; const notes=[];
-    if(pw.length>=8) score+=20; else notes.push('Use at least 8 characters.');
-    if(pw.length>=12) score+=15;
-    if(/[a-z]/.test(pw)) score+=10; else notes.push('Add a lowercase letter.');
-    if(/[A-Z]/.test(pw)) score+=15; else notes.push('Add an uppercase letter.');
-    if(/[0-9]/.test(pw)) score+=15; else notes.push('Add a number.');
-    if(/[^A-Za-z0-9]/.test(pw)) score+=20; else notes.push('Add a symbol.');
-    if(/(.)\1\1/.test(pw)){ score-=10; notes.push('Avoid repeating the same character three times.'); }
-    if(/^(123|abc|password|qwerty)/i.test(pw)){ score-=25; notes.push('Avoid common patterns and words.'); }
-    return {score:Math.max(0,Math.min(100,score)), tips:notes};
-  }
-  input.addEventListener('input', ()=>{
-    const {score, tips:notes}=evaluate(input.value);
-    bar.style.width=score+'%';
-    let color='#ff5470', text='Very weak';
-    if(score>=80){ color='#2de08e'; text='Strong'; } else if(score>=60){ color='#00f3ff'; text='Good'; } else if(score>=35){ color='#9d4edd'; text='Weak'; }
-    bar.style.background=color; label.textContent=input.value?text:'—'; tips.innerHTML=notes.map(n=>`<li>${n}</li>`).join('');
-  });
-})();
-
-/* ================= security: password generator ================= */
-(function(){
-  const lenInput=document.getElementById('gen-length'), lenVal=document.getElementById('gen-length-val');
-  lenInput.addEventListener('input', ()=> lenVal.textContent=lenInput.value);
-  const sets={upper:'ABCDEFGHJKLMNPQRSTUVWXYZ', lower:'abcdefghijkmnpqrstuvwxyz', numbers:'23456789', symbols:'!@#$%^&*()-_=+[]{}'};
-  document.getElementById('gen-generate').addEventListener('click', ()=>{
-    let pool='';
-    if(document.getElementById('gen-upper').checked) pool+=sets.upper;
-    if(document.getElementById('gen-lower').checked) pool+=sets.lower;
-    if(document.getElementById('gen-numbers').checked) pool+=sets.numbers;
-    if(document.getElementById('gen-symbols').checked) pool+=sets.symbols;
-    const out=document.getElementById('gen-output');
-    if(!pool){ out.textContent='Select at least one character type.'; return; }
-    const len=parseInt(lenInput.value,10);
-    const bytes=new Uint32Array(len); crypto.getRandomValues(bytes);
-    let pw=''; for(let i=0;i<len;i++) pw+=pool[bytes[i]%pool.length];
-    out.textContent=pw; unlockAchievement('genpw');
-  });
-  document.getElementById('gen-copy').addEventListener('click', async ()=>{
-    const text=document.getElementById('gen-output').textContent; if(!text) return;
-    try{ await navigator.clipboard.writeText(text); }catch(e){}
-  });
-})();
-
-/* ================= security: pwned password check ================= */
-(function(){
-  async function sha1Hex(str){
-    const buf=await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
-    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-  }
-  document.getElementById('pw-breach-check').addEventListener('click', async ()=>{
-    const result=document.getElementById('breach-result');
-    const pw=document.getElementById('pw-breach-input').value;
-    if(!pw){ result.className='msg err'; result.textContent='Type a password first.'; return; }
-    result.className='msg'; result.textContent='Checking…';
-    try{
-      const hash=await sha1Hex(pw);
-      const prefix=hash.slice(0,5), suffix=hash.slice(5);
-      const res=await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
-      const text=await res.text();
-      const match=text.split('\n').find(l=>l.split(':')[0]===suffix);
-      if(match){
-        const count=parseInt(match.split(':')[1],10);
-        result.className='msg err'; result.textContent=`Found in ${count.toLocaleString()} known breaches — don't use this password.`;
-      } else { result.className='msg ok'; result.textContent='Not found in any known breach database.'; }
-      unlockAchievement('breach');
-    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach database — check your connection.'; }
-  });
-})();
-
-/* ================= security: email breach check ================= */
-(function(){
-  const HIBP_API_KEY = "";
-  document.getElementById('email-breach-check').addEventListener('click', async ()=>{
-    const result=document.getElementById('email-result');
-    const email=document.getElementById('email-breach-input').value.trim();
-    if(!email){ result.className='msg err'; result.textContent='Enter an email address.'; return; }
-    if(!HIBP_API_KEY){ result.className='msg err'; result.textContent='Email Check needs a free/paid Have I Been Pwned API key — see the HIBP_API_KEY line near this block in the script.'; return; }
-    result.className='msg'; result.textContent='Checking…';
-    try{
-      const res=await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}`, {headers:{'hibp-api-key':HIBP_API_KEY}});
-      if(res.status===404){ result.className='msg ok'; result.textContent='No known breaches found for this address.'; }
-      else if(res.ok){ const data=await res.json(); result.className='msg err'; result.textContent=`Found in ${data.length} breach(es): ${data.map(b=>b.Name).join(', ')}`; }
-      else { result.className='msg err'; result.textContent='The breach lookup service returned an error.'; }
-    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach lookup service.'; }
-  });
-})();
-
-/* ================= security: fingerprint ================= */
-(function(){
-  function canvasFingerprint(){
-    try{
-      const c=document.createElement('canvas'); const ctx=c.getContext('2d');
-      ctx.textBaseline='top'; ctx.font='14px Arial'; ctx.fillText('AstraSpec fingerprint 🌌',2,2);
-      return c.toDataURL().slice(-16);
-    }catch(e){ return 'Unavailable'; }
-  }
-  const rows=[
-    ['User agent', navigator.userAgent],['Platform', navigator.platform||'Unavailable'],
-    ['Language(s)', navigator.languages?navigator.languages.join(', '):navigator.language],
-    ['Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone],
-    ['Screen resolution', `${screen.width}×${screen.height}`],['Color depth', screen.colorDepth+'-bit'],
-    ['Device pixel ratio', window.devicePixelRatio],['Cookies enabled', navigator.cookieEnabled?'Yes':'No'],
-    ['Do Not Track', navigator.doNotTrack||'Not set'],['Touch support', ('ontouchstart' in window)?'Yes':'No'],
-    ['Connection type', (navigator.connection&&navigator.connection.effectiveType)||'Unavailable'],
-    ['Canvas fingerprint tail', canvasFingerprint()],['Referrer', document.referrer||'(none — direct visit)']
-  ];
-  document.getElementById('finger-grid').innerHTML = rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><span class="mono">${v}</span></div>`).join('');
-})();
-
-/* ================= security: username search ================= */
-(function(){
-  const platforms=[['GitHub',u=>`https://github.com/${u}`],['X / Twitter',u=>`https://x.com/${u}`],['Instagram',u=>`https://instagram.com/${u}`],
-    ['Reddit',u=>`https://reddit.com/user/${u}`],['TikTok',u=>`https://tiktok.com/@${u}`],['YouTube',u=>`https://youtube.com/@${u}`],
-    ['Pinterest',u=>`https://pinterest.com/${u}`],['Twitch',u=>`https://twitch.tv/${u}`]];
-  document.getElementById('username-search').addEventListener('click', ()=>{
-    const u=document.getElementById('username-input').value.trim();
-    const wrap=document.getElementById('username-links');
-    if(!u){ wrap.innerHTML=''; return; }
-    wrap.innerHTML = platforms.map(([name,fn])=>`<a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${name}</a>`).join('');
-  });
-})();
-
-/* ================= security: privacy warning ================= */
-(function(){
-  const list=document.getElementById('warn-list'); let reportLines=[];
-  function addRow(label,value){ reportLines.push(`${label}: ${value}`); const li=document.createElement('li'); li.innerHTML=`<span>${label}</span><span class="mono">${value}</span>`; list.appendChild(li); }
-  addRow('User agent', navigator.userAgent); addRow('Language', navigator.language);
-  addRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone); addRow('Screen', `${screen.width}×${screen.height}`);
-  addRow('Cookies enabled', navigator.cookieEnabled?'Yes':'No');
-  const ipRow=document.createElement('li'); ipRow.innerHTML=`<span>Public IP & location</span><span class="mono">Loading…</span>`; list.appendChild(ipRow);
-  fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>{
-    const text=`${data.ip} — ${data.city||''}${data.city?', ':''}${data.country_name||''} (${data.org||'Unknown ISP'})`;
-    ipRow.querySelector('span:last-child').textContent=text; reportLines.push(`Public IP & location: ${text}`);
-  }).catch(()=>{ ipRow.querySelector('span:last-child').textContent='Unavailable (network blocked this request)'; });
-  document.getElementById('warn-copy').addEventListener('click', async ()=>{
-    const msg=document.getElementById('warn-msg');
-    try{ await navigator.clipboard.writeText(reportLines.join('\n')); msg.className='msg ok'; msg.textContent='Report copied to clipboard.'; }
-    catch(e){ msg.className='msg err'; msg.textContent='Could not copy — your browser blocked clipboard access.'; }
-  });
-})();
-
-/* ================= security: QR generator ================= */
-(function(){
-  document.getElementById('qr-generate').addEventListener('click', ()=>{
-    const text=document.getElementById('qr-input').value.trim();
-    const out=document.getElementById('qr-output');
-    if(!text){ out.innerHTML=''; return; }
-    const url=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(text)}`;
-    out.innerHTML=`<img src="${url}" alt="QR code" width="220" height="220">`;
-  });
-})();
-
-/* ================= health score ================= */
-(function(){
-  function refresh(){
-    const bench = window.__astraBenchScores || {gaming:0,prod:0};
-    const hw = Math.round((bench.gaming+bench.prod)/2);
-    const secToolsUsed = ['breach','aes','hash','genpw'].filter(id=>unlocked.has(id)).length;
-    const secScore = Math.round((secToolsUsed/4)*100);
-    const overall = Math.round((hw+secScore)/2);
-    let grade='D';
-    if(overall>=85) grade='A'; else if(overall>=70) grade='B'; else if(overall>=50) grade='C';
-    document.getElementById('health-grade').textContent=grade;
-    document.getElementById('health-hw').textContent=hw+' / 100';
-    document.getElementById('health-hw-bar').style.width=hw+'%';
-    document.getElementById('health-sec').textContent=secToolsUsed+' / 4 tools used';
-    document.getElementById('health-sec-bar').style.width=secScore+'%';
-  }
-  document.getElementById('health-refresh').addEventListener('click', refresh);
-  setTimeout(refresh, 2000);
-})();
-
-/* ================= optimization tab logic ================= */
-(function(){
-  document.querySelectorAll('.os-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.os-guide').forEach(g=>g.classList.remove('active'));
-      document.getElementById('guide-'+btn.dataset.os).classList.add('active');
-    });
-  });
-})();
-</script>
-<script>
-/* ================= interactive terminal ================= */
-(function(){
-  const log=document.getElementById('terminal-log');
-  const input=document.getElementById('terminal-input');
-  const box=document.getElementById('terminal-box');
-  function print(text, cls){
-    const d=document.createElement('div'); if(cls) d.className=cls; d.textContent=text;
-    log.appendChild(d); box.scrollTop=box.scrollHeight;
-  }
-  const commands = {
-    help(){ print('Available commands: help, about, whoami, date, echo <text>, neofetch, sudo, theme <retro|default>, clear'); },
-    about(){ print('AstraSpec — a browser-based PC diagnostic and security toolkit. Everything here runs client-side.'); },
-    whoami(){ print('You are a visitor to AstraSpec. No login, no tracking of identity.'); },
-    date(){ print(new Date().toString()); },
-    echo(args){ print(args.join(' ')||''); },
-    neofetch(){
-      const os = document.getElementById('os-val').textContent;
-      const cores = document.getElementById('cores-val').textContent;
-      const gpu = document.getElementById('gpu-val').textContent;
-      print(`OS: ${os}\nCores: ${cores}\nGPU: ${gpu}\nSite: AstraSpec v2.0`);
-    },
-    sudo(){ print("Nice try — this terminal doesn't touch your real system. 😄"); },
-    theme(args){
-      const mode = args[0];
-      if(mode==='retro'){ document.body.classList.add('retro-mode'); localStorage.setItem('astra-retro','1'); print('Retro mode enabled.'); }
-      else if(mode==='default'){ document.body.classList.remove('retro-mode'); localStorage.setItem('astra-retro','0'); print('Theme reset.'); }
-      else print('Usage: theme <retro|default>');
-    },
-    clear(){ log.innerHTML=''; },
-    konami(){ print('Try the arrow keys and B, A on your actual keyboard... 👀'); }
-  };
-  input.addEventListener('keydown', e=>{
-    if(e.key!=='Enter') return;
-    const raw=input.value.trim(); input.value='';
-    if(!raw) return;
-    print('> '+raw, 'term-line');
-    unlockAchievement('terminal');
-    const parts=raw.split(' ');
-    const cmd=parts[0].toLowerCase();
-    const args=parts.slice(1);
-    if(commands[cmd]) commands[cmd](args);
-    else print(`Command not found: ${cmd}. Type 'help' for a list.`);
-  });
-})();
-
-/* ================= shared mini-game engine (used by both games) ================= */
-function buildFlappyGame(opts){
-  const canvas=document.getElementById(opts.canvasId);
-  const ctx=canvas.getContext('2d');
-  const scoreEl=document.getElementById(opts.scoreId);
-  const bestEl=document.getElementById(opts.bestId);
-  let best = parseInt(localStorage.getItem(opts.bestKey)||'0',10);
-  bestEl.textContent = best;
-
-  let bird, pipes, score, running, gravity, flapPower;
-  function resize(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
-  resize(); window.addEventListener('resize', resize);
-
-  function reset(){
-    bird = {x:canvas.width*0.25, y:canvas.height/2, vy:0, r:14};
-    pipes = [];
-    score = 0; running = true;
-    gravity = opts.gravity; flapPower = opts.flapPower;
-    scoreEl.textContent = '0';
-    spawnPipe();
-    requestAnimationFrame(loop);
-  }
-  function spawnPipe(){
-    const gap = 130;
-    const y = 40 + Math.random()*(canvas.height-80-gap);
-    pipes.push({x:canvas.width+20, gapY:y, gap, passed:false});
-  }
-  function flap(){ if(!running) return; bird.vy = flapPower; }
-  function drawChar(){
-    ctx.save(); ctx.translate(bird.x, bird.y);
-    const rot = Math.max(-0.5, Math.min(0.9, bird.vy*0.05));
-    ctx.rotate(rot);
-    if(opts.getChar && opts.getChar()==='windows'){
-      ctx.fillStyle='#00f3ff'; ctx.fillRect(-12,-12,11,11);
-      ctx.fillStyle='#9d4edd'; ctx.fillRect(1,-12,11,11);
-      ctx.fillStyle='#9d4edd'; ctx.fillRect(-12,1,11,11);
-      ctx.fillStyle='#00f3ff'; ctx.fillRect(1,1,11,11);
-    } else if(opts.getChar && opts.getChar()==='macos'){
-      ctx.fillStyle='#9d4edd'; ctx.beginPath(); ctx.arc(0,0,13,0,Math.PI*2); ctx.fill();
-    } else if(opts.getChar && opts.getChar()==='ship'){
-      ctx.fillStyle='#00f3ff';
-      ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(-10,-9); ctx.lineTo(-5,0); ctx.lineTo(-10,9); ctx.closePath(); ctx.fill();
-    } else {
-      ctx.fillStyle='#e9e9f2'; ctx.beginPath(); ctx.ellipse(0,0,11,14,0,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#f5a623'; ctx.beginPath(); ctx.moveTo(-6,10); ctx.lineTo(6,10); ctx.lineTo(0,16); ctx.fill();
-    }
-    ctx.restore();
-  }
-  function loop(){
-    if(!running) return;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    bird.vy += gravity; bird.y += bird.vy;
-    ctx.fillStyle='rgba(0,243,255,0.08)';
-    for(let i=0;i<5;i++) ctx.fillRect((i*80+((Date.now()/20)%80)) % canvas.width, 0, 2, canvas.height);
-
-    pipes.forEach(p=>{
-      p.x -= opts.speed;
-      ctx.fillStyle='#9d4edd';
-      ctx.fillRect(p.x, 0, 26, p.gapY);
-      ctx.fillRect(p.x, p.gapY+p.gap, 26, canvas.height-(p.gapY+p.gap));
-      if(!p.passed && p.x+26 < bird.x){ p.passed=true; score++; scoreEl.textContent=score; }
-      if(bird.x+bird.r > p.x && bird.x-bird.r < p.x+26){
-        if(bird.y-bird.r < p.gapY || bird.y+bird.r > p.gapY+p.gap) endGame();
-      }
-    });
-    pipes = pipes.filter(p=>p.x > -30);
-    if(pipes.length===0 || pipes[pipes.length-1].x < canvas.width-220) spawnPipe();
-
-    if(bird.y+bird.r > canvas.height || bird.y-bird.r < 0) endGame();
-    drawChar();
-    if(running) requestAnimationFrame(loop);
-  }
-  function endGame(){
-    running=false;
-    if(score>best){ best=score; localStorage.setItem(opts.bestKey, best); bestEl.textContent=best; }
-    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#fff'; ctx.font='20px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('Game over — press Start to retry', canvas.width/2, canvas.height/2);
-    unlockAchievement('game');
-  }
-  canvas.addEventListener('pointerdown', flap);
-  window.addEventListener('keydown', e=>{ if(e.code==='Space' && document.getElementById(opts.canvasId).offsetParent) { e.preventDefault(); flap(); } });
-  document.getElementById(opts.startId).addEventListener('click', reset);
-  return {reset};
-}
-
-/* Flappy Byte */
-let flapChar = 'windows';
-document.querySelectorAll('#flap-chars .char-opt').forEach(opt=>{
-  opt.addEventListener('click', ()=>{
-    document.querySelectorAll('#flap-chars .char-opt').forEach(o=>o.classList.remove('active'));
-    opt.classList.add('active'); flapChar = opt.dataset.char;
-  });
-});
-buildFlappyGame({
-  canvasId:'flap-canvas', scoreId:'flap-score', bestId:'flap-best', startId:'flap-start',
-  bestKey:'astra-flap-best', gravity:0.45, flapPower:-7, speed:2.6,
-  getChar: ()=>flapChar
-});
-
-/* Glide — same engine, different pacing, no character select (uses a simple ship shape) */
-buildFlappyGame({
-  canvasId:'glide-canvas', scoreId:'glide-score', bestId:'glide-best', startId:'glide-start',
-  bestKey:'astra-glide-best', gravity:0.28, flapPower:-5.5, speed:3.4,
-  getChar: ()=> 'ship'
-});
-</script>
-</body>
-</html>
+      a=ad(a,o
