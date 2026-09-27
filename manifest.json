@@ -1,0 +1,16 @@
+{
+  "name": "AstraSpec — PC Benchmark & Hardware Diagnostics",
+  "short_name": "AstraSpec",
+  "description": "A free browser-based toolkit for PC benchmarking, hardware diagnostics, DNS testing, peripheral checks, and password security tools.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05050a",
+  "theme_color": "#05050a",
+  "orientation": "any",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
