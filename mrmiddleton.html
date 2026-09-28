@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Best Tutor Of All Times - Mr Middleton</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- KaTeX for crisp mathematical typography -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#0B132B',
+                            800: '#1C2541',
+                            700: '#3A506B',
+                        },
+                        amber: {
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        },
+                        cyan: {
+                            400: '#38BDF8',
+                            500: '#0EA5E9',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styling & animations */
+        body {
+            background-color: #070B19;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(28, 37, 65, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card-gold {
+            background: rgba(28, 37, 65, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.15);
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FFF5C0 0%, #F59E0B 50%, #D97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-cyan {
+            background: linear-gradient(135deg, #E0F2FE 0%, #38BDF8 50%, #0284C7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070B19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1C2541;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3A506B;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-navy-900">
+
+    <!-- Interactive Background Canvas -->
+    <canvas id="mathCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20 text-navy-900 font-bold font-serif text-xl">
+                    <i class="fa-solid font-mono">∑</i>
+                </div>
+                <span class="font-serif text-lg tracking-wider font-semibold text-slate-200">Tribute to Excellence</span>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-300">
+                <a href="#hero" class="hover:text-amber-400 transition-colors">Home</a>
+                <a href="#tribute" class="hover:text-amber-400 transition-colors">Tribute Message</a>
+                <a href="#formulas" class="hover:text-amber-400 transition-colors">Mastered Formulas</a>
+                <a href="#visualizer" class="hover:text-amber-400 transition-colors">Function Plotter</a>
+                <a href="#notes" class="hover:text-amber-400 transition-colors">Student Gratitude</a>
+            </nav>
+            <a href="#notes" class="px-4 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold hover:bg-amber-500 hover:text-navy-900 transition-all duration-300">
+                <i class="fa-solid fa-heart mr-1.5"></i> Say Thank You
+            </a>
+        </div>
+    </header>
+
+    <main class="relative z-10 space-y-24 pb-20">
+
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[85vh] flex items-center justify-center px-4 pt-12 relative">
+            <div class="max-w-5xl mx-auto text-center space-y-8">
+                
+                <!-- Honor Badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-amber-500/30 text-amber-400 text-xs md:text-sm font-mono tracking-widest uppercase animate-pulse">
+                    <i class="fa-solid fa-award text-amber-400"></i>
+                    <span>Dedicated to Mathematical Mastery & Pedagogy</span>
+                </div>
+
+                <!-- Main Heading -->
+                <div class="space-y-4">
+                    <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-100 font-serif leading-tight">
+                        The Best Tutor Of All Times
+                    </h1>
+                    <!-- Strongly Contrasted Next Line -->
+                    <div class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-serif tracking-wide pt-2">
+                        <span class="text-gradient-gold block drop-shadow-[0_10px_25px_rgba(245,158,11,0.3)]">
+                            Mr Middleton
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Subtle Decorative Divider with Math Symbol -->
+                <div class="flex items-center justify-center gap-4 py-2 text-slate-500">
+                    <div class="h-[1px] w-24 bg-gradient-to-r from-transparent to-amber-500/50"></div>
+                    <span class="font-mono text-amber-400/80 text-lg">∫ (Patience × Logic) dt = ∞</span>
+                    <div class="h-[1px] w-24 bg-gradient-to-l from-transparent to-amber-500/50"></div>
+                </div>
+
+                <!-- Subtitle / Tagline -->
+                <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 font-light leading-relaxed">
+                    Transforming complex equations into moments of pure clarity. A master of logic, a guide through numbers, and an educator who inspires intellectual curiosity every single day.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 pt-4">
+                    <a href="#visualizer" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-navy-900 font-bold shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-chart-line"></i> Explore Interactive Math
+                    </a>
+                    <a href="#tribute" class="px-6 py-3.5 rounded-xl glass-card text-slate-200 hover:text-white border border-slate-700 hover:border-amber-500/40 hover:bg-slate-800/50 transition-all flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-solid fa-book-open"></i> Read Tribute
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Tribute Message Section -->
+        <section id="tribute" class="max-w-6xl mx-auto px-4">
+            <div class="glass-card-gold rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <!-- Background Geometric Motif -->
+                <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Left Column: Quote & Appreciation -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 text-amber-400 font-mono text-sm tracking-wider uppercase">
+                            <i class="fa-solid fa-graduation-cap"></i> An Educator's Legacy
+                        </div>
+                        <h2 class="text-2xl md:text-4xl font-serif font-bold text-slate-100">
+                            Where Logic Meets True Inspiration
+                        </h2>
+                        <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                            Great teaching is not merely about explaining formulas; it is about illuminating the elegance behind them. Mr Middleton possesses that rare ability to demystify abstract mathematical concepts, turning formidable challenges into rewarding puzzles.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                            His unwavering patience, intellectual rigor, and genuine passion for mathematics instill confidence in every student he guides. Thank you for making mathematics an art form worth exploring.
+                        </p>
+                        <div class="pt-2 flex items-center gap-4 text-xs text-amber-400/80 font-mono">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-amber-500"></i> Rigorous Logic</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-amber-500"></i> Infinite Patience</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-amber-500"></i> Passionate Pedagogy</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Stat / Quote Grid -->
+                    <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+                        <div class="glass-card p-5 rounded-2xl border border-slate-700/60 text-center space-y-2">
+                            <div class="text-3xl md:text-4xl font-bold font-serif text-amber-400">100%</div>
+                            <div class="text-xs text-slate-400 font-medium">Clarity & Dedication</div>
+                        </div>
+                        <div class="glass-card p-5 rounded-2xl border border-slate-700/60 text-center space-y-2">
+                            <div class="text-3xl md:text-4xl font-bold font-mono text-cyan-400">e<sup>iπ</sup>+1</div>
+                            <div class="text-xs text-slate-400 font-medium">Elegance in Teaching</div>
+                        </div>
+                        <div class="glass-card p-5 rounded-2xl border border-slate-700/60 text-center space-y-2">
+                            <div class="text-3xl md:text-4xl font-bold font-serif text-amber-400">φ</div>
+                            <div class="text-xs text-slate-400 font-medium">Golden Ratio of Mentorship</div>
+                        </div>
+                        <div class="glass-card p-5 rounded-2xl border border-slate-700/60 text-center space-y-2">
+                            <div class="text-3xl md:text-4xl font-bold font-mono text-cyan-400">∞</div>
+                            <div class="text-xs text-slate-400 font-medium">Impact Made</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Mastered Formulas Section -->
+        <section id="formulas" class="max-w-6xl mx-auto px-4 space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="text-xs font-mono tracking-widest text-amber-400 uppercase">The Art of Mathematics</h2>
+                <h3 class="text-3xl md:text-4xl font-serif font-bold text-slate-100">Equations Made Simple By Mr Middleton</h3>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm">
+                    Click any mathematical breakthrough below to reveal how Mr Middleton brings these profound concepts to life.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="equationContainer">
+                <!-- Dynamic Formula Cards injected via Javascript -->
+            </div>
+        </section>
+
+        <!-- Interactive Math Visualizer (Function Plotter) -->
+        <section id="visualizer" class="max-w-6xl mx-auto px-4">
+            <div class="glass-card rounded-3xl p-6 md:p-8 border border-slate-700/80 space-y-6">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="text-xs font-mono text-amber-400 uppercase tracking-widest">Interactive Tribute Canvas</span>
+                        <h3 class="text-2xl font-serif font-bold text-slate-100">Wave Harmonics & Function Visualizer</h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs font-mono text-slate-300">Function:</label>
+                        <select id="funcSelect" class="bg-navy-800 text-amber-400 border border-slate-700 rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-amber-500">
+                            <option value="sin">f(x) = A · sin(B·x + C)</option>
+                            <option value="cos">f(x) = A · cos(B·x + C)</option>
+                            <option value="damped">f(x) = A · e^(-0.2x) · sin(B·x)</option>
+                            <option value="polynomial">f(x) = 0.1x³ - x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Canvas Wrapper -->
+                <div class="relative w-full h-72 md:h-80 bg-navy-900/90 rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center">
+                    <canvas id="plotterCanvas" class="w-full h-full"></canvas>
+                </div>
+
+                <!-- Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Amplitude (A)</span>
+                            <span id="ampVal" class="text-amber-400">1.5</span>
+                        </div>
+                        <input type="range" id="ampInput" min="0.5" max="3" step="0.1" value="1.5" class="w-full accent-amber-500 bg-navy-800 cursor-pointer">
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Frequency (B)</span>
+                            <span id="freqVal" class="text-amber-400">2.0</span>
+                        </div>
+                        <input type="range" id="freqInput" min="0.5" max="5" step="0.1" value="2.0" class="w-full accent-amber-500 bg-navy-800 cursor-pointer">
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Animation Speed</span>
+                            <span id="speedVal" class="text-amber-400">1.0</span>
+                        </div>
+                        <input type="range" id="speedInput" min="0" max="3" step="0.2" value="1.0" class="w-full accent-amber-500 bg-navy-800 cursor-pointer">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Student Appreciation Notes -->
+        <section id="notes" class="max-w-6xl mx-auto px-4 space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="text-xs font-mono tracking-widest text-amber-400 uppercase">Words of Gratitude</h2>
+                <h3 class="text-3xl md:text-4xl font-serif font-bold text-slate-100">Student Notes & Appreciation Wall</h3>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm">
+                    Leave a quick tribute note for Mr Middleton below to highlight his impact.
+                </p>
+            </div>
+
+            <!-- Notes Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="notesGrid">
+                <!-- Preset Cards -->
+                <div class="glass-card p-6 rounded-2xl border border-slate-700/60 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-amber-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "Mr Middleton made me realize that math isn't about memorizing rules, but about understanding the beauty of logical thinking."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs font-mono">A</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Former Student</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Calculus Honors</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-slate-700/60 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-amber-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "Thank you for your infinite patience during office hours. You never gave up on explaining vectors until it clicked!"
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs font-mono">M</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Algebra Student</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Class of 2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-slate-700/60 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-amber-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "The absolute gold standard of math teachers. Engaging, humorous, incredibly knowledgeable, and deeply dedicated."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs font-mono">S</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Grateful Parent</div>
+                            <div class="text-[10px] text-slate-500 font-mono">Appreciation Note</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form to Add New Note -->
+            <div class="glass-card p-6 rounded-2xl border border-slate-700 max-w-xl mx-auto space-y-4">
+                <h4 class="text-base font-serif font-semibold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-amber-400"></i> Leave a Note for Mr Middleton
+                </h4>
+                <div class="space-y-3">
+                    <input type="text" id="noteAuthor" placeholder="Your Name or Designation (e.g. Student, Parent)" class="w-full bg-navy-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                    <textarea id="noteContent" rows="3" placeholder="Write your message of gratitude..." class="w-full bg-navy-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500"></textarea>
+                    <button id="addNoteBtn" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Post Appreciation Note
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-navy-900/60 py-8 px-4 text-center relative z-10">
+        <div class="max-w-6xl mx-auto space-y-4">
+            <div class="font-serif text-amber-400 text-lg font-bold">
+                The Best Tutor Of All Times — Mr Middleton
+            </div>
+            <p class="text-xs text-slate-500 font-mono">
+                Crafted with Appreciation & Mathematical Precision • Q.E.D.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA: Famous Formulas ---
+        const formulas = [
+            {
+                title: "Euler's Identity",
+                latex: "e^{i\\pi} + 1 = 0",
+                desc: "Connecting five fundamental constants of math in one beautiful relation. Mr Middleton uses this to show the uncanny harmony in mathematics."
+            },
+            {
+                title: "Golden Ratio",
+                latex: "\\phi = \\frac{1 + \\sqrt{5}}{2}",
+                desc: "The mathematical backbone of natural aesthetics and balance. Taught as a bridge between pure numbers and geometry."
+            },
+            {
+                title: "Fundamental Theorem of Calculus",
+                latex: "\\int_{a}^{b} f(x) dx = F(b) - F(a)",
+                desc: "Unifying rate of change with area under a curve. Explored with clarity and intuitive visual geometric proofs."
+            },
+            {
+                title: "Fourier Transform",
+                latex: "\\hat{f}(\\xi) = \\int_{-\\infty}^{\\infty} f(x) e^{-2\\pi i x \\xi} dx",
+                desc: "Breaking down complex waves into clean frequencies. Taught as the mathematical key to modern audio and signal science."
+            },
+            {
+                title: "Pythagorean Theorem",
+                latex: "a^2 + b^2 = c^2",
+                desc: "The timeless foundation of Euclidean space. Taught not just as a formula, but as a gateway to trigonometry."
+            },
+            {
+                title: "Normal Distribution",
+                latex: "f(x) = \\frac{1}{\\sigma \\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}",
+                desc: "The majestic bell curve governing randomness and real-world data, simplified with practical examples."
+            }
+        ];
+
+        // --- RENDER FORMULAS WITH KATEX ---
+        function renderFormulas() {
+            const container = document.getElementById('equationContainer');
+            container.innerHTML = '';
+
+            formulas.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-6 rounded-2xl border border-slate-700/60 hover:border-amber-500/40 transition-all cursor-pointer group hover:-translate-y-1 duration-300";
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs font-mono text-amber-400">Formula 0${index + 1}</span>
+                        <i class="fa-solid fa-sparkles text-slate-600 group-hover:text-amber-400 transition-colors text-xs"></i>
+                    </div>
+                    <h4 class="text-base font-serif font-bold text-slate-200 mb-3">${item.title}</h4>
+                    <div class="bg-navy-900/80 p-4 rounded-xl border border-slate-800 text-center my-3 overflow-x-auto min-h-[60px] flex items-center justify-center">
+                        <span id="katex-${index}" class="text-slate-100 text-lg"></span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">${item.desc}</p>
+                `;
+
+                container.appendChild(card);
+
+                // Render KaTeX after appending
+                try {
+                    katex.render(item.latex, document.getElementById(`katex-${index}`), {
+                        throwOnError: false
+                    });
+                } catch(e) {
+                    console.error("KaTeX rendering error:", e);
+                }
+            });
+        }
+
+        // --- INTERACTIVE BACKGROUND MATH SYMBOLS CANVAS ---
+        const bgCanvas = document.getElementById('mathCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgSymbols = [];
+        const symbolsList = ['π', '∑', '∫', '√', '∞', 'Δ', 'θ', 'λ', 'f(x)', 'e', 'φ', '≠', '≈', '∇'];
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            initBgSymbols();
+        }
+
+        function initBgSymbols() {
+            bgSymbols = [];
+            const count = Math.floor(window.innerWidth / 35);
+            for (let i = 0; i < count; i++) {
+                bgSymbols.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * bgCanvas.height,
+                    text: symbolsList[Math.floor(Math.random() * symbolsList.length)],
+                    size: Math.random() * 18 + 12,
+                    speedY: (Math.random() - 0.5) * 0.4,
+                    speedX: (Math.random() - 0.5) * 0.4,
+                    opacity: Math.random() * 0.4 + 0.1
+                });
+            }
+        }
+
+        function animateBgCanvas() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            
+            bgSymbols.forEach(s => {
+                s.x += s.speedX;
+                s.y += s.speedY;
+
+                if (s.x < 0) s.x = bgCanvas.width;
+                if (s.x > bgCanvas.width) s.x = 0;
+                if (s.y < 0) s.y = bgCanvas.height;
+                if (s.y > bgCanvas.height) s.y = 0;
+
+                bgCtx.fillStyle = `rgba(245, 158, 11, ${s.opacity})`;
+                bgCtx.font = `${s.size}px "Fira Code", monospace`;
+                bgCtx.fillText(s.text, s.x, s.y);
+            });
+
+            requestAnimationFrame(animateBgCanvas);
+        }
+
+        // --- FUNCTION PLOTTER VISUALIZER CANVAS ---
+        const plotCanvas = document.getElementById('plotterCanvas');
+        const plotCtx = plotCanvas.getContext('2d');
+        let animationFrameId;
+        let time = 0;
+
+        const funcSelect = document.getElementById('funcSelect');
+        const ampInput = document.getElementById('ampInput');
+        const freqInput = document.getElementById('freqInput');
+        const speedInput = document.getElementById('speedInput');
+
+        const ampVal = document.getElementById('ampVal');
+        const freqVal = document.getElementById('freqVal');
+        const speedVal = document.getElementById('speedVal');
+
+        function resizePlotCanvas() {
+            const rect = plotCanvas.parentElement.getBoundingClientRect();
+            plotCanvas.width = rect.width;
+            plotCanvas.height = rect.height;
+        }
+
+        function drawPlotter() {
+            plotCtx.clearRect(0, 0, plotCanvas.width, plotCanvas.height);
+
+            const width = plotCanvas.width;
+            const height = plotCanvas.height;
+            const centerY = height / 2;
+            const centerX = width / 2;
+
+            // Draw Grid
+            plotCtx.strokeStyle = '#1C2541';
+            plotCtx.lineWidth = 1;
+
+            // Vertical Grid Lines
+            for (let x = 0; x < width; x += 40) {
+                plotCtx.beginPath();
+                plotCtx.moveTo(x, 0);
+                plotCtx.lineTo(x, height);
+                plotCtx.stroke();
+            }
+
+            // Horizontal Grid Lines
+            for (let y = 0; y < height; y += 40) {
+                plotCtx.beginPath();
+                plotCtx.moveTo(0, y);
+                plotCtx.lineTo(width, y);
+                plotCtx.stroke();
+            }
+
+            // Main Axes
+            plotCtx.strokeStyle = '#3A506B';
+            plotCtx.lineWidth = 1.5;
+            
+            // X Axis
+            plotCtx.beginPath();
+            plotCtx.moveTo(0, centerY);
+            plotCtx.lineTo(width, centerY);
+            plotCtx.stroke();
+
+            // Y Axis
+            plotCtx.beginPath();
+            plotCtx.moveTo(centerX, 0);
+            plotCtx.lineTo(centerX, height);
+            plotCtx.stroke();
+
+            // Dynamic Inputs
+            const A = parseFloat(ampInput.value);
+            const B = parseFloat(freqInput.value);
+            const speed = parseFloat(speedInput.value);
+            const mode = funcSelect.value;
+
+            ampVal.innerText = A.toFixed(1);
+            freqVal.innerText = B.toFixed(1);
+            speedVal.innerText = speed.toFixed(1);
+
+            // Draw Function Curve
+            plotCtx.beginPath();
+            plotCtx.strokeStyle = '#F59E0B';
+            plotCtx.lineWidth = 3;
+            plotCtx.shadowColor = '#F59E0B';
+            plotCtx.shadowBlur = 10;
+
+            const scaleY = 40;
+            const scaleX = 0.02;
+
+            for (let pixelX = 0; pixelX < width; pixelX++) {
+                const xVal = (pixelX - centerX) * scaleX;
+                let yVal = 0;
+
+                if (mode === 'sin') {
+                    yVal = A * Math.sin(B * xVal + time);
+                } else if (mode === 'cos') {
+                    yVal = A * Math.cos(B * xVal + time);
+                } else if (mode === 'damped') {
+                    yVal = A * Math.exp(-0.2 * Math.abs(xVal)) * Math.sin(B * xVal + time);
+                } else if (mode === 'polynomial') {
+                    yVal = 0.1 * Math.pow(xVal, 3) - xVal + Math.sin(time);
+                }
+
+                const pixelY = centerY - (yVal * scaleY);
+
+                if (pixelX === 0) {
+                    plotCtx.moveTo(pixelX, pixelY);
+                } else {
+                    plotCtx.lineTo(pixelX, pixelY);
+                }
+            }
+
+            plotCtx.stroke();
+            plotCtx.shadowBlur = 0; // Reset shadow
+
+            time += 0.03 * speed;
+            animationFrameId = requestAnimationFrame(drawPlotter);
+        }
+
+        // --- STUDENT NOTE SUBMISSION LOGIC ---
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const noteAuthor = document.getElementById('noteAuthor');
+        const noteContent = document.getElementById('noteContent');
+        const notesGrid = document.getElementById('notesGrid');
+
+        addNoteBtn.addEventListener('click', () => {
+            const author = noteAuthor.value.trim() || 'Anonymous Student';
+            const content = noteContent.value.trim();
+
+            if (!content) {
+                alert('Please enter a note before posting!');
+                return;
+            }
+
+            const newCard = document.createElement('div');
+            newCard.className = "glass-card p-6 rounded-2xl border border-amber-500/40 relative flex flex-col justify-between animate-fade-in";
+            newCard.innerHTML = `
+                <i class="fa-solid fa-quote-left text-amber-500/20 text-4xl absolute top-4 right-4"></i>
+                <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                    "${content}"
+                </p>
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                    <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs font-mono">
+                        ${author.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-slate-200">${author}</div>
+                        <div class="text-[10px] text-amber-400 font-mono">Just added</div>
+                    </div>
+                </div>
+            `;
+
+            notesGrid.prepend(newCard);
+            noteContent.value = '';
+            noteAuthor.value = '';
+        });
+
+        // --- WINDOW ONLOAD INITIALIZATION ---
+        window.onload = function() {
+            renderFormulas();
+            resizeBgCanvas();
+            animateBgCanvas();
+            resizePlotCanvas();
+            drawPlotter();
+        };
+
+        window.onresize = function() {
+            resizeBgCanvas();
+            resizePlotCanvas();
+        };
+    </script>
+</body>
+</html>
