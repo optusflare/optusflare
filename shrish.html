@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>This Page Is Made For Shrish - Brawl Stars Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bs-yellow: #FFD200;
+      --bs-orange: #FF7E00;
+      --bs-purple: #8C52FF;
+      --bs-pink: #FF3366;
+      --bs-blue: #00C3FF;
+      --bs-dark-blue: #0D1B2A;
+      --bs-green: #00E676;
+      --bs-red: #FF2A2A;
+      --bs-bg-dark: #121928;
+      --bs-card-bg: #1C263B;
+      --bs-card-border: #2A3958;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bs-bg-dark);
+      color: #FFFFFF;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 210, 0, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(140, 82, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 2px);
+      background-size: 100% 100%, 100% 100%, 30px 30px;
+      padding-bottom: 50px;
+    }
+
+    /* HEADER & BANNER */
+    header {
+      background: linear-gradient(180deg, #1A263D 0%, #0D1424 100%);
+      border-bottom: 5px solid var(--bs-yellow);
+      padding: 25px 20px 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, var(--bs-yellow), var(--bs-pink), var(--bs-blue), var(--bs-purple));
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .stat-badge {
+      background: rgba(0, 0, 0, 0.4);
+      border: 3px solid #32446A;
+      border-radius: 50px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 1rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .stat-badge.trophies { border-color: var(--bs-yellow); color: var(--bs-yellow); }
+    .stat-badge.gems { border-color: var(--bs-green); color: var(--bs-green); }
+    .stat-badge.starpower { border-color: var(--bs-purple); color: #C084FC; }
+
+    .main-title {
+      font-family: 'Lilita One', cursive;
+      font-size: 3.2rem;
+      color: var(--bs-yellow);
+      text-transform: uppercase;
+      text-shadow: 
+        4px 4px 0px #000,
+        -2px -2px 0px #000,
+        2px -2px 0px #000,
+        -2px 2px 0px #000,
+        0px 6px 15px rgba(255, 210, 0, 0.4);
+      letter-spacing: 2px;
+      margin: 10px 0;
+      transform: rotate(-1.5deg);
+    }
+
+    .subtitle {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.3rem;
+      color: #7A93C0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* NAVIGATION / TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 25px 20px 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      border: 3px solid #000;
+      border-radius: 14px;
+      background: #25334D;
+      color: #A0B2D6;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 5px 0 #000;
+      text-transform: uppercase;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #000;
+      color: #FFF;
+    }
+
+    .tab-btn.active {
+      background: var(--bs-yellow);
+      color: #000;
+      box-shadow: 0 5px 0 #B39300;
+      border-color: #000;
+    }
+
+    .tab-btn.active:hover {
+      box-shadow: 0 7px 0 #B39300;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* BRAWLER ROSTER */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      font-family: 'Lilita One', cursive;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 2px solid #000;
+      background: #1C263B;
+      color: #8A9EC4;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #000;
+    }
+
+    .filter-btn.active {
+      background: var(--bs-pink);
+      color: #FFF;
+    }
+
+    .grid-roster {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* BRAWLER CARD */
+    .brawler-card {
+      background: var(--bs-card-bg);
+      border: 4px solid #000;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 0 #000;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brawler-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card-header {
+      padding: 15px;
+      position: relative;
+      background: linear-gradient(135deg, #2A3A5C 0%, #172136 100%);
+      border-bottom: 4px solid #000;
+      text-align: center;
+    }
+
+    .brawler-card.legendary .card-header { background: linear-gradient(135deg, #FFF066 0%, #FF9900 100%); color: #000; }
+    .brawler-card.mythic .card-header { background: linear-gradient(135deg, #FF5577 0%, #B30000 100%); }
+    .brawler-card.epic .card-header { background: linear-gradient(135deg, #D070FF 0%, #7000B3 100%); }
+
+    .rarity-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-family: 'Lilita One', cursive;
+      font-size: 0.8rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
+      color: #FFF;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .brawler-avatar {
+      font-size: 4rem;
+      margin: 10px 0;
+      filter: drop-shadow(0 5px 0px rgba(0,0,0,0.5));
+    }
+
+    .brawler-name {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 #000;
+      color: #FFF;
+    }
+
+    .brawler-card.legendary .brawler-name { color: #FFF; text-shadow: 2px 2px 0 #000, 0 0 10px rgba(0,0,0,0.5); }
+
+    .brawler-class {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      opacity: 0.9;
+      letter-spacing: 1px;
+    }
+
+    .card-body {
+      padding: 15px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .stat-value {
+      color: var(--bs-yellow);
+      font-family: 'Lilita One', cursive;
+      font-size: 1.1rem;
+    }
+
+    .hypercharge-badge {
+      background: linear-gradient(90deg, #FF007A, #9900FF);
+      color: #FFF;
+      font-family: 'Lilita One', cursive;
+      padding: 6px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.9rem;
+      border: 2px solid #000;
+      margin-top: 5px;
+      box-shadow: 0 0 10px rgba(255, 0, 122, 0.5);
+    }
+
+    .select-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      font-family: 'Lilita One', cursive;
+      font-size: 1.1rem;
+      background: var(--bs-green);
+      color: #000;
+      border: 3px solid #000;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #000;
+      text-transform: uppercase;
+    }
+
+    .select-btn:hover {
+      background: #00FF84;
+    }
+
+    /* TEAM BUILDER SECTION */
+    .builder-panel {
+      background: var(--bs-card-bg);
+      border: 4px solid #000;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 0 #000;
+    }
+
+    .team-slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      .team-slots { grid-template-columns: 1fr; }
+    }
+
+    .slot-card {
+      background: #131B2A;
+      border: 3px dashed #3A4E75;
+      border-radius: 15px;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+    }
+
+    .slot-card.filled {
+      border: 3px solid #000;
+      background: #1F2C44;
+      box-shadow: 0 5px 0 #000;
+    }
+
+    .slot-card .remove-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--bs-red);
+      color: #FFF;
+      border: 2px solid #000;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+    }
+
+    .slot-card.filled .remove-btn { display: flex; align-items: center; justify-content: center; }
+
+    .team-stats-summary {
+      background: #0D1424;
+      border: 3px solid #000;
+      border-radius: 15px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .summary-box {
+      text-align: center;
+    }
+
+    .summary-title {
+      font-size: 0.85rem;
+      color: #7A93C0;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .summary-val {
+      font-family: 'Lilita One', cursive;
+      font-size: 2rem;
+      color: var(--bs-yellow);
+    }
+
+    /* STARR DROP SIMULATOR */
+    .starr-box {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bs-card-bg);
+      border: 4px solid #000;
+      border-radius: 20px;
+      box-shadow: 0 10px 0 #000;
+    }
+
+    .starr-drop-icon {
+      font-size: 8rem;
+      margin: 20px 0;
+      cursor: pointer;
+      display: inline-block;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
+    }
+
+    .starr-drop-icon:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .starr-drop-icon.opening {
+      animation: starrShake 0.5s infinite alternate;
+    }
+
+    @keyframes starrShake {
+      0% { transform: rotate(-10deg) scale(1.05); }
+      100% { transform: rotate(10deg) scale(1.15); }
+    }
+
+    .drop-result {
+      font-family: 'Lilita One', cursive;
+      font-size: 2.2rem;
+      margin-top: 15px;
+      min-height: 50px;
+      color: var(--bs-yellow);
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .open-btn {
+      font-family: 'Lilita One', cursive;
+      font-size: 1.5rem;
+      padding: 15px 40px;
+      background: linear-gradient(180deg, #FFD200 0%, #FF8800 100%);
+      color: #000;
+      border: 4px solid #000;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #B35900;
+      text-transform: uppercase;
+    }
+
+    .open-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #B35900;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="top-bar">
+      <div class="stat-badge trophies">🏆 75,000 TROPHIES</div>
+      <div class="stat-badge gems">💎 999 GEMS</div>
+      <div class="stat-badge starpower">⚡ HYPERCHARGE UNLOCKED</div>
+    </div>
+    <h1 class="main-title">THIS PAGE IS MADE FOR SHRISH</h1>
+    <p class="subtitle">⭐ BRAWL STARS ULTIMATE BRAWLER HUB ⭐</p>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('roster')">🥊 Brawler Roster</button>
+    <button class="tab-btn" onclick="switchTab('builder')">🛡️ Team Builder</button>
+    <button class="tab-btn" onclick="switchTab('starr')">🎁 Starr Drop Opener</button>
+  </div>
+
+  <main class="container">
+    
+    <!-- TAB 1: BRAWLER ROSTER -->
+    <section id="tab-roster">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterBrawlers('all', this)">All Brawlers</button>
+        <button class="filter-btn" onclick="filterBrawlers('legendary', this)">Legendary</button>
+        <button class="filter-btn" onclick="filterBrawlers('mythic', this)">Mythic</button>
+        <button class="filter-btn" onclick="filterBrawlers('epic', this)">Epic</button>
+      </div>
+
+      <div class="grid-roster" id="roster-grid">
+        <!-- Dynamically Generated via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: TEAM BUILDER -->
+    <section id="tab-builder" class="hidden">
+      <div class="builder-panel">
+        <h2 style="font-family: 'Lilita One', cursive; font-size: 2rem; color: var(--bs-yellow); text-shadow: 2px 2px 0 #000; text-align: center;">
+          3v3 TEAM DRAFT
+        </h2>
+        <p style="text-align: center; color: #7A93C0; margin-bottom: 20px;">Select brawlers from the roster to calculate team stats!</p>
+        
+        <div class="team-slots">
+          <div class="slot-card" id="slot-0">
+            <span style="color: #4E6591; font-weight: 800;">SLOT 1 EMPTY</span>
+          </div>
+          <div class="slot-card" id="slot-1">
+            <span style="color: #4E6591; font-weight: 800;">SLOT 2 EMPTY</span>
+          </div>
+          <div class="slot-card" id="slot-2">
+            <span style="color: #4E6591; font-weight: 800;">SLOT 3 EMPTY</span>
+          </div>
+        </div>
+
+        <div class="team-stats-summary">
+          <div class="summary-box">
+            <div class="summary-title">Combined Health</div>
+            <div class="summary-val" id="team-hp">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-title">Total Burst DPS</div>
+            <div class="summary-val" id="team-dps">0</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-title">Synergy Rating</div>
+            <div class="summary-val" id="team-synergy">N/A</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: STARR DROP SIMULATOR -->
+    <section id="tab-starr" class="hidden">
+      <div class="starr-box">
+        <h2 style="font-family: 'Lilita One', cursive; font-size: 2.2rem; color: #FFF; text-shadow: 2px 2px 0 #000;">STARR DROP SIMULATOR</h2>
+        <p style="color: #7A93C0; margin-top: 5px;">Tap the Starr Drop for Shrish's exclusive rewards!</p>
+        
+        <div>
+          <div class="starr-drop-icon" id="starr-drop" onclick="openStarrDrop()">⭐</div>
+        </div>
+
+        <button class="open-btn" onclick="openStarrDrop()">OPEN STARR DROP!</button>
+        <div class="drop-result" id="drop-result"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Audio Synth Engine (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'click') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } else if (type === 'legendary') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      }
+    }
+
+    // Brawlers Data
+    const brawlers = [
+      { id: 'leon', name: 'Leon', rarity: 'legendary', class: 'Assassin', hp: 6400, dps: 3840, speed: 'Very Fast', super: 'Smoke Bomb (Invisibility)', hyper: 'Limbo (Speed & Invis Kill)', icon: '🦎' },
+      { id: 'crow', name: 'Crow', rarity: 'legendary', class: 'Assassin', hp: 4800, dps: 2880, speed: 'Very Fast', super: 'Swoop (Poison Daggers)', hyper: 'Poisonous Ring', icon: '🦅' },
+      { id: 'spike', name: 'Spike', rarity: 'legendary', class: 'Damage Dealer', hp: 4800, dps: 4160, speed: 'Normal', super: 'Stick Around (AoE Slow)', hyper: 'Blooming Super (20% Wider)', icon: '🌵' },
+      { id: 'fang', name: 'Fang', rarity: 'epic', class: 'Assassin', hp: 8600, dps: 3000, speed: 'Fast', super: 'Dragon Kick (Chained Dash)', hyper: 'Dragon Dragon (Wall Pass)', icon: '👟' },
+      { id: 'mortis', name: 'Mortis', rarity: 'mythic', class: 'Assassin', hp: 7600, dps: 2000, speed: 'Very Fast', super: 'Life Steal Bats', hyper: 'Hyper Storm (Double Bats)', icon: '🦇' },
+      { id: 'piper', name: 'Piper', rarity: 'epic', class: 'Marksman', hp: 4800, dps: 3400, speed: 'Normal', super: 'Poppin (Bomb Escape)', hyper: 'Booby Trap Drop', icon: '☂️' },
+      { id: 'edgar', name: 'Edgar', rarity: 'epic', class: 'Assassin', hp: 6000, dps: 4300, speed: 'Very Fast', super: 'Vault (Jump & Boost)', hyper: 'Outburst (Speed Reload)', icon: '🧣' },
+      { id: 'colt', name: 'Colt', rarity: 'damage', class: 'Damage Dealer', hp: 5600, dps: 4320, speed: 'Normal', super: 'Bullet Storm (Wall Break)', hyper: 'Dual Wield (120% Bullets)', icon: '🤠' }
+    ];
+
+    let team = [];
+
+    // Render Brawlers Roster
+    function renderRoster(filter = 'all') {
+      const grid = document.getElementById('roster-grid');
+      grid.innerHTML = '';
+
+      const filtered = filter === 'all' ? brawlers : brawlers.filter(b => b.rarity === filter);
+
+      filtered.forEach(b => {
+        const card = document.createElement('div');
+        card.className = `brawler-card ${b.rarity}`;
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="rarity-tag">${b.rarity}</span>
+            <div class="brawler-avatar">${b.icon}</div>
+            <div class="brawler-name">${b.name}</div>
+            <div class="brawler-class">${b.class}</div>
+          </div>
+          <div class="card-body">
+            <div class="stat-row"><span>HEALTH:</span><span class="stat-value">${b.hp}</span></div>
+            <div class="stat-row"><span>BURST DPS:</span><span class="stat-value">${b.dps}</span></div>
+            <div class="stat-row"><span>SPEED:</span><span class="stat-value" style="color:#FFF">${b.speed}</span></div>
+            <div class="stat-row"><span>SUPER:</span><span class="stat-value" style="color:var(--bs-blue); font-size:0.85rem">${b.super}</span></div>
+            <div class="hypercharge-badge">⚡ HYPERCHARGE: ${b.hyper}</div>
+            <button class="select-btn" onclick="addToTeam('${b.id}')">ADD TO TEAM</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterBrawlers(rarity, btn) {
+      playSound('click');
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRoster(rarity);
+    }
+
+    function switchTab(tabId) {
+      playSound('click');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('tab-roster').classList.add('hidden');
+      document.getElementById('tab-builder').classList.add('hidden');
+      document.getElementById('tab-starr').classList.add('hidden');
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+    }
+
+    // Team Builder Logic
+    function addToTeam(brawlerId) {
+      playSound('click');
+      if (team.length >= 3) {
+        alert("Shrish's Team is already full! Remove a brawler first.");
+        return;
+      }
+      const brawler = brawlers.find(b => b.id === brawlerId);
+      if (team.some(b => b.id === brawlerId)) {
+        alert(`${brawler.name} is already in your team!`);
+        return;
+      }
+      team.push(brawler);
+      updateTeamUI();
+    }
+
+    function removeFromTeam(index) {
+      playSound('click');
+      team.splice(index, 1);
+      updateTeamUI();
+    }
+
+    function updateTeamUI() {
+      let totalHP = 0;
+      let totalDPS = 0;
+
+      for (let i = 0; i < 3; i++) {
+        const slotEl = document.getElementById(`slot-${i}`);
+        if (team[i]) {
+          const b = team[i];
+          totalHP += b.hp;
+          totalDPS += b.dps;
+          slotEl.className = 'slot-card filled';
+          slotEl.innerHTML = `
+            <button class="remove-btn" onclick="removeFromTeam(${i})">✕</button>
+            <div style="font-size: 3rem;">${b.icon}</div>
+            <div style="font-family:'Lilita One', cursive; font-size: 1.4rem; color: var(--bs-yellow);">${b.name}</div>
+            <div style="font-size: 0.8rem; color:#A0B2D6; font-weight:800;">${b.class.toUpperCase()}</div>
+          `;
+        } else {
+          slotEl.className = 'slot-card';
+          slotEl.innerHTML = `<span style="color: #4E6591; font-weight: 800;">SLOT ${i+1} EMPTY</span>`;
+        }
+      }
+
+      document.getElementById('team-hp').innerText = totalHP.toLocaleString();
+      document.getElementById('team-dps').innerText = totalDPS.toLocaleString();
+
+      const synergyEl = document.getElementById('team-synergy');
+      if (team.length === 3) {
+        synergyEl.innerText = "S+ (GOD TIER)";
+        synergyEl.style.color = "var(--bs-green)";
+      } else if (team.length > 0) {
+        synergyEl.innerText = "BUILDING...";
+        synergyEl.style.color = "var(--bs-yellow)";
+      } else {
+        synergyEl.innerText = "N/A";
+        synergyEl.style.color = "#7A93C0";
+      }
+    }
+
+    // Starr Drop Opener Logic
+    function openStarrDrop() {
+      playSound('legendary');
+      const drop = document.getElementById('starr-drop');
+      const result = document.getElementById('drop-result');
+
+      drop.classList.add('opening');
+      result.innerText = "Tapping Starr Drop...";
+
+      setTimeout(() => {
+        drop.classList.remove('opening');
+        const rewards = [
+          "⚡ HYPERCHARGE UNLOCKED FOR LEON!",
+          "🏆 +1,000 TROPHIES FOR SHRISH!",
+          "👑 LEGENDARY BRAWLER UNLOCKED!",
+          "💎 500 GEMS STASH FOUND!",
+          "✨ ULTRA RARE SKIN: MECHA CROW!"
+        ];
+        const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+        result.innerText = randomReward;
+      }, 1000);
+    }
+
+    // Initial Setup
+    renderRoster();
+  </script>
+</body>
+</html>
