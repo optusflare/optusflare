@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This Page Is Made For Alonzo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030014;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #spaceCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Glowing text gradient matching reference photo */
+        .cosmic-title-gradient {
+            background: linear-gradient(135deg, #38bdf8 0%, #a855f7 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 35px rgba(168, 85, 247, 0.45);
+        }
+
+        /* Floating keyframes for floating astronaut, elephant, and items */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-22px) rotate(4deg); }
+        }
+
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(22px) rotate(-4deg); }
+        }
+
+        @keyframes driftHorizontal {
+            0% { transform: translate(-10%, 0) rotate(-2deg); }
+            50% { transform: translate(10%, -15px) rotate(3deg); }
+            100% { transform: translate(-10%, 0) rotate(-2deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6)); }
+            50% { filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.9)); }
+        }
+
+        .floating-element {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        .floating-element-reverse {
+            animation: floatReverse 7s ease-in-out infinite;
+        }
+
+        .drifting-elephant {
+            animation: floatSlow 7s ease-in-out infinite, driftHorizontal 16s ease-in-out infinite;
+        }
+
+        .glowing-box {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .glowing-box:hover {
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.35);
+            transform: translateY(-4px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030014;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e1b4b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b0764;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+    <!-- Animated Canvas Background -->
+    <canvas id="spaceCanvas"></canvas>
+
+    <header class="relative z-10 w-full pt-6 px-6 max-w-6xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3 glowing-box px-4 py-2 rounded-full border border-cyan-500/30">
+            <i class="fa-solid font-orbitron text-cyan-400 fa-user-astronaut text-xl"></i>
+            <span class="font-orbitron text-xs sm:text-sm tracking-wider text-cyan-200 uppercase">AstraSpec // Deep Space Node</span>
+        </div>
+        <div class="flex items-center gap-2 glowing-box px-4 py-2 rounded-full border border-purple-500/30 text-xs sm:text-sm text-purple-300">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="font-semibold">Dedicated for Alonzo</span>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 py-8 max-w-6xl mx-auto w-full">
+        
+        <!-- Floating Astronaut & Drifting Strawberry Elephant Banner -->
+        <div class="relative w-full my-4 flex justify-center items-center gap-6 sm:gap-12 flex-wrap">
+            
+            <!-- Drifting Strawberry Elephant (Grow a Garden) -->
+            <div class="drifting-elephant relative group cursor-pointer" onclick="inspectItem('Strawberry Elephant', 'Rare plant/creature hybrid drifting through cosmic orbit in Grow a Garden!', 'https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant')">
+                <div class="w-32 h-32 sm:w-44 sm:h-44 rounded-2xl p-2 bg-gradient-to-tr from-pink-500/20 to-emerald-500/20 border border-pink-500/40 glowing-box flex items-center justify-center relative overflow-hidden">
+                    <img src="https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant" 
+                         onerror="this.src='https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant'" 
+                         alt="Strawberry Elephant Grow a Garden" 
+                         class="w-full h-full object-cover rounded-xl transform group-hover:scale-110 transition-transform duration-300">
+                    <span class="absolute top-2 left-2 bg-pink-950/80 border border-pink-500/40 text-pink-300 text-[10px] px-2 py-0.5 rounded font-orbitron">Grow A Garden</span>
+                </div>
+            </div>
+
+            <!-- Astronaut Icon -->
+            <div class="relative">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 mx-auto floating-element relative flex items-center justify-center">
+                    <svg class="w-full h-full text-cyan-400" style="animation: pulseGlow 4s infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a8 8 0 0 0-8 8v3a8 8 0 0 0 16 0v-3a8 8 0 0 0-8-8z"/>
+                        <path d="M9 10a3 3 0 0 1 6 0v2a3 3 0 0 1-6 0v-2z" fill="#030014"/>
+                        <path d="M12 18v4"/>
+                        <path d="M8 22h8"/>
+                        <circle cx="12" cy="11" r="1.5" fill="#38bdf8"/>
+                        <path d="M4 11H2"/>
+                        <path d="M22 11h-2"/>
+                    </svg>
+                </div>
+                <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-950/90 border border-purple-500/50 rounded-full text-[10px] text-purple-300 tracking-widest font-orbitron uppercase shadow-lg">
+                    Commander Alonzo
+                </div>
+            </div>
+
+        </div>
+
+        <h1 class="font-orbitron font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-none mb-6 cosmic-title-gradient">
+            This Page Is Made For Alonzo
+        </h1>
+
+        <p class="text-slate-300 text-base sm:text-xl max-w-2xl mx-auto font-light leading-relaxed mb-8">
+            Floating through deep space with custom Roblox worlds — featuring <span class="text-pink-400 font-semibold">Grow a Garden</span>, <span class="text-cyan-400 font-semibold">Rivals</span>, and <span class="text-purple-400 font-semibold">Steal a Brainrot</span>!
+        </p>
+
+        <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6 text-left my-6">
+            
+            <!-- GROW A GARDEN SECTION -->
+            <div class="glowing-box rounded-2xl p-6 border-emerald-500/30 hover:border-emerald-400/60 transition-all group relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-xl">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <span class="text-xs font-orbitron text-emerald-400 uppercase tracking-wider bg-emerald-950/80 px-2.5 py-1 rounded-md border border-emerald-500/20">Grow A Garden</span>
+                    </div>
+                    
+                    <h2 class="font-orbitron text-lg font-bold text-emerald-200 mb-2">Space Garden Flora</h2>
+                    <p class="text-slate-400 text-sm mb-4">Zero-gravity botanical crops featuring the legendary Strawberry Elephant drifting through deep space!</p>
+                </div>
+
+                <!-- Floating Strawberry Elephant Image Card -->
+                <div class="pt-3 border-t border-slate-800/80">
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-4 floating-element hover:border-emerald-500/50 cursor-pointer" onclick="inspectItem('Strawberry Elephant', 'A giant strawberry elephant roaming through space in Grow a Garden.', 'https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant')">
+                        <img src="https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant" 
+                             onerror="this.src='https://placehold.co/400x300/e11d48/ffffff?text=Strawberry+Elephant'" 
+                             alt="Strawberry Elephant" 
+                             class="w-16 h-16 object-cover rounded-lg border border-pink-500/30">
+                        <div>
+                            <h3 class="font-orbitron text-sm text-pink-300 font-semibold">Strawberry Elephant</h3>
+                            <p class="text-[11px] text-slate-400">Mythic Crop Pet • Floating in Orbit</p>
+                            <span class="inline-block mt-1 text-[10px] text-emerald-400 font-orbitron"><i class="fa-solid fa-sparkles"></i> Click to Inspect</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIVALS SECTION -->
+            <div class="glowing-box rounded-2xl p-6 border-cyan-500/30 hover:border-cyan-400/60 transition-all group relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xl">
+                            <i class="fa-solid fa-crosshairs"></i>
+                        </div>
+                        <span class="text-xs font-orbitron text-cyan-400 uppercase tracking-wider bg-cyan-950/80 px-2.5 py-1 rounded-md border border-cyan-500/20">Rivals FPS</span>
+                    </div>
+                    
+                    <h2 class="font-orbitron text-lg font-bold text-cyan-200 mb-2">Rivals Armory</h2>
+                    <p class="text-slate-400 text-sm mb-4">High-caliber competitive FPS Loadout gear for Alonzo: Sniper, Handgun, and Assault Rifle.</p>
+                </div>
+
+                <!-- Rivals Weapons Thumbnails -->
+                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/80">
+                    <!-- Sniper -->
+                    <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex flex-col items-center floating-element cursor-pointer hover:border-cyan-400" onclick="inspectItem('Green Sniper Rifle', 'Long-range precision sniper rifle from Roblox Rivals.', 'https://placehold.co/400x300/15803d/ffffff?text=Sniper+Rifle')">
+                        <img src="https://placehold.co/400x300/15803d/ffffff?text=Sniper+Rifle" 
+                             onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Sniper+Rifle'" 
+                             alt="Rivals Sniper Rifle" 
+                             class="w-12 h-10 object-contain rounded">
+                        <span class="text-[10px] font-orbitron text-cyan-300 mt-1">Sniper</span>
+                    </div>
+
+                    <!-- Handgun -->
+                    <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex flex-col items-center floating-element-reverse cursor-pointer hover:border-cyan-400" onclick="inspectItem('Tactical Handgun', 'High velocity sidearm weapon equipped for close combat in Rivals.', 'https://placehold.co/400x300/334155/ffffff?text=Handgun')">
+                        <img src="https://placehold.co/400x300/334155/ffffff?text=Handgun" 
+                             onerror="this.src='https://placehold.co/400x300/334155/ffffff?text=Handgun'" 
+                             alt="Rivals Handgun" 
+                             class="w-12 h-10 object-contain rounded">
+                        <span class="text-[10px] font-orbitron text-cyan-300 mt-1">Handgun</span>
+                    </div>
+
+                    <!-- Assault Rifle -->
+                    <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800 flex flex-col items-center floating-element cursor-pointer hover:border-cyan-400" onclick="inspectItem('Assault Rifle', 'Standard issue high fire-rate assault rifle from Roblox Rivals.', 'https://placehold.co/400x300/d97706/ffffff?text=Assault+Rifle')">
+                        <img src="https://placehold.co/400x300/d97706/ffffff?text=Assault+Rifle" 
+                             onerror="this.src='https://placehold.co/400x300/d97706/ffffff?text=Assault+Rifle'" 
+                             alt="Rivals Assault Rifle" 
+                             class="w-12 h-10 object-contain rounded">
+                        <span class="text-[10px] font-orbitron text-cyan-300 mt-1">Rifle</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEAL A BRAINROT SECTION -->
+            <div class="glowing-box rounded-2xl p-6 border-purple-500/30 hover:border-purple-400/60 transition-all group relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-400 text-xl">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <span class="text-xs font-orbitron text-purple-400 uppercase tracking-wider bg-purple-950/80 px-2.5 py-1 rounded-md border border-purple-500/20">Steal a Brainrot</span>
+                    </div>
+                    
+                    <h2 class="font-orbitron text-lg font-bold text-purple-200 mb-2">Fragrama & Chocrama</h2>
+                    <p class="text-slate-400 text-sm mb-4">Ultra-rare brainrot collectibles secured in Alonzo's orbital space safe!</p>
+                </div>
+
+                <!-- Brainrot Showcase Card -->
+                <div class="pt-3 border-t border-slate-800/80">
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-4 floating-element-reverse hover:border-purple-500/50 cursor-pointer" onclick="inspectItem('Fragrama & Chocrama', '1x Fragrama & 1x Chocrama from Steal a Brainrot!', 'https://placehold.co/400x300/7e22ce/ffffff?text=Fragrama+%26+Chocrama')">
+                        <img src="https://placehold.co/400x300/7e22ce/ffffff?text=Fragrama+%26+Chocrama" 
+                             onerror="this.src='https://placehold.co/400x300/7e22ce/ffffff?text=Fragrama+%26+Chocrama'" 
+                             alt="Steal a Brainrot Fragrama and Chocrama" 
+                             class="w-16 h-16 object-cover rounded-lg border border-purple-500/30">
+                        <div>
+                            <h3 class="font-orbitron text-sm text-purple-300 font-semibold">Fragrama & Chocrama</h3>
+                            <p class="text-[11px] text-slate-400">Steal A Brainrot • Legendary Duo</p>
+                            <span class="inline-block mt-1 text-[10px] text-purple-400 font-orbitron"><i class="fa-solid fa-sparkles"></i> Click to Inspect</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-4 justify-center items-center">
+            <button id="warpBtn" class="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-500 text-white font-orbitron text-sm font-bold tracking-wider hover:opacity-90 shadow-lg shadow-purple-500/25 transition-all transform active:scale-95 flex items-center gap-2">
+                <i class="fa-solid fa-rocket"></i> Activate Hyperdrive Speed
+            </button>
+            <button id="starBurstBtn" class="px-6 py-3 rounded-full glowing-box border border-cyan-500/40 text-cyan-300 font-orbitron text-sm font-semibold hover:bg-cyan-950/50 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-sparkles"></i> Launch Stardust Burst
+            </button>
+        </div>
+
+    </main>
+
+    <div id="inspectModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glowing-box max-w-md w-full rounded-2xl p-6 border-purple-500/50 relative text-center">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="modalImg" src="" alt="Inspect Item" class="w-full h-48 object-contain rounded-xl bg-slate-950 p-2 mb-4 border border-slate-800">
+            <h3 id="modalTitle" class="font-orbitron text-xl font-bold text-purple-300 mb-2">Item Name</h3>
+            <p id="modalDesc" class="text-slate-300 text-sm mb-6">Item description goes here...</p>
+            <button onclick="closeModal()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-orbitron text-sm font-semibold transition-colors">
+                Close Viewer
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 w-full py-6 text-center text-xs text-slate-500 font-orbitron border-t border-slate-800/50 backdrop-blur-md">
+        <p>Made Specially For Alonzo • Astronaut Theme Experience • Grow a Garden x Rivals x Steal a Brainrot</p>
+    </footer>
+
+    <script>
+        // Canvas Space Background Animation
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStars();
+        });
+
+        let stars = [];
+        const numStars = 240;
+        let speedMultiplier = 1;
+
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = (Math.random() - 0.5) * width * 1.5;
+                this.y = (Math.random() - 0.5) * height * 1.5;
+                this.z = Math.random() * width;
+                this.size = Math.random() * 1.8 + 0.5;
+                this.color = ['#ffffff', '#c7d2fe', '#a5f3fc', '#f472b6', '#38bdf8'][Math.floor(Math.random() * 5)];
+                this.twinkleSpeed = Math.random() * 0.03 + 0.005;
+                this.alpha = Math.random();
+            }
+
+            update() {
+                this.z -= 0.8 * speedMultiplier;
+                if (this.z <= 0) {
+                    this.reset();
+                    this.z = width;
+                }
+
+                this.alpha += this.twinkleSpeed;
+                if (this.alpha > 1 || this.alpha < 0.2) {
+                    this.twinkleSpeed = -this.twinkleSpeed;
+                }
+            }
+
+            draw() {
+                const k = 256 / this.z;
+                const px = this.x * k + width / 2;
+                const py = this.y * k + height / 2;
+
+                if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                    const size = Math.max(0.1, (1 - this.z / width) * this.size * 2.5);
+                    ctx.beginPath();
+                    ctx.arc(px, py, size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = Math.min(1, Math.max(0.1, this.alpha));
+                    ctx.shadowBlur = size * 3;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < numStars; i++) {
+                stars.push(new Star());
+            }
+        }
+
+        // Particle Burst FX
+        let burstParticles = [];
+
+        class BurstParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 9;
+                this.vy = (Math.random() - 0.5) * 9;
+                this.size = Math.random() * 4 + 2;
+                this.color = ['#38bdf8', '#a855f7', '#10b981', '#f43f5e', '#f59e0b'][Math.floor(Math.random() * 5)];
+                this.life = 1.0;
+                this.decay = Math.random() * 0.02 + 0.015;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function createBurst(x, y) {
+            for (let i = 0; i < 45; i++) {
+                burstParticles.push(new BurstParticle(x, y));
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = '#030014';
+            ctx.fillRect(0, 0, width, height);
+
+            for (let star of stars) {
+                star.update();
+                star.draw();
+            }
+
+            for (let i = burstParticles.length - 1; i >= 0; i--) {
+                const p = burstParticles[i];
+                p.update();
+                p.draw();
+                if (p.life <= 0) {
+                    burstParticles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Warp button
+        let isWarp = false;
+        const warpBtn = document.getElementById('warpBtn');
+        warpBtn.addEventListener('click', (e) => {
+            isWarp = !isWarp;
+            if (isWarp) {
+                speedMultiplier = 12;
+                warpBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Slow Down Speed';
+                warpBtn.classList.add('ring-4', 'ring-purple-400');
+            } else {
+                speedMultiplier = 1;
+                warpBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Activate Hyperdrive Speed';
+                warpBtn.classList.remove('ring-4', 'ring-purple-400');
+            }
+            createBurst(e.clientX, e.clientY);
+        });
+
+        // Burst button
+        const starBurstBtn = document.getElementById('starBurstBtn');
+        starBurstBtn.addEventListener('click', () => {
+            createBurst(window.innerWidth / 2, window.innerHeight / 2);
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('button') && !e.target.closest('.glowing-box')) {
+                createBurst(e.clientX, e.clientY);
+            }
+        });
+
+        // Modal Inspect Functions
+        function inspectItem(title, desc, imgSrc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('inspectModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('inspectModal').classList.add('hidden');
+        }
+
+        // Initialize space animation
+        window.onload = function() {
+            initStars();
+            animate();
+        };
+    </script>
+</body>
+</html>
