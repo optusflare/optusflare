@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHREYASS // CYBER CORE OS</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Share Tech Mono, Space Grotesk, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,800;1,400&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#030712',
+                            panel: '#0B0F19',
+                            card: '#111827',
+                            border: '#1F293D',
+                            neon: '#00FF66',
+                            cyan: '#00F0FF',
+                            pink: '#FF0055',
+                            amber: '#FFB800',
+                            purple: '#9D00FF'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['Share Tech Mono', 'monospace'],
+                        jetbrains: ['JetBrains Mono', 'monospace'],
+                        sans: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #00FF66;
+            --secondary-color: #00F0FF;
+            --accent-pink: #FF0055;
+            --glow-primary: rgba(0, 255, 102, 0.4);
+        }
+
+        body {
+            background-color: #030712;
+            color: #E2E8F0;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* CRT Scanline Effect */
+        .crt-scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px;
+        }
+
+        /* Holographic Glows */
+        .neon-border-glow {
+            box-shadow: 0 0 15px var(--glow-primary), inset 0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .text-neon-glow {
+            text-shadow: 0 0 8px var(--primary-color), 0 0 20px var(--primary-color);
+        }
+
+        .text-cyan-glow {
+            text-shadow: 0 0 8px #00F0FF, 0 0 20px #00F0FF;
+        }
+
+        /* Glitch Effect */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .glitch-hover:hover {
+            animation: glitch 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .pulse-active {
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative text-slate-200 selection:bg-emerald-500 selection:text-black">
+
+    <div class="pointer-events-none fixed inset-0 z-50 crt-scanlines opacity-60"></div>
+    <canvas id="matrix-canvas" class="fixed inset-0 z-0 opacity-20 pointer-events-none"></canvas>
+
+    <!-- MAIN OS WRAPPER -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- TOP CYBER OPERATING SYSTEM HEADER -->
+        <header class="border-b border-cyber-border bg-cyber-panel/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- System Title / User Badge -->
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/50 flex items-center justify-center text-emerald-400 font-mono text-xl font-bold neon-border-glow">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-mono tracking-widest text-emerald-400 uppercase">SYS_OPERATOR //</span>
+                            <span class="px-2 py-0.5 text-[10px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800 rounded">ENCRYPTED</span>
+                        </div>
+                        <h1 class="text-lg font-mono font-bold tracking-wider text-white">SHREYAS.SYS v4.02</h1>
+                    </div>
+                </div>
+
+                <!-- Theme Customizer & Audio Sound Deck Controls -->
+                <div class="flex items-center gap-3">
+                    <!-- Audio Toggle -->
+                    <button id="sfx-btn" onclick="toggleAudio()" class="px-3 py-1.5 bg-cyber-card hover:bg-slate-800 border border-cyber-border rounded text-xs font-mono flex items-center gap-2 transition">
+                        <i id="sfx-icon" class="fa-solid fa-volume-high text-emerald-400"></i>
+                        <span id="sfx-text" class="hidden sm:inline text-slate-300">SFX: ON</span>
+                    </button>
+
+                    <!-- Theme Switcher -->
+                    <div class="flex items-center gap-1.5 bg-cyber-card border border-cyber-border p-1 rounded">
+                        <button onclick="setTheme('neon')" title="Cyberpunk Neon" class="w-6 h-6 rounded bg-emerald-500 border border-white/20 transition transform hover:scale-110"></button>
+                        <button onclick="setTheme('cyan')" title="Deep Cyan" class="w-6 h-6 rounded bg-cyan-400 border border-white/20 transition transform hover:scale-110"></button>
+                        <button onclick="setTheme('pink')" title="Neon Pink" class="w-6 h-6 rounded bg-rose-500 border border-white/20 transition transform hover:scale-110"></button>
+                        <button onclick="setTheme('amber')" title="Solar Amber" class="w-6 h-6 rounded bg-amber-400 border border-white/20 transition transform hover:scale-110"></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 space-y-12">
+
+            <!-- HERO STATEMENT BANNER -->
+            <section class="relative bg-gradient-to-r from-cyber-panel via-cyber-card to-cyber-panel border border-cyber-border rounded-2xl p-8 md:p-12 overflow-hidden shadow-2xl">
+                <!-- Decorative Corner Cutouts -->
+                <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-emerald-500/20 to-transparent border-t border-r border-emerald-500/50"></div>
+                <div class="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-cyan-500/20 to-transparent border-b border-l border-cyan-500/50"></div>
+
+                <div class="relative z-10 text-center max-w-4xl mx-auto space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 font-mono text-xs tracking-widest uppercase">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        Deep Space Neural Hub Authorized
+                    </div>
+
+                    <!-- MANDATORY SPECIFIED TEXT DISPLAY -->
+                    <h1 class="text-4xl sm:text-6xl md:text-7xl font-mono font-black tracking-tight text-white uppercase">
+                        This Page Is Made For <span id="shreyass-title" class="text-emerald-400 text-neon-glow inline-block transition-all duration-300 transform hover:scale-105">Shreyas</span>
+                    </h1>
+
+                    <p class="text-slate-400 font-sans text-base sm:text-lg max-w-2xl mx-auto">
+                        Welcome to your bespoke cybernetic command deck. Calibrate reactor nodes, equip experimental combat modules, and execute real-time terminal diagnostics.
+                    </p>
+
+                    <!-- Realtime System Status Ticker -->
+                    <div class="pt-4 flex flex-wrap items-center justify-center gap-6 font-mono text-xs">
+                        <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-lg border border-slate-800">
+                            <span class="text-slate-500">CORE STATUS:</span>
+                            <span class="text-emerald-400 font-bold">100% NOMINAL</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-lg border border-slate-800">
+                            <span class="text-slate-500">NEURAL LINK:</span>
+                            <span class="text-cyan-400 font-bold">STABLE (1.2 ms)</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-lg border border-slate-800">
+                            <span class="text-slate-500">CYBER DECK RATING:</span>
+                            <span id="deck-rating-val" class="text-amber-400 font-bold">CLASS-S</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <!-- PANEL 1: SHREYAS'S POWER NODE CALIBRATION -->
+                <div class="lg:col-span-1 bg-cyber-panel border border-cyber-border rounded-xl p-6 flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-cyber-border">
+                            <h2 class="font-mono font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-atom text-emerald-400"></i> REACTOR NODES
+                            </h2>
+                            <span class="text-[10px] font-mono text-slate-400">CALIBRATION</span>
+                        </div>
+
+                        <p class="text-xs text-slate-400 mb-6">Adjust system frequency sliders to boost Shreyas's overall cyber deck output power.</p>
+
+                        <!-- Sliders -->
+                        <div class="space-y-5 font-mono text-xs">
+                            <!-- Node 1 -->
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-slate-300">NEURAL PROCESSING</span>
+                                    <span id="val-p1" class="text-emerald-400 font-bold">75%</span>
+                                </div>
+                                <input type="range" id="slider-p1" min="10" max="100" value="75" oninput="updatePower()" class="w-full accent-emerald-400 bg-slate-800 rounded cursor-pointer">
+                            </div>
+
+                            <!-- Node 2 -->
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-slate-300">SHIELD MATRIX</span>
+                                    <span id="val-p2" class="text-cyan-400 font-bold">60%</span>
+                                </div>
+                                <input type="range" id="slider-p2" min="10" max="100" value="60" oninput="updatePower()" class="w-full accent-cyan-400 bg-slate-800 rounded cursor-pointer">
+                            </div>
+
+                            <!-- Node 3 -->
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-slate-300">WEAPON FREQUENCY</span>
+                                    <span id="val-p3" class="text-rose-400 font-bold">90%</span>
+                                </div>
+                                <input type="range" id="slider-p3" min="10" max="100" value="90" oninput="updatePower()" class="w-full accent-rose-400 bg-slate-800 rounded cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Power Calculation Indicator -->
+                    <div class="bg-cyber-card p-4 rounded-xl border border-cyber-border text-center">
+                        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-widest">TOTAL DECK OUTPUT</div>
+                        <div id="total-output" class="text-3xl font-mono font-black text-emerald-400 my-1 text-neon-glow">225 MW</div>
+                        <button onclick="overdriveReactor()" class="mt-2 w-full py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 rounded font-mono text-xs font-bold transition glitch-hover">
+                            <i class="fa-solid fa-bolt mr-1"></i> INITIATE OVERDRIVE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PANEL 2 & 3: CYBERWARE & WEAPONS MODULE FITTING BAY -->
+                <div class="lg:col-span-2 bg-cyber-panel border border-cyber-border rounded-xl p-6 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-cyber-border">
+                        <div>
+                            <h2 class="font-mono font-bold text-white text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-microchip text-cyan-400"></i> SHREYAS'S CYBERWARE BAY
+                            </h2>
+                            <p class="text-xs text-slate-400">Select modules to load into active neural slots.</p>
+                        </div>
+                        
+                        <!-- Module Filter Tabs -->
+                        <div class="flex gap-2 font-mono text-xs">
+                            <button onclick="filterModules('all')" class="mod-tab active bg-emerald-500 text-black font-bold px-3 py-1.5 rounded transition">ALL</button>
+                            <button onclick="filterModules('combat')" class="mod-tab bg-slate-800 text-slate-300 px-3 py-1.5 rounded transition hover:bg-slate-700">COMBAT</button>
+                            <button onclick="filterModules('utility')" class="mod-tab bg-slate-800 text-slate-300 px-3 py-1.5 rounded transition hover:bg-slate-700">UTILITY</button>
+                        </div>
+                    </div>
+
+                    <!-- Grid of Modules -->
+                    <div id="modules-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: LIVE TERMINAL CONSOLE LOG & COMMAND RUNNER -->
+            <section class="bg-cyber-panel border border-cyber-border rounded-xl p-6 font-mono">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-cyber-border">
+                    <div class="flex items-center gap-2 text-xs text-slate-400">
+                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="ml-2 text-slate-200 font-bold">TERMINAL DIAGNOSTICS</span>
+                    </div>
+                    <button onclick="clearConsole()" class="text-[11px] text-slate-500 hover:text-slate-300 transition">CLEAR_LOGS</button>
+                </div>
+
+                <!-- Console Display Box -->
+                <div id="console-logs" class="bg-slate-950 p-4 rounded-lg h-44 overflow-y-auto space-y-2 text-xs text-emerald-400 font-mono border border-slate-900">
+                    <div>[SYS_INIT] SHREYAS-OS v4.02 initialized successfully.</div>
+                    <div>[SECURITY] Biometric scan verified: SHREYAS core operator detected.</div>
+                    <div>[NET] Neural uplink bandwidth optimized at 10 Gbps.</div>
+                </div>
+
+                <!-- Command Input Line -->
+                <form onsubmit="handleCommand(event)" class="mt-4 flex gap-2">
+                    <span class="text-emerald-400 font-bold py-2">&gt;</span>
+                    <input type="text" id="cmd-input" placeholder="Type a command (e.g. 'help', 'scan', 'status', 'boost')..." class="flex-grow bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition font-mono">
+                    <button type="submit" class="px-4 py-2 bg-emerald-500 text-black font-bold text-xs rounded hover:bg-emerald-400 transition">EXECUTE</button>
+                </form>
+            </section>
+
+        </main>
+
+        <footer class="border-t border-cyber-border bg-cyber-panel/80 py-6 mt-12 text-center font-mono text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>DESIGNED EXCLUSIVELY FOR <span class="text-emerald-400 font-bold">SHREYAS</span></div>
+                <div class="flex gap-4">
+                    <span>STATUS: OPERATIONAL</span>
+                    <span>CORE: ONLINE</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // MATRIX RAIN CANVAS BACKGROUND
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = '01SHREYAS_SYSTEM_CYBER_MATRIX_9876543210';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(3, 7, 18, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00FF66';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 40);
+
+        // SYNTHETIC AUDIO ENGINE (WEB AUDIO API)
+        let audioEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const text = document.getElementById('sfx-text');
+            const icon = document.getElementById('sfx-icon');
+            if (audioEnabled) {
+                text.innerText = 'SFX: ON';
+                icon.className = 'fa-solid fa-volume-high text-emerald-400';
+                playSynthBeep(800, 0.05);
+            } else {
+                text.innerText = 'SFX: OFF';
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+            }
+        }
+
+        function playSynthBeep(freq = 600, duration = 0.08, type = 'sine') {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, now);
+                osc.frequency.exponentialRampToValueAtTime(freq / 2, now + duration);
+
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + duration);
+            } catch (e) {
+                console.log("Audio Error:", e);
+            }
+        }
+
+        // CYBERWARE MODULES DATA
+        const modulesData = [
+            {
+                id: 'mod-1',
+                name: 'Neural Quantum Accelerator',
+                type: 'utility',
+                icon: 'fa-brain',
+                stat: '+45% Reaction Speed',
+                desc: 'Overclocks Shreyas\'s neural synapse triggers for zero-latency target tracking.',
+                equipped: true
+            },
+            {
+                id: 'mod-2',
+                name: 'Plasma Cannon Augment',
+                type: 'combat',
+                icon: 'fa-burst',
+                stat: '+120 High Impact Damage',
+                desc: 'Direct energy output attachment that vaporizes incoming drone shields.',
+                equipped: false
+            },
+            {
+                id: 'mod-3',
+                name: 'Aegis Forcefield Generator',
+                type: 'utility',
+                icon: 'fa-shield-halved',
+                stat: '+300 Energy Barrier',
+                desc: 'Projects a localized kinetic deflection wall around the operator.',
+                equipped: true
+            },
+            {
+                id: 'mod-4',
+                name: 'Thermal Precision Blade',
+                type: 'combat',
+                icon: 'fa-wand-magic-sparkles',
+                stat: '+85 Melee Cut Precision',
+                desc: 'Monomolecular edge superheated to slice through carbon plating.',
+                equipped: false
+            }
+        ];
+
+        function renderModules(filter = 'all') {
+            const container = document.getElementById('modules-container');
+            container.innerHTML = '';
+
+            const items = filter === 'all' 
+                ? modulesData 
+                : modulesData.filter(m => m.type === filter);
+
+            items.forEach(m => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-lg border transition duration-300 flex flex-col justify-between ${
+                    m.equipped 
+                        ? 'bg-emerald-950/30 border-emerald-500/60 shadow-[0_0_15px_rgba(0,255,102,0.15)]' 
+                        : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid ${m.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded ${m.equipped ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'}">
+                                ${m.equipped ? 'ONLINE' : 'OFFLINE'}
+                            </span>
+                        </div>
+                        <h3 class="font-mono font-bold text-white text-sm mb-1">${m.name}</h3>
+                        <div class="text-[11px] font-mono text-emerald-400 font-bold mb-2">${m.stat}</div>
+                        <p class="text-xs text-slate-400 line-clamp-2">${m.desc}</p>
+                    </div>
+
+                    <button onclick="toggleModule('${m.id}')" class="mt-4 w-full py-1.5 font-mono text-xs font-bold rounded transition ${
+                        m.equipped 
+                            ? 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40' 
+                            : 'bg-emerald-500 hover:bg-emerald-400 text-black'
+                    }">
+                        ${m.equipped ? 'EJECT MODULE' : 'EQUIP MODULE'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleModule(id) {
+            playSynthBeep(900, 0.06, 'square');
+            const mod = modulesData.find(m => m.id === id);
+            if (mod) {
+                mod.equipped = !mod.equipped;
+                renderModules();
+                logConsole(`[MODULE] ${mod.name} set to ${mod.equipped ? 'ONLINE' : 'OFFLINE'}.`);
+            }
+        }
+
+        function filterModules(type) {
+            playSynthBeep(700, 0.04);
+            const tabs = document.querySelectorAll('.mod-tab');
+            tabs.forEach(t => {
+                t.classList.remove('bg-emerald-500', 'text-black', 'font-bold');
+                t.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            event.currentTarget.classList.remove('bg-slate-800', 'text-slate-300');
+            event.currentTarget.classList.add('bg-emerald-500', 'text-black', 'font-bold');
+
+            renderModules(type);
+        }
+
+        // REACTOR POWER SLIDERS LOGIC
+        function updatePower() {
+            const p1 = parseInt(document.getElementById('slider-p1').value);
+            const p2 = parseInt(document.getElementById('slider-p2').value);
+            const p3 = parseInt(document.getElementById('slider-p3').value);
+
+            document.getElementById('val-p1').innerText = p1 + '%';
+            document.getElementById('val-p2').innerText = p2 + '%';
+            document.getElementById('val-p3').innerText = p3 + '%';
+
+            const total = p1 + p2 + p3;
+            const output = Math.round(total * 2.5);
+            document.getElementById('total-output').innerText = output + ' MW';
+
+            playSynthBeep(300 + total, 0.03);
+        }
+
+        function overdriveReactor() {
+            playSynthBeep(1200, 0.25, 'sawtooth');
+            document.getElementById('slider-p1').value = 100;
+            document.getElementById('slider-p2').value = 100;
+            document.getElementById('slider-p3').value = 100;
+            updatePower();
+            logConsole('[OVERDRIVE] Reactor nodes boosted to 100% capacity! Peak power reached.');
+        }
+
+        // TERMINAL COMMAND LOGS
+        function logConsole(msg) {
+            const logs = document.getElementById('console-logs');
+            const entry = document.createElement('div');
+            entry.innerText = msg;
+            logs.appendChild(entry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function clearConsole() {
+            playSynthBeep(400, 0.05);
+            document.getElementById('console-logs').innerHTML = '<div>[LOGS_CLEARED] System ready for new telemetry.</div>';
+        }
+
+        function handleCommand(e) {
+            e.preventDefault();
+            const input = document.getElementById('cmd-input');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+
+            playSynthBeep(800, 0.05);
+            logConsole(`> ${cmd}`);
+            input.value = '';
+
+            if (cmd === 'help') {
+                logConsole('AVAILABLE COMMANDS: status, scan, boost, clear, shreyas');
+            } else if (cmd === 'status') {
+                logConsole('[STATUS] Operating system functioning at 100% capacity.');
+            } else if (cmd === 'scan') {
+                logConsole('[SCAN] Scanning local cyber deck... No threats found.');
+            } else if (cmd === 'boost') {
+                overdriveReactor();
+            } else if (cmd === 'shreyas') {
+                logConsole('[USER_INFO] Shreyas is recognized as Supreme Cyber Deck Commander.');
+            } else if (cmd === 'clear') {
+                clearConsole();
+            } else {
+                logConsole(`[ERROR] Command '${cmd}' not recognized. Type 'help' for options.`);
+            }
+        }
+
+        // THEME CUSTOMIZER
+        function setTheme(theme) {
+            playSynthBeep(1000, 0.08);
+            const root = document.documentElement;
+            const title = document.getElementById('shreyas-title');
+
+            if (theme === 'neon') {
+                root.style.setProperty('--primary-color', '#00FF66');
+                title.className = 'text-emerald-400 text-neon-glow inline-block transition-all duration-300 transform hover:scale-105';
+                logConsole('[THEME] Switched palette to CYBERPUNK NEON.');
+            } else if (theme === 'cyan') {
+                root.style.setProperty('--primary-color', '#00F0FF');
+                title.className = 'text-cyan-400 text-cyan-glow inline-block transition-all duration-300 transform hover:scale-105';
+                logConsole('[THEME] Switched palette to DEEP VOID CYAN.');
+            } else if (theme === 'pink') {
+                root.style.setProperty('--primary-color', '#FF0055');
+                title.className = 'text-rose-500 inline-block transition-all duration-300 transform hover:scale-105 shadow-rose-500';
+                logConsole('[THEME] Switched palette to HIGH-VOLTAGE PINK.');
+            } else if (theme === 'amber') {
+                root.style.setProperty('--primary-color', '#FFB800');
+                title.className = 'text-amber-400 inline-block transition-all duration-300 transform hover:scale-105';
+                logConsole('[THEME] Switched palette to SOLAR AMBER.');
+            }
+        }
+
+        // INITIAL LOAD
+        window.onload = function() {
+            renderModules('all');
+            updatePower();
+        };
+    </script>
+</body>
+</html>
