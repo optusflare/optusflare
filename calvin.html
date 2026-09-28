@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Rivals - Made For Calvin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron & Rajdhani -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rivals-red': '#FF2A55',
+                        'rivals-gold': '#FFC700',
+                        'rivals-cyan': '#00F0FF',
+                        'rivals-purple': '#A855F7',
+                        'rivals-dark': '#0B0D14',
+                        'rivals-panel': '#121624',
+                        'rivals-border': '#2A314A'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080A10;
+            color: #FFFFFF;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 42, 85, 0.15) 0%, transparent 60%),
+                linear-gradient(to bottom, rgba(11, 13, 20, 0.8), #080A10),
+                radial-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 0);
+            background-size: 100% 100%, 100% 100%, 24px 24px;
+        }
+
+        .glow-red {
+            box-shadow: 0 0 20px rgba(255, 42, 85, 0.4);
+        }
+        
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .glow-gold {
+            box-shadow: 0 0 25px rgba(255, 199, 0, 0.5);
+        }
+
+        .text-glow-red {
+            text-shadow: 0 0 10px rgba(255, 42, 85, 0.7), 0 0 20px rgba(255, 42, 85, 0.4);
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7), 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .clip-slant {
+            clip-path: polygon(12px 0, 100% 0, fill, calc(100% - 12px) 100%, 0 100%);
+        }
+
+        .clip-hud-card {
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+
+        .clip-button {
+            clip-path: polygon(10px 0%, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        /* Recoil & Fire animations */
+        @keyframes recoil {
+            0% { transform: translateY(0) scale(1); }
+            30% { transform: translateY(-8px) scale(0.98) rotate(-2deg); }
+            100% { transform: translateY(0) scale(1) rotate(0deg); }
+        }
+
+        .animate-recoil {
+            animation: recoil 0.25s ease-out;
+        }
+
+        @keyframes muzzleFlash {
+            0% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+
+        .flash-effect {
+            animation: muzzleFlash 0.15s ease-out;
+        }
+
+        /* Scanline Overlay */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0D14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF2A55;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 relative pb-16 selection:bg-rivals-red selection:text-white">
+
+    <!-- Scanline overlay effect -->
+    <div class="pointer-events-none fixed inset-0 z-50 scanlines opacity-40"></div>
+
+    <!-- TOP HUD BAR -->
+    <header class="sticky top-0 z-40 bg-rivals-dark/90 backdrop-blur-md border-b-2 border-rivals-red/60 px-4 py-3 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Player Stats HUD -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3 bg-rivals-panel px-3 py-1.5 rounded border border-rivals-border">
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-rivals-red/20 rounded border border-rivals-red">
+                        <i class="fa-solid font-black text-rivals-red text-xl fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase text-slate-400 font-bold tracking-wider">CALVIN HP</div>
+                        <div class="w-28 bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                            <div class="bg-gradient-to-r from-red-600 to-rivals-red h-full w-[100%] shadow-[0_0_10px_#FF2A55]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shield Bar -->
+                <div class="flex items-center gap-3 bg-rivals-panel px-3 py-1.5 rounded border border-rivals-border">
+                    <div class="relative flex items-center justify-center w-10 h-10 bg-rivals-cyan/20 rounded border border-rivals-cyan">
+                        <i class="fa-solid text-rivals-cyan text-xl fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase text-slate-400 font-bold tracking-wider">ARMOR</div>
+                        <div class="w-24 bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+                            <div class="bg-gradient-to-r from-cyan-600 to-rivals-cyan h-full w-[85%] shadow-[0_0_10px_#00F0FF]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match Status / Timer -->
+            <div class="flex items-center gap-6 bg-slate-950/80 px-6 py-1.5 rounded-full border border-rivals-gold/40 shadow-inner">
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">RANK</div>
+                    <div class="text-rivals-gold font-orbitron font-extrabold text-sm flex items-center gap-1">
+                        <i class="fa-solid fa-crown text-xs"></i> TOP RIVAL #1
+                    </div>
+                </div>
+                <div class="h-6 w-px bg-slate-800"></div>
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">MATCH TIME</div>
+                    <div id="match-timer" class="font-orbitron font-black text-xl text-white">04:20</div>
+                </div>
+                <div class="h-6 w-px bg-slate-800"></div>
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">SCORE</div>
+                    <div class="font-orbitron font-extrabold text-sm text-rivals-cyan">15 - 3</div>
+                </div>
+            </div>
+
+            <!-- Audio & Killfeed Preview -->
+            <div class="flex items-center gap-3">
+                <button id="sound-toggle" onclick="toggleAudio()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs font-orbitron border border-slate-600 flex items-center gap-2 transition">
+                    <i id="audio-icon" class="fa-solid fa-volume-high text-rivals-cyan"></i>
+                    <span id="audio-status">SFX: ON</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN TITLE BANNER -->
+    <section class="relative py-12 px-4 overflow-hidden border-b border-rivals-border/40">
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            
+            <div class="inline-flex items-center gap-2 bg-rivals-red/10 border border-rivals-red/40 px-4 py-1.5 rounded-full text-rivals-red font-orbitron text-xs font-bold tracking-widest uppercase mb-4 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-rivals-red"></span>
+                Official Roblox Rivals Showcase
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-orbitron font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400 drop-shadow-lg">
+                This Page Is Made For <span class="text-rivals-red text-glow-red inline-block transform hover:scale-105 transition duration-300">Calvin</span>
+            </h1>
+
+            <p class="mt-4 text-slate-400 font-medium text-lg max-w-2xl mx-auto">
+                Step into the arena. Inspect the highest tier weapon stats, build your custom loadout, and dominate the leaderboard in Roblox Rivals.
+            </p>
+
+            <!-- Animated Kill Feed Bar -->
+            <div class="mt-8 max-w-md mx-auto bg-rivals-panel/80 border border-rivals-border p-2 rounded-lg text-xs font-mono flex items-center justify-between shadow-xl">
+                <span class="text-slate-500 font-bold uppercase tracking-wider pl-2"><i class="fa-solid fa-skull text-rivals-red mr-1"></i> Killfeed:</span>
+                <div id="killfeed-ticker" class="text-slate-200 font-bold truncate transition-all duration-300">
+                    <span class="text-rivals-cyan">Calvin</span> [<i class="fa-solid fa-crosshair text-rivals-red"></i> Heavy Sniper] <span class="text-rivals-gold">Enemy_Pro</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-10 space-y-16">
+
+        <!-- SECTION 1: CALVIN'S CUSTOM LOADOUT BUILDER -->
+        <section class="bg-gradient-to-b from-rivals-panel to-rivals-dark border-2 border-rivals-border rounded-2xl p-6 md:p-8 shadow-2xl relative">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-rivals-border">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-orbitron font-black text-white flex items-center gap-3">
+                        <i class="fa-solid fa-sliders text-rivals-gold"></i>
+                        CALVIN'S RIVALS LOADOUT
+                    </h2>
+                    <p class="text-slate-400 text-sm">Select 1 Primary, 1 Secondary, and 1 Melee weapon to calculate total loadout combat rating.</p>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-900/90 px-4 py-2 rounded-xl border border-rivals-gold/30">
+                    <span class="text-xs text-slate-400 font-bold uppercase">Loadout Power:</span>
+                    <span id="loadout-power" class="text-2xl font-orbitron font-black text-rivals-gold text-glow-gold">0</span>
+                </div>
+            </div>
+
+            <!-- Loadout Weapon Slots Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Slot 1: Primary -->
+                <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 hover:border-rivals-red transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-orbitron font-bold text-rivals-red tracking-wider uppercase">PRIMARY WEAPON</span>
+                            <span id="slot-primary-type" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Empty</span>
+                        </div>
+                        <div id="slot-primary-card" class="text-center py-6 border-2 border-dashed border-slate-800 rounded-lg">
+                            <i class="fa-solid fa-gun text-slate-600 text-3xl mb-2"></i>
+                            <div class="text-sm font-bold text-slate-500">Select Primary Below</div>
+                        </div>
+                    </div>
+                    <button onclick="clearSlot('primary')" class="mt-4 text-xs text-slate-500 hover:text-rivals-red transition text-center w-full">Clear Slot</button>
+                </div>
+
+                <!-- Slot 2: Secondary -->
+                <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 hover:border-rivals-cyan transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-orbitron font-bold text-rivals-cyan tracking-wider uppercase">SECONDARY WEAPON</span>
+                            <span id="slot-secondary-type" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Empty</span>
+                        </div>
+                        <div id="slot-secondary-card" class="text-center py-6 border-2 border-dashed border-slate-800 rounded-lg">
+                            <i class="fa-solid fa-handgun text-slate-600 text-3xl mb-2"></i>
+                            <div class="text-sm font-bold text-slate-500">Select Secondary Below</div>
+                        </div>
+                    </div>
+                    <button onclick="clearSlot('secondary')" class="mt-4 text-xs text-slate-500 hover:text-rivals-cyan transition text-center w-full">Clear Slot</button>
+                </div>
+
+                <!-- Slot 3: Melee -->
+                <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 hover:border-rivals-gold transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-orbitron font-bold text-rivals-gold tracking-wider uppercase">MELEE WEAPON</span>
+                            <span id="slot-melee-type" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Empty</span>
+                        </div>
+                        <div id="slot-melee-card" class="text-center py-6 border-2 border-dashed border-slate-800 rounded-lg">
+                            <i class="fa-solid fa-khanda text-slate-600 text-3xl mb-2"></i>
+                            <div class="text-sm font-bold text-slate-500">Select Melee Below</div>
+                        </div>
+                    </div>
+                    <button onclick="clearSlot('melee')" class="mt-4 text-xs text-slate-500 hover:text-rivals-gold transition text-center w-full">Clear Slot</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: FEATURED RIVALS WEAPONS ARMORY -->
+        <section>
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-orbitron font-black text-white tracking-wide">
+                        RIVALS <span class="text-rivals-red">ARMORY</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">Explore popular weapons from Roblox Rivals. Test sound effects, inspect stats, and assign to loadout.</p>
+                </div>
+
+                <!-- Category Filter Buttons -->
+                <div class="flex flex-wrap gap-2" id="filter-buttons">
+                    <button onclick="filterWeapons('all')" class="filter-btn active bg-rivals-red text-white px-4 py-2 rounded-lg font-orbitron text-xs font-bold transition hover:bg-rivals-red">ALL WEAPONS</button>
+                    <button onclick="filterWeapons('primary')" class="filter-btn bg-slate-800 text-slate-300 px-4 py-2 rounded-lg font-orbitron text-xs font-bold transition hover:bg-slate-700">PRIMARY</button>
+                    <button onclick="filterWeapons('secondary')" class="filter-btn bg-slate-800 text-slate-300 px-4 py-2 rounded-lg font-orbitron text-xs font-bold transition hover:bg-slate-700">SECONDARY</button>
+                    <button onclick="filterWeapons('melee')" class="filter-btn bg-slate-800 text-slate-300 px-4 py-2 rounded-lg font-orbitron text-xs font-bold transition hover:bg-slate-700">MELEE</button>
+                    <button onclick="filterWeapons('heavy')" class="filter-btn bg-slate-800 text-slate-300 px-4 py-2 rounded-lg font-orbitron text-xs font-bold transition hover:bg-slate-700">HEAVY / EXPLOSIVE</button>
+                </div>
+            </div>
+
+            <!-- Weapons Cards Grid -->
+            <div id="weapons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JavaScript will populate weapons dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- WEAPON INSPECT MODAL -->
+    <div id="inspect-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-rivals-panel border-2 border-rivals-cyan/60 rounded-2xl max-w-2xl w-full p-6 md:p-8 relative shadow-[0_0_50px_rgba(0,240,255,0.2)]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <span id="modal-category" class="bg-rivals-cyan/20 text-rivals-cyan text-xs font-orbitron font-bold px-3 py-1 rounded-full border border-rivals-cyan/40">PRIMARY</span>
+                <span id="modal-rarity" class="text-rivals-gold text-xs font-bold uppercase"><i class="fa-solid fa-star"></i> LEGENDARY</span>
+            </div>
+
+            <h3 id="modal-title" class="text-3xl font-orbitron font-black text-white mb-2">HEAVY SNIPER</h3>
+            <p id="modal-description" class="text-slate-300 text-sm mb-6">High caliber sniper rifle designed to eliminate opponents with single headshots across extreme distances.</p>
+
+            <!-- Visual Preview Area -->
+            <div class="relative bg-slate-950 rounded-xl p-8 mb-6 flex flex-col items-center justify-center border border-slate-800 overflow-hidden group">
+                <div id="modal-muzzle-flash" class="absolute w-24 h-24 bg-rivals-gold rounded-full blur-xl opacity-0"></div>
+                <i id="modal-icon" class="fa-solid fa-crosshair text-7xl text-rivals-cyan mb-4 transition duration-300"></i>
+                
+                <div class="flex gap-4 z-10">
+                    <button id="modal-fire-btn" onclick="fireWeaponFromModal()" class="bg-rivals-red hover:bg-red-600 text-white font-orbitron text-xs font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-lg transition">
+                        <i class="fa-solid fa-fire"></i> FIRE WEAPON
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Stats Grid -->
+            <div class="space-y-3 font-orbitron text-xs mb-6">
+                <div>
+                    <div class="flex justify-between text-slate-300 mb-1">
+                        <span>DAMAGE PER SHOT</span>
+                        <span id="modal-stat-damage" class="text-rivals-red font-bold">95</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="modal-bar-damage" class="bg-rivals-red h-full transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-slate-300 mb-1">
+                        <span>FIRE RATE</span>
+                        <span id="modal-stat-firerate" class="text-rivals-cyan font-bold">20</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="modal-bar-firerate" class="bg-rivals-cyan h-full transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-slate-300 mb-1">
+                        <span>ACCURACY & RANGE</span>
+                        <span id="modal-stat-accuracy" class="text-rivals-gold font-bold">98</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="modal-bar-accuracy" class="bg-rivals-gold h-full transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-bolt text-rivals-gold text-lg"></i>
+                <div>
+                    <div class="text-xs font-bold text-white">SPECIAL PERK: <span id="modal-perk-name" class="text-rivals-gold">Armor Piercer</span></div>
+                    <div id="modal-perk-desc" class="text-[11px] text-slate-400">Ignores 50% of target shields on headshots.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WEB AUDIO SYNTHESIZER FOR GUN SFX
+        let audioEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const status = document.getElementById('audio-status');
+            const icon = document.getElementById('audio-icon');
+            if (audioEnabled) {
+                status.innerText = 'SFX: ON';
+                icon.className = 'fa-solid fa-volume-high text-rivals-cyan';
+                playSyntheticSound('click');
+            } else {
+                status.innerText = 'SFX: OFF';
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+            }
+        }
+
+        function playSyntheticSound(type) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } 
+                else if (type === 'rifle') {
+                    // Rifle burst noise
+                    const bufferSize = audioCtx.sampleRate * 0.15;
+                    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = audioCtx.createBufferSource();
+                    noise.buffer = buffer;
+                    const filter = audioCtx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(1200, now);
+                    filter.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                    const gain = audioCtx.createGain();
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    noise.start(now);
+                }
+                else if (type === 'sniper') {
+                    // Heavy sniper sound
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
+                    gain.gain.setValueAtTime(0.6, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                }
+                else if (type === 'shotgun') {
+                    // Punchy shotgun blast
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                    gain.gain.setValueAtTime(0.5, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+                else if (type === 'blade') {
+                    // Slash blade sfx
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1200, now);
+                    osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        // RIVALS WEAPONS DATA
+        const weapons = [
+            {
+                id: 'assault-rifle',
+                name: 'Assault Rifle',
+                category: 'primary',
+                typeLabel: 'PRIMARY',
+                icon: 'fa-gun',
+                color: 'rivals-red',
+                damage: 32,
+                fireRate: 85,
+                accuracy: 75,
+                mobility: 80,
+                soundType: 'rifle',
+                perkName: 'Overclocked Rate',
+                perkDesc: 'Increases rate of fire by 15% on consecutive hits.'
+            },
+            {
+                id: 'heavy-sniper',
+                name: 'Heavy Sniper',
+                category: 'primary',
+                typeLabel: 'PRIMARY',
+                icon: 'fa-crosshair',
+                color: 'rivals-cyan',
+                damage: 98,
+                fireRate: 22,
+                accuracy: 95,
+                mobility: 45,
+                soundType: 'sniper',
+                perkName: 'Headshot Mastery',
+                perkDesc: 'One-shot headshot kill on unshielded rivals.'
+            },
+            {
+                id: 'pump-shotgun',
+                name: 'Pump Shotgun',
+                category: 'primary',
+                typeLabel: 'PRIMARY',
+                icon: 'fa-bullseye',
+                color: 'rivals-gold',
+                damage: 88,
+                fireRate: 35,
+                accuracy: 40,
+                mobility: 70,
+                soundType: 'shotgun',
+                perkName: 'Close Quarters Burst',
+                perkDesc: 'Deals 25% extra damage at point-blank range.'
+            },
+            {
+                id: 'revolver',
+                name: 'Hand Cannon Revolver',
+                category: 'secondary',
+                typeLabel: 'SECONDARY',
+                icon: 'fa-handgun',
+                color: 'rivals-purple',
+                damage: 58,
+                fireRate: 45,
+                accuracy: 82,
+                mobility: 90,
+                soundType: 'sniper',
+                perkName: 'Quick Draw',
+                perkDesc: 'Instant weapon swap time when switching from primary.'
+            },
+            {
+                id: 'katana',
+                name: 'Cyber Katana',
+                category: 'melee',
+                typeLabel: 'MELEE',
+                icon: 'fa-khanda',
+                color: 'rivals-gold',
+                damage: 75,
+                fireRate: 65,
+                accuracy: 90,
+                mobility: 100,
+                soundType: 'blade',
+                perkName: 'Dash Slash',
+                perkDesc: 'Lunge forward 5 meters when executing a heavy slash.'
+            },
+            {
+                id: 'rpg',
+                name: 'Rocket Launcher',
+                category: 'heavy',
+                typeLabel: 'HEAVY',
+                icon: 'fa-rocket',
+                color: 'rivals-red',
+                damage: 100,
+                fireRate: 15,
+                accuracy: 60,
+                mobility: 35,
+                soundType: 'shotgun',
+                perkName: 'Splash Radius',
+                perkDesc: 'Deals massive area-of-effect damage to clustered rivals.'
+            }
+        ];
+
+        // LOADOUT STATE FOR CALVIN
+        const currentLoadout = {
+            primary: null,
+            secondary: null,
+            melee: null
+        };
+
+        let currentActiveInspectWeapon = null;
+
+        function renderWeapons(filter = 'all') {
+            const grid = document.getElementById('weapons-grid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' 
+                ? weapons 
+                : weapons.filter(w => w.category === filter);
+
+            filtered.forEach(w => {
+                const card = document.createElement('div');
+                card.className = `bg-rivals-panel border border-rivals-border hover:border-${w.color} rounded-xl p-5 relative transition-all duration-300 transform hover:-translate-y-1 shadow-lg flex flex-col justify-between group`;
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] font-orbitron font-bold bg-slate-900 text-slate-300 px-2.5 py-1 rounded border border-slate-700 uppercase tracking-widest">${w.typeLabel}</span>
+                            <button onclick="inspectWeapon('${w.id}')" class="text-slate-400 hover:text-white text-xs flex items-center gap-1 font-orbitron">
+                                <i class="fa-solid fa-eye text-rivals-cyan"></i> Inspect
+                            </button>
+                        </div>
+
+                        <div class="my-4 flex items-center justify-center py-6 bg-slate-950/60 rounded-lg border border-slate-900 group-hover:border-slate-800 transition">
+                            <i class="fa-solid ${w.icon} text-5xl text-slate-300 group-hover:scale-110 group-hover:text-white transition duration-300"></i>
+                        </div>
+
+                        <h3 class="text-xl font-orbitron font-bold text-white mb-1">${w.name}</h3>
+                        <p class="text-xs text-slate-400 mb-4 line-clamp-2">${w.perkDesc}</p>
+
+                        <!-- Compact Stats Bars -->
+                        <div class="space-y-2 text-[11px] font-orbitron mb-5">
+                            <div class="flex justify-between text-slate-400">
+                                <span>DMG</span>
+                                <span class="text-white">${w.damage}</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-rivals-red h-full" style="width: ${w.damage}%"></div>
+                            </div>
+
+                            <div class="flex justify-between text-slate-400">
+                                <span>FIRE RATE</span>
+                                <span class="text-white">${w.fireRate}</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-rivals-cyan h-full" style="width: ${w.fireRate}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="fireWeapon('${w.id}', this)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg font-orbitron text-xs font-bold transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-volume-high text-rivals-gold"></i> Test SFX
+                        </button>
+                        <button onclick="equipToLoadout('${w.id}')" class="flex-1 bg-rivals-red hover:bg-red-600 text-white py-2 rounded-lg font-orbitron text-xs font-bold transition flex items-center justify-center gap-1 shadow-md">
+                            <i class="fa-solid fa-plus"></i> Equip
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // FILTER WEAPONS
+        function filterWeapons(category) {
+            playSyntheticSound('click');
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('bg-rivals-red', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            event.currentTarget.classList.remove('bg-slate-800', 'text-slate-300');
+            event.currentTarget.classList.add('bg-rivals-red', 'text-white');
+
+            renderWeapons(category);
+        }
+
+        // FIRE WEAPON ANIMATION & AUDIO
+        function fireWeapon(id, btnElement) {
+            const w = weapons.find(item => item.id === id);
+            if (!w) return;
+
+            playSyntheticSound(w.soundType);
+
+            // Add animation recoil effect to nearby card element
+            if (btnElement) {
+                const card = btnElement.closest('.group');
+                card.classList.add('animate-recoil');
+                setTimeout(() => card.classList.remove('animate-recoil'), 250);
+            }
+
+            // Trigger Killfeed simulation update
+            updateKillfeed(w.name);
+        }
+
+        // UPDATE KILLFEED TICKER
+        function updateKillfeed(weaponName) {
+            const ticker = document.getElementById('killfeed-ticker');
+            const opponents = ['Rival_Ninja', 'NoobSlayer99', 'RobloxKing', 'Viper_FPS', 'Shadow_Striker'];
+            const randomEnemy = opponents[Math.floor(Math.random() * opponents.length)];
+
+            ticker.style.opacity = '0';
+            setTimeout(() => {
+                ticker.innerHTML = `<span class="text-rivals-cyan">Calvin</span> [<i class="fa-solid fa-crosshair text-rivals-red"></i> ${weaponName}] <span class="text-rivals-gold">${randomEnemy}</span>`;
+                ticker.style.opacity = '1';
+            }, 150);
+        }
+
+        // LOADOUT LOGIC
+        function equipToLoadout(weaponId) {
+            playSyntheticSound('click');
+            const w = weapons.find(item => item.id === weaponId);
+            if (!w) return;
+
+            let slotKey = 'primary';
+            if (w.category === 'secondary') slotKey = 'secondary';
+            if (w.category === 'melee') slotKey = 'melee';
+            if (w.category === 'heavy') slotKey = 'primary'; // Heavy maps to Primary slot
+
+            currentLoadout[slotKey] = w;
+            updateLoadoutUI();
+        }
+
+        function clearSlot(slotKey) {
+            playSyntheticSound('click');
+            currentLoadout[slotKey] = null;
+            updateLoadoutUI();
+        }
+
+        function updateLoadoutUI() {
+            // Slot Keys
+            ['primary', 'secondary', 'melee'].forEach(slot => {
+                const weapon = currentLoadout[slot];
+                const cardContainer = document.getElementById(`slot-${slot}-card`);
+                const typeLabel = document.getElementById(`slot-${slot}-type`);
+
+                if (weapon) {
+                    typeLabel.innerText = weapon.name;
+                    typeLabel.className = 'text-[10px] bg-rivals-red/20 text-rivals-red border border-rivals-red/40 px-2 py-0.5 rounded font-bold';
+
+                    cardContainer.className = 'text-center py-4 bg-slate-950 border border-rivals-border rounded-lg';
+                    cardContainer.innerHTML = `
+                        <i class="fa-solid ${weapon.icon} text-3xl text-white mb-2"></i>
+                        <div class="text-sm font-orbitron font-bold text-white">${weapon.name}</div>
+                        <div class="text-[11px] text-slate-400 mt-1">DMG: ${weapon.damage} | FR: ${weapon.fireRate}</div>
+                    `;
+                } else {
+                    typeLabel.innerText = 'Empty';
+                    typeLabel.className = 'text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded';
+
+                    cardContainer.className = 'text-center py-6 border-2 border-dashed border-slate-800 rounded-lg';
+                    cardContainer.innerHTML = `
+                        <i class="fa-solid fa-plus text-slate-600 text-2xl mb-2"></i>
+                        <div class="text-sm font-bold text-slate-500">Select ${slot.toUpperCase()} Below</div>
+                    `;
+                }
+            });
+
+            // Calculate Loadout Power Score
+            let totalPower = 0;
+            Object.values(currentLoadout).forEach(w => {
+                if (w) {
+                    totalPower += (w.damage * 1.5) + (w.fireRate) + (w.accuracy * 0.8);
+                }
+            });
+
+            document.getElementById('loadout-power').innerText = Math.round(totalPower);
+        }
+
+        // INSPECT MODAL LOGIC
+        function inspectWeapon(id) {
+            playSyntheticSound('click');
+            const w = weapons.find(item => item.id === id);
+            if (!w) return;
+
+            currentActiveInspectWeapon = w;
+
+            document.getElementById('modal-category').innerText = w.typeLabel;
+            document.getElementById('modal-title').innerText = w.name;
+            document.getElementById('modal-description').innerText = w.perkDesc;
+            document.getElementById('modal-icon').className = `fa-solid ${w.icon} text-7xl text-rivals-cyan mb-4 transition duration-300`;
+            
+            document.getElementById('modal-stat-damage').innerText = w.damage;
+            document.getElementById('modal-bar-damage').style.width = `${w.damage}%`;
+
+            document.getElementById('modal-stat-firerate').innerText = w.fireRate;
+            document.getElementById('modal-bar-firerate').style.width = `${w.fireRate}%`;
+
+            document.getElementById('modal-stat-accuracy').innerText = w.accuracy;
+            document.getElementById('modal-bar-accuracy').style.width = `${w.accuracy}%`;
+
+            document.getElementById('modal-perk-name').innerText = w.perkName;
+            document.getElementById('modal-perk-desc').innerText = w.perkDesc;
+
+            const modal = document.getElementById('inspect-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function fireWeaponFromModal() {
+            if (!currentActiveInspectWeapon) return;
+            
+            playSyntheticSound(currentActiveInspectWeapon.soundType);
+
+            const icon = document.getElementById('modal-icon');
+            const flash = document.getElementById('modal-muzzle-flash');
+
+            icon.classList.add('animate-recoil', 'text-white');
+            flash.classList.add('flash-effect');
+
+            setTimeout(() => {
+                icon.classList.remove('animate-recoil', 'text-white');
+                flash.classList.remove('flash-effect');
+            }, 250);
+
+            updateKillfeed(currentActiveInspectWeapon.name);
+        }
+
+        function closeModal() {
+            playSyntheticSound('click');
+            const modal = document.getElementById('inspect-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // MATCH TIMER LOOP
+        let timerSeconds = 260;
+        setInterval(() => {
+            if (timerSeconds > 0) {
+                timerSeconds--;
+                const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('match-timer').innerText = `${mins}:${secs}`;
+            }
+        }, 1000);
+
+        // INITIAL LOAD
+        window.onload = function() {
+            renderWeapons('all');
+            updateLoadoutUI();
+        };
+    </script>
+</body>
+</html>
