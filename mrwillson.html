@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Best Teacher Of All Times - Mr Wilson</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blueprint: {
+                            950: '#020C1B',
+                            900: '#0A192F',
+                            800: '#112240',
+                            700: '#233554',
+                        },
+                        amber: {
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        },
+                        cyan: {
+                            400: '#38BDF8',
+                            500: '#0EA5E9',
+                        },
+                        industrial: {
+                            400: '#FF6B00',
+                            500: '#FF5500',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Chakra Petch', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020C1B;
+            color: #E2E8F0;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .glass-blueprint {
+            background: rgba(10, 25, 47, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(2, 12, 27, 0.6);
+        }
+
+        .glass-card-orange {
+            background: rgba(17, 34, 64, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 107, 0, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(255, 107, 0, 0.2);
+        }
+
+        .text-gradient-orange {
+            background: linear-gradient(135deg, #FF9E43 0%, #FF6B00 50%, #FF3D00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .orange-glow {
+            filter: drop-shadow(0px 0px 18px rgba(255, 107, 0, 0.5));
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020C1B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #112240;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #233554;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-industrial-500 selection:text-white">
+
+    <canvas id="blueprintCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-30"></canvas>
+
+    <header class="sticky top-0 z-50 glass-blueprint border-b border-cyan-500/20 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-industrial-500 to-amber-600 flex items-center justify-center shadow-lg shadow-industrial-500/30 text-white font-bold font-tech text-xl">
+                    <i class="fa-solid fa-gear animate-spin-slow"></i>
+                </div>
+                <div>
+                    <span class="font-tech text-lg tracking-wider font-bold text-slate-100 uppercase block">ENGINEERING LEGACY</span>
+                    <span class="text-[10px] font-mono text-cyan-400 tracking-widest block">DOC-ID: ENG-TEACHER-01</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-xs font-mono tracking-wider text-slate-300">
+                <a href="#hero" class="hover:text-industrial-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-compass text-cyan-400"></i> OVERVIEW</a>
+                <a href="#simulator" class="hover:text-industrial-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-microchip text-cyan-400"></i> CAD SIMULATOR</a>
+                <a href="#strengths" class="hover:text-industrial-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-sliders text-cyan-400"></i> QUALITIES</a>
+                <a href="#notes" class="hover:text-industrial-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-comments text-cyan-400"></i> APPRECIATION LOG</a>
+            </nav>
+            <a href="#notes" class="px-4 py-2 rounded-lg bg-industrial-500/10 border border-industrial-500/40 text-industrial-400 text-xs font-mono font-semibold hover:bg-industrial-500 hover:text-white transition-all duration-300">
+                <i class="fa-solid fa-paper-plane mr-1.5"></i> LEAVE NOTE
+            </a>
+        </div>
+    </header>
+
+    <main class="relative z-10 space-y-24 pb-20">
+
+        <section id="hero" class="min-h-[85vh] flex items-center justify-center px-4 pt-8 relative">
+            <div class="max-w-5xl mx-auto text-center space-y-8">
+                
+                <!-- Honor Badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-blueprint border border-industrial-500/40 text-industrial-400 text-xs md:text-sm font-mono tracking-widest uppercase">
+                    <span class="w-2 h-2 rounded-full bg-industrial-500 animate-ping"></span>
+                    <span>ENGINEERING & INSPIRATIONAL PEDAGOGY</span>
+                </div>
+
+                <!-- Main Headline Requirement -->
+                <div class="space-y-3">
+                    <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-100 font-tech uppercase leading-tight">
+                        The Best Teacher Of All Times
+                    </h1>
+                    <!-- Line 2: Mr Wilson in contrasted glowing orange -->
+                    <div class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-tech tracking-wide pt-2">
+                        <span class="text-gradient-orange block orange-glow uppercase">
+                            Mr Wilson
+                        </span>
+                    </div>
+                </div>
+
+                <!-- CAD Blueprint Dimension Divider -->
+                <div class="flex items-center justify-center gap-4 py-2 text-slate-500">
+                    <div class="h-[1px] w-20 bg-cyan-500/40 relative">
+                        <div class="absolute -top-1 left-0 w-2 h-2 border-l border-t border-cyan-400"></div>
+                    </div>
+                    <span class="font-mono text-cyan-400 text-xs tracking-widest">[ KINDNESS × INGENUITY = IMPACT ]</span>
+                    <div class="h-[1px] w-20 bg-cyan-500/40 relative">
+                        <div class="absolute -top-1 right-0 w-2 h-2 border-r border-t border-cyan-400"></div>
+                    </div>
+                </div>
+
+                <!-- Subtitle -->
+                <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 font-light leading-relaxed">
+                    Connecting hands-on problem solving with genuine warmth. An outstanding educator who makes engineering accessible, exciting, and fun for every student.
+                </p>
+
+                <!-- Statistics Metrics Bar -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6">
+                    <div class="glass-blueprint p-4 rounded-xl border border-cyan-500/30 text-center space-y-1">
+                        <div class="text-2xl md:text-3xl font-bold font-tech text-industrial-400">500+</div>
+                        <div class="text-[11px] font-mono text-slate-400 uppercase">Projects Guided</div>
+                    </div>
+                    <div class="glass-blueprint p-4 rounded-xl border border-cyan-500/30 text-center space-y-1">
+                        <div class="text-2xl md:text-3xl font-bold font-tech text-cyan-400">100%</div>
+                        <div class="text-[11px] font-mono text-slate-400 uppercase">Approachable</div>
+                    </div>
+                    <div class="glass-blueprint p-4 rounded-xl border border-cyan-500/30 text-center space-y-1">
+                        <div class="text-2xl md:text-3xl font-bold font-tech text-industrial-400">∞</div>
+                        <div class="text-[11px] font-mono text-slate-400 uppercase">Inspiration Level</div>
+                    </div>
+                    <div class="glass-blueprint p-4 rounded-xl border border-cyan-500/30 text-center space-y-1">
+                        <div class="text-2xl md:text-3xl font-bold font-tech text-cyan-400">2,400+</div>
+                        <div class="text-[11px] font-mono text-slate-400 uppercase">Tea/Coffee Drank</div>
+                    </div>
+                </div>
+
+                <!-- Hero Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 pt-4">
+                    <a href="#simulator" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-industrial-500 to-industrial-600 text-white font-tech font-bold tracking-wider shadow-lg shadow-industrial-500/25 hover:shadow-industrial-500/40 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm uppercase">
+                        <i class="fa-solid fa-cogs"></i> Test Gear CAD Simulator
+                    </a>
+                    <a href="#notes" class="px-6 py-3.5 rounded-xl glass-blueprint text-slate-200 hover:text-white border border-slate-700 hover:border-industrial-500/50 transition-all flex items-center gap-2 text-sm font-tech tracking-wider uppercase">
+                        <i class="fa-solid fa-heart text-industrial-400"></i> Read Appreciation Notes
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="simulator" class="max-w-6xl mx-auto px-4">
+            <div class="glass-card-orange rounded-3xl p-6 md:p-8 space-y-6">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-cyan-500/20 pb-4">
+                    <div>
+                        <span class="text-xs font-mono text-industrial-400 uppercase tracking-widest">[ INTERACTIVE ENGINEERING BLUEPRINT ]</span>
+                        <h3 class="text-2xl font-tech font-bold text-slate-100 uppercase">Gear Train & Mechanical Advantage Simulator</h3>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs font-mono text-cyan-400 bg-blueprint-950 px-3 py-1.5 rounded-lg border border-cyan-500/30">
+                        <i class="fa-solid fa-circle-dot animate-pulse text-emerald-400"></i>
+                        <span>REAL-TIME PHYSICS ENGINE</span>
+                    </div>
+                </div>
+
+                <!-- Simulation Canvas Wrapper -->
+                <div class="relative w-full h-80 bg-blueprint-950 rounded-2xl overflow-hidden border border-cyan-500/30 flex items-center justify-center">
+                    <canvas id="gearCanvas" class="w-full h-full"></canvas>
+                    
+                    <!-- HUD Overlay -->
+                    <div class="absolute top-3 left-3 glass-blueprint p-3 rounded-lg border border-cyan-500/30 font-mono text-xs space-y-1">
+                        <div class="text-cyan-400 font-bold">TELEMETRY DATA</div>
+                        <div class="text-slate-300">Driver Gear (N1): <span id="hudN1" class="text-industrial-400">12</span> teeth</div>
+                        <div class="text-slate-300">Driven Gear (N2): <span id="hudN2" class="text-cyan-400">24</span> teeth</div>
+                        <div class="text-slate-300">Gear Ratio (i): <span id="hudRatio" class="text-amber-400">2.00 : 1</span></div>
+                        <div class="text-slate-300">Output RPM: <span id="hudRPM" class="text-emerald-400">30.0</span></div>
+                    </div>
+                </div>
+
+                <!-- Interactive Controls Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+                    <div class="space-y-2 glass-blueprint p-4 rounded-xl border border-cyan-500/20">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Driver Teeth (N1)</span>
+                            <span id="n1Val" class="text-industrial-400 font-bold">12</span>
+                        </div>
+                        <input type="range" id="n1Input" min="8" max="24" step="1" value="12" class="w-full accent-industrial-500 bg-blueprint-950 cursor-pointer">
+                    </div>
+                    <div class="space-y-2 glass-blueprint p-4 rounded-xl border border-cyan-500/20">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Driven Teeth (N2)</span>
+                            <span id="n2Val" class="text-cyan-400 font-bold">24</span>
+                        </div>
+                        <input type="range" id="n2Input" min="8" max="32" step="1" value="24" class="w-full accent-cyan-400 bg-blueprint-950 cursor-pointer">
+                    </div>
+                    <div class="space-y-2 glass-blueprint p-4 rounded-xl border border-cyan-500/20">
+                        <div class="flex justify-between text-xs font-mono text-slate-300">
+                            <span>Motor Speed (RPM)</span>
+                            <span id="rpmVal" class="text-amber-400 font-bold">60</span>
+                        </div>
+                        <input type="range" id="rpmInput" min="10" max="120" step="5" value="60" class="w-full accent-amber-400 bg-blueprint-950 cursor-pointer">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="strengths" class="max-w-6xl mx-auto px-4 space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="text-xs font-mono tracking-widest text-industrial-400 uppercase">[ CORE TEACHING ATTRIBUTES ]</h2>
+                <h3 class="text-3xl md:text-4xl font-tech font-bold text-slate-100 uppercase">Why Students Love Mr Wilson</h3>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm">
+                    Engineering is tough, but having a great, approachable teacher changes everything.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Quality 1 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 hover:border-industrial-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-industrial-500/20 text-industrial-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-hands-holding-circle"></i>
+                    </div>
+                    <h4 class="text-lg font-tech font-bold text-slate-100 mb-2">Infinite Patience</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Never makes anyone feel bad for asking questions. Re-explains tricky schematics until everyone gets it.
+                    </p>
+                </div>
+
+                <!-- Quality 2 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 hover:border-industrial-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <h4 class="text-lg font-tech font-bold text-slate-100 mb-2">Hands-On Projects</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Brings textbook theory to life with real gearboxes, circuits, robotics, and practical classroom builds.
+                    </p>
+                </div>
+
+                <!-- Quality 3 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 hover:border-industrial-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-face-smile"></i>
+                    </div>
+                    <h4 class="text-lg font-tech font-bold text-slate-100 mb-2">Genuine Kindness</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Creates an inclusive, supportive environment where mistakes are celebrated as steps toward a solution.
+                    </p>
+                </div>
+
+                <!-- Quality 4 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 hover:border-industrial-500/50 transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h4 class="text-lg font-tech font-bold text-slate-100 mb-2">Real-World Wisdom</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Shares true engineering insights and practical advice that prepare students for real future careers.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="notes" class="max-w-6xl mx-auto px-4 space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="text-xs font-mono tracking-widest text-industrial-400 uppercase">[ CLASSROOM TRANSMISSIONS ]</h2>
+                <h3 class="text-3xl md:text-4xl font-tech font-bold text-slate-100 uppercase">Student Appreciation Board</h3>
+                <p class="text-slate-400 max-w-xl mx-auto text-sm">
+                    Leave a quick thank-you note for Mr Wilson to show appreciation for his great teaching.
+                </p>
+            </div>
+
+            <!-- Notes Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="notesGrid">
+                <!-- Preset Card 1 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-industrial-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "Mr Wilson is hands down the best teacher ever. He made CAD software so easy to understand and always helped us debug our project mechanisms with a smile."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-industrial-500/20 text-industrial-400 flex items-center justify-center font-bold text-xs font-mono">D</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Daniel K.</div>
+                            <div class="text-[10px] text-slate-400 font-mono">Engineering Student</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preset Card 2 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-industrial-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "Thank you for being such a genuinely nice teacher, Mr Wilson! You always took time after class to help us work on our robotics competition entry."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs font-mono">S</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Sarah M.</div>
+                            <div class="text-[10px] text-slate-400 font-mono">Robotics Team Lead</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preset Card 3 -->
+                <div class="glass-blueprint p-6 rounded-2xl border border-cyan-500/30 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-left text-industrial-500/20 text-4xl absolute top-4 right-4"></i>
+                    <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                        "I used to think engineering was intimidating until I joined Mr Wilson's class. He encourages everyone and makes learning super fun."
+                    </p>
+                    <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs font-mono">J</div>
+                        <div>
+                            <div class="text-xs font-semibold text-slate-200">Jason T.</div>
+                            <div class="text-[10px] text-slate-400 font-mono">Class of '26</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form to Add New Note -->
+            <div class="glass-card-orange p-6 rounded-2xl max-w-xl mx-auto space-y-4">
+                <h4 class="text-base font-tech font-semibold text-slate-200 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-industrial-400"></i> Leave a Note for Mr Wilson
+                </h4>
+                <div class="space-y-3">
+                    <input type="text" id="noteAuthor" placeholder="Your Name / Student Title" class="w-full bg-blueprint-950 border border-cyan-500/30 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-industrial-500">
+                    <textarea id="noteContent" rows="3" placeholder="Write your message of appreciation..." class="w-full bg-blueprint-950 border border-cyan-500/30 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-industrial-500"></textarea>
+                    <button id="addNoteBtn" class="w-full py-3 rounded-xl bg-industrial-500 hover:bg-industrial-600 text-white font-tech font-bold text-sm transition-colors flex items-center justify-center gap-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-paper-plane"></i> Post Message
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="border-t border-cyan-500/20 bg-blueprint-950/80 py-8 px-4 text-center relative z-10">
+        <div class="max-w-6xl mx-auto space-y-3">
+            <div class="font-tech text-industrial-400 text-lg font-bold uppercase tracking-wider">
+                The Best Teacher Of All Times — Mr Wilson
+            </div>
+            <p class="text-xs text-slate-500 font-mono">
+                ENGINEERING PEDAGOGY • DESIGNED WITH GRATITUDE
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- BACKGROUND BLUEPRINT CONNECTIVITY CANVAS ---
+        const bgCanvas = document.getElementById('blueprintCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgNodes = [];
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            initBgNodes();
+        }
+
+        function initBgNodes() {
+            bgNodes = [];
+            const count = Math.floor(window.innerWidth / 40);
+            for (let i = 0; i < count; i++) {
+                bgNodes.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * bgCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+        }
+
+        function animateBgCanvas() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // Draw connecting lines
+            for (let i = 0; i < bgNodes.length; i++) {
+                for (let j = i + 1; j < bgNodes.length; j++) {
+                    const dx = bgNodes[i].x - bgNodes[j].x;
+                    const dy = bgNodes[i].y - bgNodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        bgCtx.strokeStyle = `rgba(56, 189, 248, ${1 - dist / 120})`;
+                        bgCtx.lineWidth = 0.5;
+                        bgCtx.beginPath();
+                        bgCtx.moveTo(bgNodes[i].x, bgNodes[i].y);
+                        bgCtx.lineTo(bgNodes[j].x, bgNodes[j].y);
+                        bgCtx.stroke();
+                    }
+                }
+            }
+
+            // Draw and update nodes
+            bgNodes.forEach(node => {
+                node.x += node.vx;
+                node.y += node.vy;
+
+                if (node.x < 0 || node.x > bgCanvas.width) node.vx *= -1;
+                if (node.y < 0 || node.y > bgCanvas.height) node.vy *= -1;
+
+                bgCtx.fillStyle = '#38BDF8';
+                bgCtx.beginPath();
+                bgCtx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                bgCtx.fill();
+            });
+
+            requestAnimationFrame(animateBgCanvas);
+        }
+
+        // --- GEAR SIMULATOR CANVAS ---
+        const gearCanvas = document.getElementById('gearCanvas');
+        const gearCtx = gearCanvas.getContext('2d');
+        let gearRotation = 0;
+
+        const n1Input = document.getElementById('n1Input');
+        const n2Input = document.getElementById('n2Input');
+        const rpmInput = document.getElementById('rpmInput');
+
+        const n1Val = document.getElementById('n1Val');
+        const n2Val = document.getElementById('n2Val');
+        const rpmVal = document.getElementById('rpmVal');
+
+        const hudN1 = document.getElementById('hudN1');
+        const hudN2 = document.getElementById('hudN2');
+        const hudRatio = document.getElementById('hudRatio');
+        const hudRPM = document.getElementById('hudRPM');
+
+        function resizeGearCanvas() {
+            const rect = gearCanvas.parentElement.getBoundingClientRect();
+            gearCanvas.width = rect.width;
+            gearCanvas.height = rect.height;
+        }
+
+        function drawGear(ctx, x, y, radius, teeth, angle, color, accentColor) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            // Gear Teeth
+            ctx.fillStyle = color;
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 2;
+
+            const toothDepth = 12;
+            ctx.beginPath();
+            for (let i = 0; i < teeth; i++) {
+                const a1 = (i / teeth) * Math.PI * 2;
+                const a2 = ((i + 0.3) / teeth) * Math.PI * 2;
+                const a3 = ((i + 0.5) / teeth) * Math.PI * 2;
+                const a4 = ((i + 0.8) / teeth) * Math.PI * 2;
+
+                const rIn = radius - toothDepth / 2;
+                const rOut = radius + toothDepth / 2;
+
+                if (i === 0) ctx.moveTo(Math.cos(a1) * rIn, Math.sin(a1) * rIn);
+                else ctx.lineTo(Math.cos(a1) * rIn, Math.sin(a1) * rIn);
+
+                ctx.lineTo(Math.cos(a2) * rOut, Math.sin(a2) * rOut);
+                ctx.lineTo(Math.cos(a3) * rOut, Math.sin(a3) * rOut);
+                ctx.lineTo(Math.cos(a4) * rIn, Math.sin(a4) * rIn);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Inner Center Circle
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = '#020C1B';
+            ctx.fill();
+            ctx.stroke();
+
+            // Keyway / Spoke
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(radius * 0.4, 0);
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function animateGears() {
+            gearCtx.clearRect(0, 0, gearCanvas.width, gearCanvas.height);
+
+            const N1 = parseInt(n1Input.value);
+            const N2 = parseInt(n2Input.value);
+            const RPM = parseInt(rpmInput.value);
+
+            // Update UI Labels
+            n1Val.innerText = N1;
+            n2Val.innerText = N2;
+            rpmVal.innerText = RPM;
+
+            hudN1.innerText = N1;
+            hudN2.innerText = N2;
+            const ratio = (N2 / N1).toFixed(2);
+            hudRatio.innerText = `${ratio} : 1`;
+            hudRPM.innerText = (RPM / (N2 / N1)).toFixed(1);
+
+            // Calculate Radii based on Pitch Circle
+            const pitchScale = 6;
+            const r1 = N1 * pitchScale;
+            const r2 = N2 * pitchScale;
+
+            const width = gearCanvas.width;
+            const height = gearCanvas.height;
+
+            const totalWidth = r1 + r2;
+            const startX = (width - totalWidth) / 2 + r1;
+            const centerY = height / 2;
+
+            // Draw Driver Gear (Orange)
+            drawGear(gearCtx, startX, centerY, r1, N1, gearRotation, 'rgba(255, 107, 0, 0.2)', '#FF6B00');
+
+            // Draw Driven Gear (Cyan) - Opposite Rotation
+            const gear2Rotation = -gearRotation * (N1 / N2);
+            drawGear(gearCtx, startX + r1 + r2, centerY, r2, N2, gear2Rotation, 'rgba(56, 189, 248, 0.2)', '#38BDF8');
+
+            // Increment rotation angle based on RPM
+            gearRotation += (RPM / 60) * 0.05;
+
+            requestAnimationFrame(animateGears);
+        }
+
+        // --- STUDENT NOTE SUBMISSION LOGIC ---
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const noteAuthor = document.getElementById('noteAuthor');
+        const noteContent = document.getElementById('noteContent');
+        const notesGrid = document.getElementById('notesGrid');
+
+        addNoteBtn.addEventListener('click', () => {
+            const author = noteAuthor.value.trim() || 'Student';
+            const content = noteContent.value.trim();
+
+            if (!content) {
+                return;
+            }
+
+            const newCard = document.createElement('div');
+            newCard.className = "glass-blueprint p-6 rounded-2xl border border-industrial-500/50 relative flex flex-col justify-between";
+            newCard.innerHTML = `
+                <i class="fa-solid fa-quote-left text-industrial-500/20 text-4xl absolute top-4 right-4"></i>
+                <p class="text-slate-300 text-sm italic mb-4 leading-relaxed">
+                    "${content}"
+                </p>
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-800">
+                    <div class="w-8 h-8 rounded-full bg-industrial-500/20 text-industrial-400 flex items-center justify-center font-bold text-xs font-mono">
+                        ${author.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-slate-200">${author}</div>
+                        <div class="text-[10px] text-industrial-400 font-mono">Just added</div>
+                    </div>
+                </div>
+            `;
+
+            notesGrid.prepend(newCard);
+            noteContent.value = '';
+            noteAuthor.value = '';
+        });
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            resizeBgCanvas();
+            animateBgCanvas();
+            resizeGearCanvas();
+            animateGears();
+        };
+
+        window.onresize = function() {
+            resizeBgCanvas();
+            resizeGearCanvas();
+        };
+    </script>
+</body>
+</html>
