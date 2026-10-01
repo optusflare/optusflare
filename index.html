@@ -327,9 +327,52 @@ body.retro-mode .panel,body.retro-mode h1,body.retro-mode h2,body.retro-mode h3{
 body.cursor-fx #cursor-canvas{display:block;}
 
 footer{text-align:center;padding:40px 20px 20px;color:var(--muted);font-size:.8rem;}
+
+/* ---------- top search bar ---------- */
+#top-search-wrap{
+  position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:60;
+  width:min(560px,86vw);
+}
+#top-search-box{
+  display:flex; align-items:center; gap:10px;
+  background:var(--glass); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--border); border-radius:999px; padding:10px 18px;
+  transition:border-color .2s, box-shadow .2s;
+}
+#top-search-box:focus-within{ border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,243,255,0.12); }
+#top-search-box .ts-icon{ font-size:.95rem; opacity:.6; }
+#top-search{
+  background:transparent; border:none; padding:0; width:100%;
+  font-family:'IBM Plex Mono',monospace; font-size:.88rem; color:var(--text);
+}
+#top-search:focus{ outline:none; }
+#top-search-suggest{
+  margin-top:8px; background:var(--bg-raised); border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; display:none; max-height:60vh; overflow-y:auto;
+}
+#top-search-suggest.open{ display:block; }
+.ts-label{ padding:10px 16px 4px; font-size:.68rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+.ts-item{
+  all:unset; display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box;
+  padding:10px 16px; cursor:pointer; font-family:'Inter',sans-serif;
+}
+.ts-item:hover, .ts-item.sel{ background:var(--glass-strong); }
+.ts-item .ts-ic{ font-size:1.1rem; width:22px; text-align:center; flex-shrink:0; }
+.ts-item .ts-title{ font-size:.85rem; color:var(--text); display:block; }
+.ts-item .ts-desc{ font-size:.72rem; color:var(--muted); display:block; }
+.ts-empty{ padding:14px 16px; font-size:.8rem; color:var(--muted); }
+body.is-mobile #top-search-wrap{ width:92vw; top:12px; }
 </style>
 </head>
 <body>
+
+<div id="top-search-wrap">
+  <div id="top-search-box">
+    <span class="ts-icon">🔍</span>
+    <input type="text" id="top-search" placeholder="Search all tools… (press / to focus)" autocomplete="off">
+  </div>
+  <div id="top-search-suggest"></div>
+</div>
 
 <nav class="floating-nav" aria-label="Section navigation">
   <span class="brand">AstraSpec</span>
@@ -1159,7 +1202,7 @@ document.getElementById('ach-tray-btn').addEventListener('click', ()=>{
         deactivateBg(e.target);
       }
     });
-  }, {root:null, threshold:0.45});
+  }, {root:null, threshold:0, rootMargin:'35% 0px 35% 0px'});
   slides.forEach(s=>io.observe(s));
 })();
 
@@ -1184,13 +1227,20 @@ window.__scrollBoost = 0;
 
 function makeBgEngine(canvas, mode){
   const ctx = canvas.getContext('2d');
+  const isMobile = document.body.classList.contains('is-mobile') || window.innerWidth < 720;
+  const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
   let w,h,raf=null;
-  function resize(){ w=canvas.width=canvas.clientWidth; h=canvas.height=canvas.clientHeight; }
+  function resize(){
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
   resize(); window.addEventListener('resize', resize);
 
   let particles = [];
   if(mode==='galaxy'){
-    for(let i=0;i<450;i++) particles.push({t:Math.random(), arm:i%4, z:Math.random()});
+    const N = isMobile ? 160 : 450;
+    for(let i=0;i<N;i++) particles.push({t:Math.random(), arm:i%4, z:Math.random()});
   } else if(mode==='grid' || mode==='nodes'){
     for(let i=0;i<40;i++) particles.push({x:Math.random(), y:Math.random(), vx:(Math.random()-.5)*0.0006, vy:(Math.random()-.5)*0.0006});
   } else if(mode==='matrix'){
@@ -1216,11 +1266,13 @@ function makeBgEngine(canvas, mode){
         const r = (p.t * Math.max(w,h) * 0.55 + 10) * expand;
         const x = w/2 + Math.cos(angle)*r, y = h/2 + Math.sin(angle)*r*0.55;
         const col = [0 + (157)*p.t, 243 + (78-243)*p.t, 255 + (221-255)*p.t];
-        ctx.shadowBlur = 6 + p.z*8;
-        ctx.shadowColor = `rgba(${col[0]},${col[1]},${col[2]},0.8)`;
-        ctx.beginPath(); ctx.arc(x,y,0.4+p.z*1.6,0,Math.PI*2);
+        const coreR = 0.4+p.z*1.6;
+        if(p.z>0.5 && !isMobile){
+          ctx.beginPath(); ctx.arc(x,y,coreR*2.4,0,Math.PI*2);
+          ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.08+p.z*0.1})`; ctx.fill();
+        }
+        ctx.beginPath(); ctx.arc(x,y,coreR,0,Math.PI*2);
         ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.2+p.z*0.6})`; ctx.fill();
-        ctx.shadowBlur = 0;
       });
     } else if(mode==='grid'){
       const speedMul = 1 + Math.abs(boost)*4;
@@ -2559,6 +2611,112 @@ buildFlappyGame({
   });
 })();
 
+
+/* ================= top search bar ================= */
+(function(){
+  const input=document.getElementById('top-search');
+  const box=document.getElementById('top-search-suggest');
+  const wrap=document.getElementById('top-search-wrap');
+
+  const ITEMS=[
+    ['⚡','Hardware benchmark','Live FPS, CPU, GPU, RAM','bench','', 'benchmark fps cpu gpu ram hardware specs performance'],
+    ['⌨️','Typing speed test','Measure WPM and accuracy','peripherals','.tabbtn[data-tab="p-typing"]','typing wpm speed accuracy'],
+    ['🖱️','Mouse tester','Clicks, scroll, movement','peripherals','.tabbtn[data-tab="p-mouse"]','mouse click scroll'],
+    ['🎨','Color blindness test','Ishihara-style screening','peripherals','.tabbtn[data-tab="p-color"]','color colour blind vision test'],
+    ['🔋','Battery health','Charge level and status','peripherals','.tabbtn[data-tab="p-battery"]','battery charge power'],
+    ['⏱️','Reaction time test','How fast are your reflexes','peripherals','.tabbtn[data-tab="p-reaction"]','reaction reflex speed'],
+    ['🖥️','Monitor / dead pixel test','Full-screen color swatches','peripherals','.tabbtn[data-tab="p-monitor"]','monitor screen dead pixel display'],
+    ['🎧','Headset / speaker test','Tone generator, L/R balance','peripherals','.tabbtn[data-tab="p-headset"]','audio sound speaker headphones'],
+    ['🎙️','Microphone test','Live waveform','peripherals','.tabbtn[data-tab="p-mic"]','microphone mic waveform'],
+    ['💪','Password strength test','See how strong it is','security','.tabbtn[data-tab="strength"]','password strength strong weak'],
+    ['🎲','Password generator','Random or passphrase mode','security','.tabbtn[data-tab="generator"]','password generator passphrase'],
+    ['🛡️','Password breach check','Has it leaked before?','security','.tabbtn[data-tab="breach"]','password breach leaked pwned hacked'],
+    ['📧','Email breach check','Has your email leaked?','security','.tabbtn[data-tab="email"]','email breach leaked'],
+    ['🕵️','Browser fingerprint','What sites can see about you','security','.tabbtn[data-tab="fingerprint"]','fingerprint tracking privacy'],
+    ['👤','Username search','Find a username across sites','security','.tabbtn[data-tab="username"]','username social profile'],
+    ['🔳','QR code generator','Text or link to QR','security','.tabbtn[data-tab="qr"]','qr code generator'],
+    ['📝','Secure notes','Encrypted password-protected notes','security','.tabbtn[data-tab="notes"]','notes encrypted private'],
+    ['🔒','AES encryptor','Encrypt/decrypt text','privacy','','aes encrypt decrypt cipher'],
+    ['#️⃣','Hash generator','SHA-256, SHA-512, MD5','privacy','','hash sha md5 checksum'],
+    ['❤️','Health score','One grade for your setup','health','','health score grade'],
+    ['🖥️','Windows optimization','Boost FPS on Windows','optimization','.os-btn[data-os="windows"]','windows optimize fps boost'],
+    ['🐧','Linux optimization','Smoother gaming on Linux','optimization','.os-btn[data-os="linux"]','linux optimize fps'],
+    ['🍎','macOS optimization','Speed up your Mac','optimization','.os-btn[data-os="macos"]','mac macos optimize'],
+    ['💿','Change your OS','Reinstall from a USB drive','changeos','','install reinstall usb iso rufus bios'],
+    ['💻','Terminal','Hidden commands inside','terminal','','terminal shell command matrix party'],
+    ['🎮','Flappy Byte','Flap through pipes','games','.tabbtn[data-tab="game-flap"]','game flappy bird play'],
+    ['🌊','Glide','Fly a ship through a corridor','games','.tabbtn[data-tab="game-glide"]','game glide fly ship'],
+    ['🎯','Aim trainer','Hit targets fast','games','.tabbtn[data-tab="game-aim"]','aim trainer shooter'],
+    ['➕','Crosshair generator','Design and export one','games','.tabbtn[data-tab="game-crosshair"]','crosshair reticle'],
+    ['{ }','JSON formatter','Format and validate JSON','toolkit','.tabbtn[data-tab="tk-json"]','json format validate'],
+    ['🔤','Base64 / URL encoder','Encode and decode text','toolkit','.tabbtn[data-tab="tk-base64"]','base64 url encode decode'],
+    ['🔁','Unit converter','GB, Mbps, Hz conversions','toolkit','.tabbtn[data-tab="tk-units"]','unit convert gb mbps hz'],
+    ['🅰️','ASCII art generator','Words to block letters','toolkit','.tabbtn[data-tab="tk-ascii"]','ascii art text'],
+    ['🕐','World clock','Time in major cities','quicktools','.tabbtn[data-tab="qt-clock"]','clock time timezone'],
+    ['📶','Is it down?','Check if a site is reachable','quicktools','.tabbtn[data-tab="qt-down"]','down outage website status'],
+    ['📋','Clipboard history','Last copied snippets','quicktools','.tabbtn[data-tab="qt-clipboard"]','clipboard copy paste'],
+    ['⛅','Weather','Current weather, your location','quicktools','.tabbtn[data-tab="qt-weather"]','weather temperature'],
+    ['💱','Currency converter','Live exchange rates','quicktools','.tabbtn[data-tab="qt-currency"]','currency exchange money'],
+    ['🧾','Bill splitter','Split a bill, add a tip','quicktools','.tabbtn[data-tab="qt-bill"]','bill split tip'],
+    ['🗣️','Speech / text','Dictate or hear text aloud','quicktools','.tabbtn[data-tab="qt-speech"]','speech voice dictate'],
+    ['🌐','Network speed test','Rough download estimate','dns','','speed internet download network dns'],
+    ['🗺️','Roadmap','What shipped, what is next','roadmap','','roadmap changelog']
+  ];
+  let shown=[], sel=-1;
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function row(it,i){
+    return `<button type="button" class="ts-item" data-i="${i}"><span class="ts-ic">${it[0]}</span><span><span class="ts-title">${esc(it[1])}</span><span class="ts-desc">${esc(it[2])}</span></span></button>`;
+  }
+  function render(q){
+    q=(q||'').trim().toLowerCase();
+    let list=[], html='';
+    if(!q){
+      list=ITEMS.slice(0,6);
+      html='<div class="ts-label">Popular</div>'+list.map(row).join('');
+    } else {
+      const scored=[];
+      ITEMS.forEach(it=>{
+        const hay=(it[1]+' '+it[2]+' '+it[5]).toLowerCase();
+        if(hay.includes(q)) scored.push([it[1].toLowerCase().indexOf(q)===0?2:1, it]);
+      });
+      scored.sort((a,b)=>b[0]-a[0]);
+      list=scored.slice(0,8).map(s=>s[1]);
+      html = list.length ? '<div class="ts-label">Results</div>'+list.map(row).join('')
+        : `<div class="ts-empty">Nothing matches "${esc(q)}" — try "password", "game", "json"…</div>`;
+    }
+    shown=list; sel=-1; box.innerHTML=html;
+  }
+  function open(){ render(input.value); box.classList.add('open'); }
+  function close(){ box.classList.remove('open'); sel=-1; }
+  function go(it){
+    if(!it) return;
+    close(); input.value='';
+    if(it[4]){ const b=document.querySelector(it[4]); if(b) b.click(); }
+    const sec=document.getElementById(it[3]);
+    if(sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+    input.blur();
+    unlockAchievement('search');
+  }
+  input.addEventListener('focus', open);
+  input.addEventListener('input', open);
+  input.addEventListener('keydown', e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); sel=Math.min(sel+1, shown.length-1); updateSel(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); sel=Math.max(sel-1, 0); updateSel(); }
+    else if(e.key==='Enter'){ e.preventDefault(); go(shown[sel>=0?sel:0]); }
+    else if(e.key==='Escape'){ close(); input.blur(); }
+  });
+  function updateSel(){ box.querySelectorAll('.ts-item').forEach((el,i)=> el.classList.toggle('sel', i===sel)); }
+  box.addEventListener('click', e=>{
+    const b=e.target.closest('.ts-item');
+    if(b) go(shown[parseInt(b.dataset.i,10)]);
+  });
+  document.addEventListener('click', e=>{ if(!wrap.contains(e.target)) close(); });
+  document.addEventListener('keydown', e=>{
+    const tag=(e.target.tagName||'').toLowerCase();
+    const typing = tag==='input'||tag==='textarea'||e.target.isContentEditable;
+    if(e.key==='/' && !typing){ e.preventDefault(); input.focus(); }
+  });
+})();
 
 /* ================= PWA: service worker registration ================= */
 if('serviceWorker' in navigator){
