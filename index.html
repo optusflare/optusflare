@@ -113,6 +113,11 @@ input:focus,textarea:focus{border-color:var(--cyan);outline:none;}
   display:flex; flex-direction:column; justify-content:center;
 }
 .slide-inner{max-width:1040px;margin:0 auto;width:100%;}
+/* Reserve space so the fixed sidebar nav never overlaps clickable content (desktop only — mobile nav is a bottom drawer, not an overlay) */
+@media (min-width:721px){
+  .slide-inner{margin-left:240px;max-width:calc(1040px - 240px);}
+  #hero .slide-inner{margin-left:240px;}
+}
 .slide-bg{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block;}
 
 /* ---------- floating nav (desktop: sidebar / mobile: toggled drawer) ---------- */
@@ -1753,4 +1758,814 @@ document.querySelectorAll('.tabs').forEach(group=>{
       a=ii(a,b,c,d,x[i+12],6,1700485571); d=ii(d,a,b,c,x[i+3],10,-1894986606); c=ii(c,d,a,b,x[i+10],15,-1051523); b=ii(b,c,d,a,x[i+1],21,-2054922799);
       a=ii(a,b,c,d,x[i+8],6,1873313359); d=ii(d,a,b,c,x[i+15],10,-30611744); c=ii(c,d,a,b,x[i+6],15,-1560198380); b=ii(b,c,d,a,x[i+13],21,1309151649);
       a=ii(a,b,c,d,x[i+4],6,-145523070); d=ii(d,a,b,c,x[i+11],10,-1120210379); c=ii(c,d,a,b,x[i+2],15,718787259); b=ii(b,c,d,a,x[i+9],21,-343485551);
-      a=ad(a,o
+      a=ad(a,oa); b=ad(b,ob); c=ad(c,oc); d=ad(d,od);
+    }
+    return toHex([a,b,c,d]);
+  }
+  const out=document.getElementById('hash-output');
+  document.getElementById('hash-sha256').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-256', document.getElementById('hash-input').value); unlockAchievement('hash'); });
+  document.getElementById('hash-sha512').addEventListener('click', async ()=>{ out.textContent=await digestHex('SHA-512', document.getElementById('hash-input').value); unlockAchievement('hash'); });
+  document.getElementById('hash-md5').addEventListener('click', ()=>{ out.textContent=md5(document.getElementById('hash-input').value); unlockAchievement('hash'); });
+})();
+
+/* ================= security: password strength ================= */
+(function(){
+  const input=document.getElementById('pw-strength-input');
+  const bar=document.getElementById('strength-bar'), label=document.getElementById('strength-label'), tips=document.getElementById('strength-tips');
+  function evaluate(pw){
+    if(!pw) return {score:0,tips:[]};
+    let score=0; const notes=[];
+    if(pw.length>=8) score+=20; else notes.push('Use at least 8 characters.');
+    if(pw.length>=12) score+=15;
+    if(/[a-z]/.test(pw)) score+=10; else notes.push('Add a lowercase letter.');
+    if(/[A-Z]/.test(pw)) score+=15; else notes.push('Add an uppercase letter.');
+    if(/[0-9]/.test(pw)) score+=15; else notes.push('Add a number.');
+    if(/[^A-Za-z0-9]/.test(pw)) score+=20; else notes.push('Add a symbol.');
+    if(/(.)\1\1/.test(pw)){ score-=10; notes.push('Avoid repeating the same character three times.'); }
+    if(/^(123|abc|password|qwerty)/i.test(pw)){ score-=25; notes.push('Avoid common patterns and words.'); }
+    return {score:Math.max(0,Math.min(100,score)), tips:notes};
+  }
+  input.addEventListener('input', ()=>{
+    const {score, tips:notes}=evaluate(input.value);
+    bar.style.width=score+'%';
+    let color='#ff5470', text='Very weak';
+    if(score>=80){ color='#2de08e'; text='Strong'; } else if(score>=60){ color='#00f3ff'; text='Good'; } else if(score>=35){ color='#9d4edd'; text='Weak'; }
+    bar.style.background=color; label.textContent=input.value?text:'—'; tips.innerHTML=notes.map(n=>`<li>${n}</li>`).join('');
+  });
+})();
+
+/* ================= security: password generator ================= */
+(function(){
+  const lenInput=document.getElementById('gen-length'), lenVal=document.getElementById('gen-length-val');
+  lenInput.addEventListener('input', ()=> lenVal.textContent=lenInput.value);
+  const sets={upper:'ABCDEFGHJKLMNPQRSTUVWXYZ', lower:'abcdefghijkmnpqrstuvwxyz', numbers:'23456789', symbols:'!@#$%^&*()-_=+[]{}'};
+  document.getElementById('gen-generate').addEventListener('click', ()=>{
+    let pool='';
+    if(document.getElementById('gen-upper').checked) pool+=sets.upper;
+    if(document.getElementById('gen-lower').checked) pool+=sets.lower;
+    if(document.getElementById('gen-numbers').checked) pool+=sets.numbers;
+    if(document.getElementById('gen-symbols').checked) pool+=sets.symbols;
+    const out=document.getElementById('gen-output');
+    if(!pool){ out.textContent='Select at least one character type.'; return; }
+    const len=parseInt(lenInput.value,10);
+    const bytes=new Uint32Array(len); crypto.getRandomValues(bytes);
+    let pw=''; for(let i=0;i<len;i++) pw+=pool[bytes[i]%pool.length];
+    out.textContent=pw; unlockAchievement('genpw');
+  });
+  document.getElementById('gen-copy').addEventListener('click', async ()=>{
+    const text=document.getElementById('gen-output').textContent; if(!text) return;
+    try{ await navigator.clipboard.writeText(text); }catch(e){}
+  });
+
+  /* mode toggle + passphrase generator */
+  const WORDLIST=['orbit','photon','cipher','nebula','velvet','anchor','glacier','ember','falcon','quartz','ripple','signal','vortex','meadow','lantern','copper','harbor','crimson','tundra','marble','beacon','fossil','ripcord','maple','shadow','quartet','ember','pixel','crater','helix','vapor','thistle','onyx','prism','wander','summit','ravine','ashen','delta','fable'];
+  const modeTabs=document.querySelectorAll('#gen-mode-tabs .minitab');
+  modeTabs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      modeTabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+      const mode=btn.dataset.genmode;
+      document.getElementById('gen-mode-chars').style.display = mode==='chars' ? 'block':'none';
+      document.getElementById('gen-mode-phrase').style.display = mode==='phrase' ? 'block':'none';
+    });
+  });
+  const phraseCount=document.getElementById('phrase-count'), phraseCountVal=document.getElementById('phrase-count-val');
+  phraseCount.addEventListener('input', ()=> phraseCountVal.textContent=phraseCount.value);
+  document.getElementById('phrase-generate').addEventListener('click', ()=>{
+    const n=parseInt(phraseCount.value,10);
+    const bytes=new Uint32Array(n); crypto.getRandomValues(bytes);
+    const words=[]; for(let i=0;i<n;i++) words.push(WORDLIST[bytes[i]%WORDLIST.length]);
+    const numBytes=new Uint32Array(1); crypto.getRandomValues(numBytes);
+    document.getElementById('gen-output').textContent = words.join('-') + '-' + (numBytes[0]%900+100);
+    unlockAchievement('genpw');
+  });
+})();
+
+/* ================= security: password-protected notes (reuses AES pattern) ================= */
+(function(){
+  function b64(bytes){ return btoa(String.fromCharCode(...bytes)); }
+  function unb64(str){ return Uint8Array.from(atob(str), c=>c.charCodeAt(0)); }
+  async function deriveKey(pass, salt){
+    const enc=new TextEncoder();
+    const keyMaterial=await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'}, keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+  }
+  document.getElementById('notes-encrypt').addEventListener('click', async ()=>{
+    const msg=document.getElementById('notes-msg'), out=document.getElementById('notes-output');
+    const text=document.getElementById('notes-input').value, pass=document.getElementById('notes-pass').value;
+    if(!text||!pass){ msg.className='msg err'; msg.textContent='Write a note and set a passphrase.'; return; }
+    try{
+      const salt=crypto.getRandomValues(new Uint8Array(16)), iv=crypto.getRandomValues(new Uint8Array(12));
+      const key=await deriveKey(pass, salt);
+      const cipher=await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(text));
+      const combined=new Uint8Array(salt.length+iv.length+cipher.byteLength);
+      combined.set(salt,0); combined.set(iv,salt.length); combined.set(new Uint8Array(cipher), salt.length+iv.length);
+      out.textContent=b64(combined); msg.className='msg ok'; msg.textContent='Locked. Copy the text above to save your note.';
+    }catch(err){ msg.className='msg err'; msg.textContent='Encryption failed.'; }
+  });
+  document.getElementById('notes-decrypt').addEventListener('click', async ()=>{
+    const msg=document.getElementById('notes-msg'), out=document.getElementById('notes-output');
+    const text=document.getElementById('notes-input').value.trim(), pass=document.getElementById('notes-pass').value;
+    if(!text||!pass){ msg.className='msg err'; msg.textContent='Paste the locked note and its passphrase.'; return; }
+    try{
+      const combined=unb64(text);
+      const salt=combined.slice(0,16), iv=combined.slice(16,28), cipher=combined.slice(28);
+      const key=await deriveKey(pass, salt);
+      const plain=await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, cipher);
+      out.textContent=new TextDecoder().decode(plain); msg.className='msg ok'; msg.textContent='Unlocked.';
+    }catch(err){ msg.className='msg err'; msg.textContent='Wrong passphrase or corrupted note.'; out.textContent=''; }
+  });
+})();
+
+/* ================= security: local storage inspector ================= */
+(function(){
+  const KNOWN_KEYS = {
+    'astra-achievements':'Which achievement badges you\'ve unlocked',
+    'astra-flap-best':'Your Flappy Byte high score',
+    'astra-glide-best':'Your Glide high score',
+    'astra-retro':'Whether Retro/CRT mode is on',
+    'astra-cursor':'Whether the cursor trail effect is on',
+    'astra-clipboard':'Your in-site clipboard history'
+  };
+  function render(){
+    const list=document.getElementById('storage-list');
+    const keys = Object.keys(localStorage).filter(k=>k.startsWith('astra-'));
+    if(keys.length===0){ list.innerHTML='<p>Nothing stored yet — try using a few tools first.</p>'; return; }
+    list.innerHTML = keys.map(k=>{
+      let val = localStorage.getItem(k);
+      if(val && val.length>60) val = val.slice(0,60)+'…';
+      return `<div class="stat-row"><span>${KNOWN_KEYS[k]||k}</span><span class="mono">${val}</span></div>`;
+    }).join('');
+  }
+  render();
+  document.getElementById('storage-clear').addEventListener('click', ()=>{
+    Object.keys(localStorage).filter(k=>k.startsWith('astra-')).forEach(k=>localStorage.removeItem(k));
+    render();
+    document.getElementById('storage-msg').className='msg ok';
+    document.getElementById('storage-msg').textContent='Cleared. Achievements, high scores, and toggles have been reset.';
+  });
+})();
+
+/* ================= security: pwned password check ================= */
+(function(){
+  async function sha1Hex(str){
+    const buf=await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+  document.getElementById('pw-breach-check').addEventListener('click', async ()=>{
+    const result=document.getElementById('breach-result');
+    const pw=document.getElementById('pw-breach-input').value;
+    if(!pw){ result.className='msg err'; result.textContent='Type a password first.'; return; }
+    result.className='msg'; result.textContent='Checking…';
+    try{
+      const hash=await sha1Hex(pw);
+      const prefix=hash.slice(0,5), suffix=hash.slice(5);
+      const res=await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+      const text=await res.text();
+      const match=text.split('\n').find(l=>l.split(':')[0]===suffix);
+      if(match){
+        const count=parseInt(match.split(':')[1],10);
+        result.className='msg err'; result.textContent=`Found in ${count.toLocaleString()} known breaches — don't use this password.`;
+      } else { result.className='msg ok'; result.textContent='Not found in any known breach database.'; }
+      unlockAchievement('breach');
+    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach database — check your connection.'; }
+  });
+})();
+
+/* ================= security: email breach check ================= */
+(function(){
+  const HIBP_API_KEY = "";
+  document.getElementById('email-breach-check').addEventListener('click', async ()=>{
+    const result=document.getElementById('email-result');
+    const email=document.getElementById('email-breach-input').value.trim();
+    if(!email){ result.className='msg err'; result.textContent='Enter an email address.'; return; }
+    if(!HIBP_API_KEY){ result.className='msg err'; result.textContent='Email Check needs a free/paid Have I Been Pwned API key — see the HIBP_API_KEY line near this block in the script.'; return; }
+    result.className='msg'; result.textContent='Checking…';
+    try{
+      const res=await fetch(`https://haveibeenpwned.com/api/v3/breachedaccount/${encodeURIComponent(email)}`, {headers:{'hibp-api-key':HIBP_API_KEY}});
+      if(res.status===404){ result.className='msg ok'; result.textContent='No known breaches found for this address.'; }
+      else if(res.ok){ const data=await res.json(); result.className='msg err'; result.textContent=`Found in ${data.length} breach(es): ${data.map(b=>b.Name).join(', ')}`; }
+      else { result.className='msg err'; result.textContent='The breach lookup service returned an error.'; }
+    }catch(err){ result.className='msg err'; result.textContent='Could not reach the breach lookup service.'; }
+  });
+})();
+
+/* ================= security: fingerprint ================= */
+(function(){
+  function canvasFingerprint(){
+    try{
+      const c=document.createElement('canvas'); const ctx=c.getContext('2d');
+      ctx.textBaseline='top'; ctx.font='14px Arial'; ctx.fillText('AstraSpec fingerprint 🌌',2,2);
+      return c.toDataURL().slice(-16);
+    }catch(e){ return 'Unavailable'; }
+  }
+  const rows=[
+    ['User agent', navigator.userAgent],['Platform', navigator.platform||'Unavailable'],
+    ['Language(s)', navigator.languages?navigator.languages.join(', '):navigator.language],
+    ['Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone],
+    ['Screen resolution', `${screen.width}×${screen.height}`],['Color depth', screen.colorDepth+'-bit'],
+    ['Device pixel ratio', window.devicePixelRatio],['Cookies enabled', navigator.cookieEnabled?'Yes':'No'],
+    ['Do Not Track', navigator.doNotTrack||'Not set'],['Touch support', ('ontouchstart' in window)?'Yes':'No'],
+    ['Connection type', (navigator.connection&&navigator.connection.effectiveType)||'Unavailable'],
+    ['Canvas fingerprint tail', canvasFingerprint()],['Referrer', document.referrer||'(none — direct visit)']
+  ];
+  document.getElementById('finger-grid').innerHTML = rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><span class="mono">${v}</span></div>`).join('');
+})();
+
+/* ================= security: username search ================= */
+(function(){
+  const platforms=[['GitHub',u=>`https://github.com/${u}`],['X / Twitter',u=>`https://x.com/${u}`],['Instagram',u=>`https://instagram.com/${u}`],
+    ['Reddit',u=>`https://reddit.com/user/${u}`],['TikTok',u=>`https://tiktok.com/@${u}`],['YouTube',u=>`https://youtube.com/@${u}`],
+    ['Pinterest',u=>`https://pinterest.com/${u}`],['Twitch',u=>`https://twitch.tv/${u}`]];
+  document.getElementById('username-search').addEventListener('click', ()=>{
+    const u=document.getElementById('username-input').value.trim();
+    const wrap=document.getElementById('username-links');
+    if(!u){ wrap.innerHTML=''; return; }
+    wrap.innerHTML = platforms.map(([name,fn])=>`<a href="${fn(encodeURIComponent(u))}" target="_blank" rel="noopener noreferrer">${name}</a>`).join('');
+  });
+})();
+
+/* ================= security: privacy warning ================= */
+(function(){
+  const list=document.getElementById('warn-list'); let reportLines=[];
+  function addRow(label,value){ reportLines.push(`${label}: ${value}`); const li=document.createElement('li'); li.innerHTML=`<span>${label}</span><span class="mono">${value}</span>`; list.appendChild(li); }
+  addRow('User agent', navigator.userAgent); addRow('Language', navigator.language);
+  addRow('Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone); addRow('Screen', `${screen.width}×${screen.height}`);
+  addRow('Cookies enabled', navigator.cookieEnabled?'Yes':'No');
+  const ipRow=document.createElement('li'); ipRow.innerHTML=`<span>Public IP & location</span><span class="mono">Loading…</span>`; list.appendChild(ipRow);
+  fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>{
+    const text=`${data.ip} — ${data.city||''}${data.city?', ':''}${data.country_name||''} (${data.org||'Unknown ISP'})`;
+    ipRow.querySelector('span:last-child').textContent=text; reportLines.push(`Public IP & location: ${text}`);
+  }).catch(()=>{ ipRow.querySelector('span:last-child').textContent='Unavailable (network blocked this request)'; });
+  document.getElementById('warn-copy').addEventListener('click', async ()=>{
+    const msg=document.getElementById('warn-msg');
+    try{ await navigator.clipboard.writeText(reportLines.join('\n')); msg.className='msg ok'; msg.textContent='Report copied to clipboard.'; }
+    catch(e){ msg.className='msg err'; msg.textContent='Could not copy — your browser blocked clipboard access.'; }
+  });
+})();
+
+/* ================= security: QR generator ================= */
+(function(){
+  document.getElementById('qr-generate').addEventListener('click', ()=>{
+    const text=document.getElementById('qr-input').value.trim();
+    const out=document.getElementById('qr-output');
+    if(!text){ out.innerHTML=''; return; }
+    const url=`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(text)}`;
+    out.innerHTML=`<img src="${url}" alt="QR code" width="220" height="220">`;
+  });
+})();
+
+/* ================= health score ================= */
+(function(){
+  function refresh(){
+    const bench = window.__astraBenchScores || {gaming:0,prod:0};
+    const hw = Math.round((bench.gaming+bench.prod)/2);
+    const secToolsUsed = ['breach','aes','hash','genpw'].filter(id=>unlocked.has(id)).length;
+    const secScore = Math.round((secToolsUsed/4)*100);
+    const overall = Math.round((hw+secScore)/2);
+    let grade='D';
+    if(overall>=85) grade='A'; else if(overall>=70) grade='B'; else if(overall>=50) grade='C';
+    document.getElementById('health-grade').textContent=grade;
+    document.getElementById('health-hw').textContent=hw+' / 100';
+    document.getElementById('health-hw-bar').style.width=hw+'%';
+    document.getElementById('health-sec').textContent=secToolsUsed+' / 4 tools used';
+    document.getElementById('health-sec-bar').style.width=secScore+'%';
+  }
+  document.getElementById('health-refresh').addEventListener('click', refresh);
+  setTimeout(refresh, 2000);
+})();
+
+/* ================= optimization tab logic ================= */
+(function(){
+  document.querySelectorAll('.os-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.os-guide').forEach(g=>g.classList.remove('active'));
+      document.getElementById('guide-'+btn.dataset.os).classList.add('active');
+    });
+  });
+})();
+</script>
+<script>
+/* ================= interactive terminal ================= */
+(function(){
+  const log=document.getElementById('terminal-log');
+  const input=document.getElementById('terminal-input');
+  const box=document.getElementById('terminal-box');
+  function print(text, cls){
+    const d=document.createElement('div'); if(cls) d.className=cls; d.textContent=text;
+    log.appendChild(d); box.scrollTop=box.scrollHeight;
+  }
+  const commands = {
+    help(){ print('Available commands: help, about, whoami, date, echo <text>, neofetch, sudo, theme <retro|default>, clear. A few more exist if you go looking...'); },
+    about(){ print('AstraSpec — a browser-based PC diagnostic and security toolkit. Everything here runs client-side.'); },
+    whoami(){ print('You are a visitor to AstraSpec. No login, no tracking of identity.'); },
+    date(){ print(new Date().toString()); },
+    echo(args){ print(args.join(' ')||''); },
+    neofetch(){
+      const os = document.getElementById('os-val').textContent;
+      const cores = document.getElementById('cores-val').textContent;
+      const gpu = document.getElementById('gpu-val').textContent;
+      print(`OS: ${os}\nCores: ${cores}\nGPU: ${gpu}\nSite: AstraSpec v2.0`);
+    },
+    sudo(){ print("Nice try — this terminal doesn't touch your real system. 😄"); },
+    theme(args){
+      const mode = args[0];
+      if(mode==='retro'){ document.body.classList.add('retro-mode'); localStorage.setItem('astra-retro','1'); print('Retro mode enabled.'); }
+      else if(mode==='default'){ document.body.classList.remove('retro-mode'); localStorage.setItem('astra-retro','0'); print('Theme reset.'); }
+      else print('Usage: theme <retro|default>');
+    },
+    clear(){ log.innerHTML=''; },
+    konami(){ print('Try the arrow keys and B, A on your actual keyboard... 👀'); },
+    matrix(){
+      box.classList.add('matrix-flash');
+      print('Wake up, Neo… (visual effect running for a few seconds)');
+      setTimeout(()=> box.classList.remove('matrix-flash'), 3000);
+    },
+    starfield(){
+      print('✦ ･ﾟ✧ Warping through the AstraSpec galaxy… ✧ﾟ･ ✦');
+      let i=0; const iv=setInterval(()=>{ print('.'.repeat(i%4+1)+' *'); i++; if(i>6) clearInterval(iv); }, 200);
+    },
+    party(){
+      document.body.style.animation='party-spin 0.6s linear 3';
+      print('🎉 Party mode! 🎉');
+      setTimeout(()=> document.body.style.animation='', 1900);
+    }
+  };
+  input.addEventListener('keydown', e=>{
+    if(e.key!=='Enter') return;
+    const raw=input.value.trim(); input.value='';
+    if(!raw) return;
+    print('> '+raw, 'term-line');
+    unlockAchievement('terminal');
+    const parts=raw.split(' ');
+    const cmd=parts[0].toLowerCase();
+    const args=parts.slice(1);
+    if(commands[cmd]) commands[cmd](args);
+    else print(`Command not found: ${cmd}. Type 'help' for a list.`);
+  });
+})();
+
+/* ================= shared mini-game engine (used by both games) ================= */
+function buildFlappyGame(opts){
+  const canvas=document.getElementById(opts.canvasId);
+  const ctx=canvas.getContext('2d');
+  const scoreEl=document.getElementById(opts.scoreId);
+  const bestEl=document.getElementById(opts.bestId);
+  let best = parseInt(localStorage.getItem(opts.bestKey)||'0',10);
+  bestEl.textContent = best;
+
+  let bird, pipes, score, running, gravity, flapPower;
+  function resize(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  function reset(){
+    bird = {x:canvas.width*0.25, y:canvas.height/2, vy:0, r:14};
+    pipes = [];
+    score = 0; running = true;
+    gravity = opts.gravity; flapPower = opts.flapPower;
+    scoreEl.textContent = '0';
+    spawnPipe();
+    requestAnimationFrame(loop);
+  }
+  function spawnPipe(){
+    const gap = 130;
+    const y = 40 + Math.random()*(canvas.height-80-gap);
+    pipes.push({x:canvas.width+20, gapY:y, gap, passed:false});
+  }
+  function flap(){ if(!running) return; bird.vy = flapPower; }
+  function drawChar(){
+    ctx.save(); ctx.translate(bird.x, bird.y);
+    const rot = Math.max(-0.5, Math.min(0.9, bird.vy*0.05));
+    ctx.rotate(rot);
+    if(opts.getChar && opts.getChar()==='windows'){
+      ctx.fillStyle='#00f3ff'; ctx.fillRect(-12,-12,11,11);
+      ctx.fillStyle='#9d4edd'; ctx.fillRect(1,-12,11,11);
+      ctx.fillStyle='#9d4edd'; ctx.fillRect(-12,1,11,11);
+      ctx.fillStyle='#00f3ff'; ctx.fillRect(1,1,11,11);
+    } else if(opts.getChar && opts.getChar()==='macos'){
+      ctx.fillStyle='#9d4edd'; ctx.beginPath(); ctx.arc(0,0,13,0,Math.PI*2); ctx.fill();
+    } else if(opts.getChar && opts.getChar()==='ship'){
+      ctx.fillStyle='#00f3ff';
+      ctx.beginPath(); ctx.moveTo(14,0); ctx.lineTo(-10,-9); ctx.lineTo(-5,0); ctx.lineTo(-10,9); ctx.closePath(); ctx.fill();
+    } else {
+      ctx.fillStyle='#e9e9f2'; ctx.beginPath(); ctx.ellipse(0,0,11,14,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#f5a623'; ctx.beginPath(); ctx.moveTo(-6,10); ctx.lineTo(6,10); ctx.lineTo(0,16); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function loop(){
+    if(!running) return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    bird.vy += gravity; bird.y += bird.vy;
+    ctx.fillStyle='rgba(0,243,255,0.08)';
+    for(let i=0;i<5;i++) ctx.fillRect((i*80+((Date.now()/20)%80)) % canvas.width, 0, 2, canvas.height);
+
+    pipes.forEach(p=>{
+      p.x -= opts.speed;
+      ctx.fillStyle='#9d4edd';
+      ctx.fillRect(p.x, 0, 26, p.gapY);
+      ctx.fillRect(p.x, p.gapY+p.gap, 26, canvas.height-(p.gapY+p.gap));
+      if(!p.passed && p.x+26 < bird.x){ p.passed=true; score++; scoreEl.textContent=score; }
+      if(bird.x+bird.r > p.x && bird.x-bird.r < p.x+26){
+        if(bird.y-bird.r < p.gapY || bird.y+bird.r > p.gapY+p.gap) endGame();
+      }
+    });
+    pipes = pipes.filter(p=>p.x > -30);
+    if(pipes.length===0 || pipes[pipes.length-1].x < canvas.width-220) spawnPipe();
+
+    if(bird.y+bird.r > canvas.height || bird.y-bird.r < 0) endGame();
+    drawChar();
+    if(running) requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;
+    if(score>best){ best=score; localStorage.setItem(opts.bestKey, best); bestEl.textContent=best; }
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#fff'; ctx.font='20px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Game over — press Start to retry', canvas.width/2, canvas.height/2);
+    unlockAchievement('game');
+  }
+  canvas.addEventListener('pointerdown', flap);
+  window.addEventListener('keydown', e=>{ if(e.code==='Space' && document.getElementById(opts.canvasId).offsetParent) { e.preventDefault(); flap(); } });
+  document.getElementById(opts.startId).addEventListener('click', reset);
+  return {reset};
+}
+
+/* Flappy Byte */
+let flapChar = 'windows';
+document.querySelectorAll('#flap-chars .char-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('#flap-chars .char-opt').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active'); flapChar = opt.dataset.char;
+  });
+});
+buildFlappyGame({
+  canvasId:'flap-canvas', scoreId:'flap-score', bestId:'flap-best', startId:'flap-start',
+  bestKey:'astra-flap-best', gravity:0.45, flapPower:-7, speed:2.6,
+  getChar: ()=>flapChar
+});
+
+/* Glide — same engine, different pacing, no character select (uses a simple ship shape) */
+buildFlappyGame({
+  canvasId:'glide-canvas', scoreId:'glide-score', bestId:'glide-best', startId:'glide-start',
+  bestKey:'astra-glide-best', gravity:0.28, flapPower:-5.5, speed:3.4,
+  getChar: ()=> 'ship'
+});
+
+/* ================= aim trainer ================= */
+(function(){
+  const canvas=document.getElementById('aim-canvas');
+  const ctx=canvas.getContext('2d');
+  function resize(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
+  resize(); window.addEventListener('resize', resize);
+  let target=null, hits=0, misses=0, reactions=[], running=false, spawnTime=0, endTime=0;
+  function spawnTarget(){
+    const r=18;
+    target={x:r+Math.random()*(canvas.width-2*r), y:r+Math.random()*(canvas.height-2*r), r};
+    spawnTime=performance.now();
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(target){
+      ctx.beginPath(); ctx.arc(target.x,target.y,target.r,0,Math.PI*2);
+      ctx.fillStyle='#00f3ff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(target.x,target.y,target.r*0.4,0,Math.PI*2);
+      ctx.fillStyle='#05050a'; ctx.fill();
+    }
+    if(running && performance.now()<endTime) requestAnimationFrame(draw);
+    else if(running) endGame();
+  }
+  function endGame(){
+    running=false; target=null;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#fff'; ctx.font='18px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Time up — press Start to try again', canvas.width/2, canvas.height/2);
+    const avg = reactions.length ? Math.round(reactions.reduce((a,b)=>a+b,0)/reactions.length) : 0;
+    document.getElementById('aim-avg').textContent = avg ? avg+' ms' : '—';
+    unlockAchievement('aimtrainer'); unlockAchievement('game');
+  }
+  canvas.addEventListener('click', e=>{
+    if(!running || !target) return;
+    const r=canvas.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const dx=x-target.x, dy=y-target.y;
+    if(Math.sqrt(dx*dx+dy*dy)<=target.r){
+      hits++; reactions.push(performance.now()-spawnTime);
+      document.getElementById('aim-hits').textContent=hits;
+      spawnTarget();
+    } else {
+      misses++; document.getElementById('aim-misses').textContent=misses;
+    }
+  });
+  document.getElementById('aim-start').addEventListener('click', ()=>{
+    hits=0; misses=0; reactions=[]; running=true; endTime=performance.now()+15000;
+    document.getElementById('aim-hits').textContent='0';
+    document.getElementById('aim-misses').textContent='0';
+    document.getElementById('aim-avg').textContent='—';
+    spawnTarget(); draw();
+  });
+})();
+
+/* ================= crosshair generator ================= */
+(function(){
+  const canvas=document.getElementById('ch-preview');
+  const ctx=canvas.getContext('2d');
+  const color=document.getElementById('ch-color');
+  const size=document.getElementById('ch-size');
+  const thickness=document.getElementById('ch-thickness');
+  const gap=document.getElementById('ch-gap');
+  const dot=document.getElementById('ch-dot');
+  function draw(){
+    ctx.clearRect(0,0,160,160);
+    const cx=80, cy=80;
+    const s=parseInt(size.value,10), t=parseInt(thickness.value,10), g=parseInt(gap.value,10);
+    ctx.strokeStyle=color.value; ctx.lineWidth=t; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx, cy-g-s); ctx.lineTo(cx, cy-g); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+g+s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-g-s, cy); ctx.lineTo(cx-g, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx+g, cy); ctx.lineTo(cx+g+s, cy); ctx.stroke();
+    if(dot.checked){ ctx.beginPath(); ctx.arc(cx,cy,t,0,Math.PI*2); ctx.fillStyle=color.value; ctx.fill(); }
+    unlockAchievement('crosshair');
+  }
+  [color,size,thickness,gap,dot].forEach(el=> el.addEventListener('input', draw));
+  document.getElementById('ch-export').addEventListener('click', ()=>{
+    const a=document.createElement('a');
+    a.href=canvas.toDataURL('image/png');
+    a.download='astraspec-crosshair.png';
+    a.click();
+  });
+  draw();
+})();
+
+/* ================= frame pacing visualizer ================= */
+(function(){
+  function makeSpinner(canvasId, fps){
+    const canvas=document.getElementById(canvasId);
+    const ctx=canvas.getContext('2d');
+    let angle=0, lastTick=0;
+    const frameInterval=1000/fps;
+    function loop(now){
+      if(now-lastTick >= frameInterval){
+        lastTick=now;
+        angle += 0.12;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.save();
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.rotate(angle);
+        ctx.strokeStyle='#00f3ff'; ctx.lineWidth=6; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(70,0); ctx.stroke();
+        ctx.restore();
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+  makeSpinner('fp-smooth', 144);
+  makeSpinner('fp-stutter', 30);
+})();
+
+/* ================= toolkit: JSON formatter ================= */
+(function(){
+  const input=document.getElementById('json-input');
+  const out=document.getElementById('json-output');
+  document.getElementById('json-format').addEventListener('click', ()=>{
+    try{ out.textContent = JSON.stringify(JSON.parse(input.value), null, 2); unlockAchievement('json'); }
+    catch(e){ out.textContent = 'Invalid JSON: '+e.message; }
+  });
+  document.getElementById('json-minify').addEventListener('click', ()=>{
+    try{ out.textContent = JSON.stringify(JSON.parse(input.value)); unlockAchievement('json'); }
+    catch(e){ out.textContent = 'Invalid JSON: '+e.message; }
+  });
+})();
+
+/* ================= toolkit: base64 / URL ================= */
+(function(){
+  const input=document.getElementById('b64-input'), out=document.getElementById('b64-output');
+  document.getElementById('b64-encode').addEventListener('click', ()=>{
+    try{ out.textContent = btoa(unescape(encodeURIComponent(input.value))); }catch(e){ out.textContent='Could not encode.'; }
+  });
+  document.getElementById('b64-decode').addEventListener('click', ()=>{
+    try{ out.textContent = decodeURIComponent(escape(atob(input.value))); }catch(e){ out.textContent='Invalid Base64.'; }
+  });
+  document.getElementById('url-encode').addEventListener('click', ()=>{ out.textContent = encodeURIComponent(input.value); });
+  document.getElementById('url-decode').addEventListener('click', ()=>{
+    try{ out.textContent = decodeURIComponent(input.value); }catch(e){ out.textContent='Invalid URL encoding.'; }
+  });
+})();
+
+/* ================= toolkit: unit converter ================= */
+(function(){
+  function upd(){
+    const gb=parseFloat(document.getElementById('conv-gb').value)||0;
+    document.getElementById('conv-gb-out').textContent = (gb*0.9313).toFixed(3)+' GiB';
+    const mbps=parseFloat(document.getElementById('conv-mbps').value)||0;
+    document.getElementById('conv-mbps-out').textContent = (mbps/8).toFixed(2)+' MB/s';
+    const hz=parseFloat(document.getElementById('conv-hz').value)||0;
+    document.getElementById('conv-hz-out').textContent = hz>0 ? (1000/hz).toFixed(2)+' ms/frame' : '—';
+  }
+  ['conv-gb','conv-mbps','conv-hz'].forEach(id=> document.getElementById(id).addEventListener('input', upd));
+  upd();
+})();
+
+/* ================= toolkit: DPI simulator ================= */
+(function(){
+  const sel=document.getElementById('dpi-preset'), prev=document.getElementById('dpi-preview');
+  sel.addEventListener('change', ()=>{ prev.style.transform=`scale(${sel.value})`; prev.style.transformOrigin='top left'; });
+})();
+
+/* ================= toolkit: ASCII art (block-letter style) ================= */
+(function(){
+  const FONT = {
+    'A':[' ██ ','█  █','████','█  █','█  █'], 'B':['███ ','█  █','███ ','█  █','███ '],
+    'C':[' ███','█   ','█   ','█   ',' ███'], 'D':['███ ','█  █','█  █','█  █','███ '],
+    'E':['████','█   ','███ ','█   ','████'], 'F':['████','█   ','███ ','█   ','█   '],
+    'G':[' ███','█   ','█ ██','█  █',' ███'], 'H':['█  █','█  █','████','█  █','█  █'],
+    'I':['███','█ ','█ ','█ ','███'], 'J':['  ██','   █','   █','█  █',' ██ '],
+    'K':['█  █','█ █ ','██  ','█ █ ','█  █'], 'L':['█   ','█   ','█   ','█   ','████'],
+    'M':['█  █','████','████','█  █','█  █'], 'N':['█  █','██ █','█ ██','█  █','█  █'],
+    'O':[' ██ ','█  █','█  █','█  █',' ██ '], 'P':['███ ','█  █','███ ','█   ','█   '],
+    'Q':[' ██ ','█  █','█  █','█ █ ',' ██▄'], 'R':['███ ','█  █','███ ','█ █ ','█  █'],
+    'S':[' ███','█   ',' ██ ','   █','███ '], 'T':['████',' █  ',' █  ',' █  ',' █  '],
+    'U':['█  █','█  █','█  █','█  █',' ██ '], 'V':['█  █','█  █','█  █',' ██ ','  █ '],
+    'W':['█  █','█  █','████','████','█  █'], 'X':['█  █',' ██ ',' ██ ',' ██ ','█  █'],
+    'Y':['█  █',' ██ ',' █  ',' █  ',' █  '], 'Z':['████','   █','  █ ',' █  ','████'],
+    ' ':['   ','   ','   ','   ','   ']
+  };
+  document.getElementById('ascii-generate').addEventListener('click', ()=>{
+    const text=(document.getElementById('ascii-input').value||'HI').toUpperCase();
+    const rows=['','','','',''];
+    for(const ch of text){
+      const glyph=FONT[ch]||FONT[' '];
+      for(let r=0;r<5;r++) rows[r]+= (glyph[r]||'   ')+'  ';
+    }
+    document.getElementById('ascii-output').textContent = rows.join('\n');
+    unlockAchievement('ascii');
+  });
+})();
+
+/* ================= quick tools: world clock ================= */
+(function(){
+  const cities=[['London','Europe/London'],['New York','America/New_York'],['Tokyo','Asia/Tokyo'],['Sydney','Australia/Sydney'],['Dubai','Asia/Dubai'],['Los Angeles','America/Los_Angeles']];
+  const grid=document.getElementById('clock-grid');
+  grid.innerHTML = cities.map(([name,tz])=>`<div class="panel" style="text-align:center;"><div style="color:var(--muted);font-size:.8rem;">${name}</div><div class="mono" style="font-size:1.3rem;margin-top:6px;" data-tz="${tz}">—</div></div>`).join('');
+  function tick(){
+    grid.querySelectorAll('[data-tz]').forEach(el=>{
+      el.textContent = new Date().toLocaleTimeString('en-GB', {timeZone: el.dataset.tz, hour:'2-digit', minute:'2-digit'});
+    });
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ================= quick tools: is it down ================= */
+(function(){
+  document.getElementById('down-check').addEventListener('click', async ()=>{
+    let url=document.getElementById('down-input').value.trim();
+    const result=document.getElementById('down-result');
+    if(!url){ result.className='msg err'; result.textContent='Enter a domain.'; return; }
+    if(!/^https?:\/\//.test(url)) url='https://'+url;
+    result.className='msg'; result.textContent='Checking…';
+    const start=performance.now();
+    try{
+      await fetch(url, {mode:'no-cors', cache:'no-store'});
+      result.className='msg ok'; result.textContent=`Reachable — responded in ≈${Math.round(performance.now()-start)}ms (approximate, browser-limited).`;
+    }catch(err){
+      result.className='msg err'; result.textContent='Could not reach it — it may be down, or blocking cross-origin requests (which some healthy sites do).';
+    }
+  });
+})();
+
+/* ================= quick tools: clipboard history ================= */
+(function(){
+  function load(){ try{ return JSON.parse(localStorage.getItem('astra-clipboard')||'[]'); }catch(e){ return []; } }
+  function save(list){ localStorage.setItem('astra-clipboard', JSON.stringify(list.slice(0,10))); }
+  function render(){
+    const list=load();
+    const el=document.getElementById('clip-list');
+    if(list.length===0){ el.innerHTML='<p>Nothing saved yet.</p>'; return; }
+    el.innerHTML = list.map((item,i)=>`<div class="stat-row"><span class="mono">${item.slice(0,50)}</span><button data-idx="${i}" class="clip-copy">Copy</button></div>`).join('');
+  }
+  document.getElementById('clip-save').addEventListener('click', ()=>{
+    const val=document.getElementById('clip-input').value.trim();
+    if(!val) return;
+    const list=load(); list.unshift(val); save(list); render();
+    document.getElementById('clip-input').value='';
+  });
+  document.getElementById('clip-list').addEventListener('click', async e=>{
+    if(e.target.classList.contains('clip-copy')){
+      const list=load(); const item=list[parseInt(e.target.dataset.idx,10)];
+      try{ await navigator.clipboard.writeText(item); e.target.textContent='Copied'; setTimeout(()=>e.target.textContent='Copy',1200); }catch(err){}
+    }
+  });
+  render();
+})();
+
+/* ================= quick tools: weather ================= */
+(function(){
+  document.getElementById('weather-fetch').addEventListener('click', ()=>{
+    const msg=document.getElementById('weather-msg'), out=document.getElementById('weather-output');
+    msg.className='msg'; msg.textContent='Getting your location…';
+    if(!navigator.geolocation){ msg.className='msg err'; msg.textContent='Geolocation not supported in this browser.'; return; }
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      try{
+        const {latitude,longitude}=pos.coords;
+        const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`);
+        const data=await res.json();
+        const w=data.current_weather;
+        out.innerHTML = `<div class="stat-row"><span>Temperature</span><span class="mono">${w.temperature}°C</span></div>
+          <div class="stat-row"><span>Wind speed</span><span class="mono">${w.windspeed} km/h</span></div>`;
+        msg.className='msg ok'; msg.textContent='Live weather for your current location.';
+      }catch(err){ msg.className='msg err'; msg.textContent='Could not fetch weather.'; }
+    }, ()=>{ msg.className='msg err'; msg.textContent='Location permission denied.'; });
+  });
+})();
+
+/* ================= quick tools: currency converter ================= */
+(function(){
+  document.getElementById('cur-convert').addEventListener('click', async ()=>{
+    const result=document.getElementById('cur-result');
+    const amount=parseFloat(document.getElementById('cur-amount').value)||0;
+    const from=document.getElementById('cur-from').value, to=document.getElementById('cur-to').value;
+    result.className='msg'; result.textContent='Converting…';
+    try{
+      const res=await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+      const data=await res.json();
+      const rate=data.rates[to];
+      result.className='msg ok'; result.textContent=`${amount} ${from} ≈ ${(amount*rate).toFixed(2)} ${to}`;
+    }catch(err){ result.className='msg err'; result.textContent='Could not fetch live exchange rates.'; }
+  });
+})();
+
+/* ================= quick tools: bill splitter ================= */
+(function(){
+  function upd(){
+    const total=parseFloat(document.getElementById('bill-total').value)||0;
+    const tip=parseFloat(document.getElementById('bill-tip').value)||0;
+    const people=Math.max(1, parseInt(document.getElementById('bill-people').value)||1);
+    const withTip = total*(1+tip/100);
+    document.getElementById('bill-total-out').textContent = withTip.toFixed(2);
+    document.getElementById('bill-per-out').textContent = (withTip/people).toFixed(2);
+  }
+  ['bill-total','bill-tip','bill-people'].forEach(id=> document.getElementById(id).addEventListener('input', upd));
+  upd();
+})();
+
+/* ================= quick tools: speech ⇄ text ================= */
+(function(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  document.getElementById('speech-start').addEventListener('click', ()=>{
+    const out=document.getElementById('speech-output');
+    if(!SR){ out.textContent='Speech recognition is not supported in this browser.'; return; }
+    const rec=new SR(); rec.lang='en-US'; rec.interimResults=false;
+    out.textContent='Listening…';
+    rec.onresult = e => { out.textContent = e.results[0][0].transcript; };
+    rec.onerror = () => { out.textContent = 'Could not access the microphone or recognize speech.'; };
+    rec.start();
+  });
+  document.getElementById('speech-play').addEventListener('click', ()=>{
+    const text=document.getElementById('speech-text').value;
+    if(!text || !window.speechSynthesis) return;
+    const u=new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(u);
+  });
+})();
+
+/* ================= site search ================= */
+(function(){
+  const nav=document.querySelector('.floating-nav');
+  const searchWrap=document.createElement('div');
+  searchWrap.style.padding='4px 6px 8px';
+  searchWrap.innerHTML = `<input type="text" id="site-search" placeholder="🔍 Search…" style="font-size:.75rem;padding:.4em .6em;">`;
+  nav.insertBefore(searchWrap, nav.querySelector('.navlink'));
+  const KEYWORDS = {
+    bench:['benchmark','fps','hardware','gpu','cpu'], dns:['dns','network','speed','ping'],
+    peripherals:['keyboard','mouse','monitor','headset','mic','microphone','typing','battery','reaction','color'],
+    privacy:['encrypt','hash','aes','sha'], security:['password','breach','security','qr','notes','storage'],
+    health:['health','score','grade'], optimization:['optimi','windows','linux','macos','fps guide'],
+    changeos:['install','reinstall','iso','rufus','bios'], terminal:['terminal','command','shell'],
+    games:['game','flappy','glide','aim','crosshair'], toolkit:['json','base64','converter','ascii','dpi'],
+    quicktools:['clock','weather','currency','bill','clipboard','speech','down'], roadmap:['roadmap','changelog']
+  };
+  document.getElementById('site-search').addEventListener('keydown', e=>{
+    if(e.key!=='Enter') return;
+    const q=e.target.value.toLowerCase().trim();
+    if(!q) return;
+    let bestMatch=null;
+    for(const [id,words] of Object.entries(KEYWORDS)){
+      if(words.some(w=>w.includes(q)||q.includes(w))){ bestMatch=id; break; }
+    }
+    if(bestMatch){
+      document.getElementById(bestMatch).scrollIntoView({behavior:'smooth'});
+      unlockAchievement('search');
+    }
+  });
+})();
+
+
+/* ================= PWA: service worker registration ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
