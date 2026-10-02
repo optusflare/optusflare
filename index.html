@@ -1045,6 +1045,25 @@ body.is-mobile #top-search-wrap{ width:92vw; top:12px; }
         <div class="timeline-item"><div class="date">Planned</div><h3>Up next</h3><p>More achievements, more games, and whatever gets requested next.</p></div>
       </div>
     </div>
+
+    <div class="panel" style="margin-top:18px;">
+      <h3>Got feedback or an idea?</h3>
+      <p>Tell us what's broken, confusing, or missing — every message goes straight to the maker.</p>
+      <!-- ================================================================
+           FEEDBACK FORM — powered by Formspree (free tier, no backend needed)
+           1. Go to https://formspree.io and sign up free
+           2. Create a new form, copy the form ID it gives you (looks like "mzzvabcd")
+           3. Replace YOUR_FORM_ID below with that ID
+           Submissions land in your email + a dashboard on formspree.io
+           ================================================================ -->
+      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <span class="field-label">Your email (optional, so we can reply)</span>
+        <input type="email" name="email" placeholder="you@example.com">
+        <span class="field-label">Message</span>
+        <textarea name="message" rows="4" required placeholder="What's on your mind?"></textarea>
+        <button type="submit" style="margin-top:12px;">Send feedback</button>
+      </form>
+    </div>
   </div>
 </section>
 
