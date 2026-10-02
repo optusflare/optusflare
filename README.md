@@ -139,7 +139,7 @@ Currently deployed on [Vercel](https://vercel.com) as a static site, auto-deploy
 
 ## Feedback
 
-Found a bug, have an idea, or just want to say something? There's a feedback form right in the **Roadmap** section of the site — every submission goes straight to the maker via [Formspree](https://formspree.io/f/mjykqdkj).
+Found a bug, have an idea, or just want to say something? There's a feedback form right in the **Roadmap** section of the site — every submission goes straight to the maker via [Formspree](https://formspree.io).
 
 You can also open an [issue](https://github.com/optusflare/optusflare/issues) directly on this repo.
 
